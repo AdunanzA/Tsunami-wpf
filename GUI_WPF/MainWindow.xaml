@@ -1,0 +1,57 @@
+﻿<Window x:Class="Tsunami_GUI_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tsunami_GUI_WPF"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"  Grid.Column="0" Background="red" Orientation="Vertical">
+            <TextBlock>R</TextBlock>
+            <TextBlock>I</TextBlock>
+            <TextBlock>C</TextBlock>
+            <TextBlock>E</TextBlock>
+            <TextBlock>R</TextBlock>
+            <TextBlock>C</TextBlock>
+            <TextBlock>A</TextBlock>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
+            
+            <DataGrid></DataGrid>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <TextBlock Foreground="Violet">BarrA</TextBlock>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
+            <TextBlock>D</TextBlock>
+            <TextBlock>O</TextBlock>
+            <TextBlock>W</TextBlock>
+            <TextBlock>N</TextBlock>
+            <TextBlock>L</TextBlock>
+            <TextBlock>O</TextBlock>
+            <TextBlock>A</TextBlock>
+            <TextBlock>D</TextBlock>
+        </StackPanel>
+        <StackPanel Background="Yellow" Grid.Column="3" Orientation="Vertical">
+            <TextBlock>S</TextBlock>
+            <TextBlock>E</TextBlock>
+            <TextBlock>N</TextBlock>
+            <TextBlock>D</TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>

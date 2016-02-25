@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9504E5FA-6818-452A-A2E8-3B34567A6CD2}</ProjectGuid>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <Keyword>ManagedCProj</Keyword>
+    <RootNamespace>ltnet</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>Core</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CLRSupport>true</CLRSupport>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\DHT\BoostBuild\include;C:\DHT\libtorrent-master\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\DHT\Boostx86\lib32-msvc-14.0;C:\DHT\libtorrent-master\build\Debug;$(LibraryPath)</LibraryPath>
+    <TargetName>tsunami</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\DHT\BoostBuild\include;C:\DHT\libtorrent-master\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\DHT\Boostx86\lib32-msvc-14.0;C:\DHT\libtorrent-master\build\Release;$(LibraryPath)</LibraryPath>
+    <TargetName>tsunami</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0600;BOOST_ALL_DYN_LINK;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)tsunami$(TargetExt)</OutputFile>
+      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;_WIN32_WINNT=0x0600;BOOST_ALL_DYN_LINK;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)tsunami$(TargetExt)</OutputFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="add_torrent_params.h" />
+    <ClInclude Include="alert.h" />
+    <ClInclude Include="alert_types.h" />
+    <ClInclude Include="announce_entry.h" />
+    <ClInclude Include="create_torrent.h" />
+    <ClInclude Include="dht_settings.h" />
+    <ClInclude Include="entry.h" />
+    <ClInclude Include="error_code.h" />
+    <ClInclude Include="file_entry.h" />
+    <ClInclude Include="file_storage.h" />
+    <ClInclude Include="interop.h" />
+    <ClInclude Include="lazy_entry.h" />
+    <ClInclude Include="peer_info.h" />
+    <ClInclude Include="session.h" />
+    <ClInclude Include="session_alert_dispatcher.h" />
+    <ClInclude Include="session_settings.h" />
+    <ClInclude Include="session_status.h" />
+    <ClInclude Include="sha1_hash.h" />
+    <ClInclude Include="torrent_handle.h" />
+    <ClInclude Include="torrent_info.h" />
+    <ClInclude Include="torrent_status.h" />
+    <ClInclude Include="util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="add_torrent_params.cpp" />
+    <ClCompile Include="alert.cpp" />
+    <ClCompile Include="alert_types.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="announce_entry.cpp" />
+    <ClCompile Include="create_torrent.cpp" />
+    <ClCompile Include="dht_settings.cpp" />
+    <ClCompile Include="entry.cpp" />
+    <ClCompile Include="error_code.cpp" />
+    <ClCompile Include="file_entry.cpp" />
+    <ClCompile Include="file_storage.cpp" />
+    <ClCompile Include="interop.cpp" />
+    <ClCompile Include="lazy_entry.cpp" />
+    <ClCompile Include="peer_info.cpp" />
+    <ClCompile Include="session.cpp" />
+    <ClCompile Include="session_alert_dispatcher.cpp" />
+    <ClCompile Include="session_settings.cpp" />
+    <ClCompile Include="session_status.cpp" />
+    <ClCompile Include="sha1_hash.cpp" />
+    <ClCompile Include="torrent_handle.cpp" />
+    <ClCompile Include="torrent_info.cpp" />
+    <ClCompile Include="torrent_status.cpp" />
+    <ClCompile Include="util.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
