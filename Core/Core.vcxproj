@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -75,18 +75,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\DHT\BoostBuild\include;C:\DHT\libtorrent-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\DHT\Boostx86\lib32-msvc-14.0;C:\DHT\libtorrent-master\build\Debug;$(LibraryPath)</LibraryPath>
-    <TargetName>tsunami</TargetName>
+    <IncludePath>..\..\BoostBuild\include;..\..\libtorrent-master\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\Boostx86\lib32-msvc-14.0;..\..\libtorrent-master\build\Debug;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\DHT\BoostBuild\include;C:\DHT\libtorrent-master\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\DHT\Boostx86\lib32-msvc-14.0;C:\DHT\libtorrent-master\build\Release;$(LibraryPath)</LibraryPath>
-    <TargetName>tsunami</TargetName>
+    <IncludePath>..\..\BoostBuild\include;..\..\libtorrent-master\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\Boostx86\lib32-msvc-14.0;..\..\libtorrent-master\build\Release;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -101,7 +101,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)tsunami$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
@@ -124,7 +124,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)tsunami$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
