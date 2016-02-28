@@ -5,16 +5,19 @@
 
 namespace Tsunami
 {
-    public ref class LazyEntry
-    {
-    internal:
-        LazyEntry(libtorrent::lazy_entry& le);
-        libtorrent::lazy_entry* ptr();
+	namespace Core
+	{
+		public ref class LazyEntry
+		{
+		internal:
+			LazyEntry(libtorrent::lazy_entry& le);
+			libtorrent::lazy_entry* ptr();
 
-    public:
-        ~LazyEntry();
+		public:
+			~LazyEntry();
 
-    private:
-        libtorrent::lazy_entry* entry_;
-    };
+		private:
+			libtorrent::lazy_entry* entry_;
+		};
+	}
 }

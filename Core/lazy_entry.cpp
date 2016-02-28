@@ -2,7 +2,7 @@
 
 
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 LazyEntry::LazyEntry(libtorrent::lazy_entry& e)
 {

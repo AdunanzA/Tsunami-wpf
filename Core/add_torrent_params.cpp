@@ -6,7 +6,7 @@
 #include "interop.h"
 #include "torrent_info.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 AddTorrentParams::AddTorrentParams()
 {

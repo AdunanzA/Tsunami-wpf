@@ -2,7 +2,7 @@
 
 #include <windows.h>
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 System::String^ interop::from_std_string(const std::string& value)
 {

@@ -14,7 +14,7 @@
         entry_->name = val; \
     }
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 FileEntry::FileEntry(const libtorrent::file_entry& entry)
 {

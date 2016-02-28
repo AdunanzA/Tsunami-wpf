@@ -4,7 +4,7 @@
 
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 Sha1Hash::Sha1Hash(const libtorrent::sha1_hash& hash)
 {

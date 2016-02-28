@@ -13,7 +13,7 @@
 #include "sha1_hash.h"
 #include "torrent_handle.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 Session::Session()
 {

@@ -9,7 +9,7 @@
 #include "torrent_info.h"
 #include "torrent_status.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 TorrentHandle::TorrentHandle(libtorrent::torrent_handle& handle)
 {

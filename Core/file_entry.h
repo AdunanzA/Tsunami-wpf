@@ -7,28 +7,31 @@
 
 namespace Tsunami
 {
-    public ref class FileEntry
-    {
-    internal:
-        FileEntry(const libtorrent::file_entry& entry);
-        libtorrent::file_entry& ptr();
+	namespace Core
+	{
+		public ref class FileEntry
+		{
+		internal:
+			FileEntry(const libtorrent::file_entry& entry);
+			libtorrent::file_entry& ptr();
 
-    public:
-        ~FileEntry();
+		public:
+			~FileEntry();
 
-        FE_PROP(System::String^, path);
-        FE_PROP(System::String^, symlink_path);
-        FE_PROP(long long, offset);
-        FE_PROP(long long, size);
-        FE_PROP(long long, file_base);
-        // TODO mtime
-        // TODO filehash
-        FE_PROP(bool, pad_file);
-        FE_PROP(bool, hidden_attribute);
-        FE_PROP(bool, executable_attribute);
-        FE_PROP(bool, symlink_attribute);
+			FE_PROP(System::String^, path);
+			FE_PROP(System::String^, symlink_path);
+			FE_PROP(long long, offset);
+			FE_PROP(long long, size);
+			FE_PROP(long long, file_base);
+			// TODO mtime
+			// TODO filehash
+			FE_PROP(bool, pad_file);
+			FE_PROP(bool, hidden_attribute);
+			FE_PROP(bool, executable_attribute);
+			FE_PROP(bool, symlink_attribute);
 
-    private:
-        libtorrent::file_entry* entry_;
-    };
+		private:
+			libtorrent::file_entry* entry_;
+		};
+	}
 }

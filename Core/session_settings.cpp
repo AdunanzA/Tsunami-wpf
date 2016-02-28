@@ -13,7 +13,7 @@
         settings_->name = val; \
     }
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 SessionSettings::SessionSettings(libtorrent::session_settings& settings)
 {

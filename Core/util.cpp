@@ -6,7 +6,7 @@
 #include "interop.h"
 #include "lazy_entry.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 cli::array<System::Byte>^ Util::bencode(Entry^ e)
 {

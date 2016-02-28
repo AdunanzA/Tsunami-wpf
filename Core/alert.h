@@ -7,24 +7,27 @@
 
 namespace Tsunami
 {
-    public ref class Alert
-    {
-    internal:
-        static Alert^ create(std::auto_ptr<libtorrent::alert> al);
-        Alert(libtorrent::alert* al);
+	namespace Core
+	{
+		public ref class Alert
+		{
+		internal:
+			static Alert^ create(std::auto_ptr<libtorrent::alert> al);
+			Alert(libtorrent::alert* al);
 
-    public:
-        ~Alert();
+		public:
+			~Alert();
 
-        System::DateTime timestamp();
-        int type();
-        System::String^ what();
-        System::String^ message();
-        int category();
-        bool discardable();
-        // TODO: clone?
+			System::DateTime timestamp();
+			int type();
+			System::String^ what();
+			System::String^ message();
+			int category();
+			bool discardable();
+			// TODO: clone?
 
-    private:
-        libtorrent::alert* alert_;
-    };
+		private:
+			libtorrent::alert* alert_;
+		};
+	}
 }

@@ -4,7 +4,7 @@
 
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 #define PEER_INT_PROP(name) \
     int PeerInfo::name::get() \

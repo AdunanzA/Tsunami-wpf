@@ -2,7 +2,7 @@
 
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 ErrorCode::ErrorCode(const libtorrent::error_code& ec)
 {

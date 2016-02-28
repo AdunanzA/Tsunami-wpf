@@ -2,7 +2,7 @@
 
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 TorrentStatus::TorrentStatus(libtorrent::torrent_status& status)
 {

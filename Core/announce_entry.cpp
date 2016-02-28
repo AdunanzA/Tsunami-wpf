@@ -3,7 +3,7 @@
 
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 AnnounceEntry::AnnounceEntry(libtorrent::announce_entry& entry)
 {

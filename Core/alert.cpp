@@ -10,7 +10,7 @@
         return gcnew alert_name(tmp); \
     }
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 Alert::Alert(libtorrent::alert* al)
 {

@@ -7,7 +7,7 @@
 #include "interop.h"
 #include "sha1_hash.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 CreateTorrent::CreateTorrent(FileStorage^ fs)
     : CreateTorrent(fs, 0, -1, libtorrent::create_torrent::optimize, -1)

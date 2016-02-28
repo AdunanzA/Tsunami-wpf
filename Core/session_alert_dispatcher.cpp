@@ -4,7 +4,7 @@
 
 
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 void SessionAlertDispatcher::invoke_callback(std::auto_ptr<libtorrent::alert> al)
 {

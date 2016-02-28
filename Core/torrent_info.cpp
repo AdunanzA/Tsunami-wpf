@@ -6,7 +6,7 @@
 #include "interop.h"
 #include "sha1_hash.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 TorrentInfo::TorrentInfo(cli::array<System::Byte>^ buffer)
 {
@@ -112,17 +112,17 @@ System::Nullable<System::DateTime>^ TorrentInfo::creation_date()
 
 System::String^ TorrentInfo::name()
 {
-    return Tsunami::interop::from_std_string(info_->name());
+    return Tsunami::Core::interop::from_std_string(info_->name());
 }
 
 System::String^ TorrentInfo::comment()
 {
-    return Tsunami::interop::from_std_string(info_->comment());
+    return Tsunami::Core::interop::from_std_string(info_->comment());
 }
 
 System::String^ TorrentInfo::creator()
 {
-    return Tsunami::interop::from_std_string(info_->creator());
+    return Tsunami::Core::interop::from_std_string(info_->creator());
 }
 
 int TorrentInfo::metadata_size()

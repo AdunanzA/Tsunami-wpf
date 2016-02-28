@@ -4,16 +4,19 @@
 
 namespace Tsunami
 {
-    public ref class Entry
-    {
-    internal:
-        Entry(const libtorrent::entry& e);
-        libtorrent::entry* ptr();
+	namespace Core
+	{
+		public ref class Entry
+		{
+		internal:
+			Entry(const libtorrent::entry& e);
+			libtorrent::entry* ptr();
 
-    public:
-        ~Entry();
+		public:
+			~Entry();
 
-    private:
-        libtorrent::entry* entry_;
-    };
+		private:
+			libtorrent::entry* entry_;
+		};
+	}
 }

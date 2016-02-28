@@ -2,7 +2,7 @@
 
 
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 Entry::Entry(const libtorrent::entry& e)
 {

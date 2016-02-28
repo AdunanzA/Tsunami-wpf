@@ -7,11 +7,14 @@
 
 namespace Tsunami
 {
-    namespace interop
-    {
-        System::String^ from_std_string(const std::string& value);
-        std::string to_std_string(System::String^ value);
-    }
+	namespace Core
+	{
+		namespace interop
+		{
+			System::String^ from_std_string(const std::string& value);
+			std::string to_std_string(System::String^ value);
+		}
+	}
 }
 
 #endif

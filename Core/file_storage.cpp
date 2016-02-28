@@ -5,7 +5,7 @@
 #include "file_entry.h"
 #include "interop.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 FileStorage::FileStorage(const libtorrent::file_storage& storage)
 {

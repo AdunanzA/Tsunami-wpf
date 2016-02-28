@@ -5,36 +5,39 @@
 
 namespace Tsunami
 {
-    ref class TorrentInfo;
+	namespace Core
+	{
+		ref class TorrentInfo;
 
-    public ref class AddTorrentParams
-    {
-    public:
-        AddTorrentParams();
-        ~AddTorrentParams();
+		public ref class AddTorrentParams
+		{
+		public:
+			AddTorrentParams();
+			~AddTorrentParams();
 
-        property System::String^ name
-        {
-            System::String^ get();
-            void set(System::String^ value);
-        }
+			property System::String^ name
+			{
+				System::String^ get();
+				void set(System::String^ value);
+			}
 
-        property System::String^ save_path
-        {
-            System::String^ get();
-            void set(System::String^ value);
-        }
+			property System::String^ save_path
+			{
+				System::String^ get();
+				void set(System::String^ value);
+			}
 
-        property TorrentInfo^ ti
-        {
-            TorrentInfo^ get();
-            void set(TorrentInfo^ value);
-        }
+			property TorrentInfo^ ti
+			{
+				TorrentInfo^ get();
+				void set(TorrentInfo^ value);
+			}
 
-    internal:
-        libtorrent::add_torrent_params* ptr();
+		internal:
+			libtorrent::add_torrent_params* ptr();
 
-    private:
-        libtorrent::add_torrent_params* params_;
-    };
+		private:
+			libtorrent::add_torrent_params* params_;
+		};
+	}
 }

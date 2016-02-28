@@ -8,7 +8,7 @@
         return status_->name; \
     }
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 SessionStatus::SessionStatus(libtorrent::session_status& status)
 {

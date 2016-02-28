@@ -1,6 +1,6 @@
 #include "dht_settings.h"
 
-using namespace Tsunami;
+using namespace Tsunami::Core;
 
 #define DS_PROP_IMPL(type, name) \
     type DhtSettings::name::get() \
