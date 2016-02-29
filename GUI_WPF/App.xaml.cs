@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Tsunami_GUI_WPF
+namespace Tsunami.Gui.Wpf
 {
     /// <summary>
     /// Logica di interazione per App.xaml

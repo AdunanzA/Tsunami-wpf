@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
 
-namespace Tsunami_GUI_WPF
+namespace Tsunami.Gui.Wpf
 {
     /// <summary>
     /// Logica di interazione per MainWindow.xaml
@@ -26,13 +26,13 @@ namespace Tsunami_GUI_WPF
             InitializeComponent();
         }
 
-        public int Loadds()
-        {
-            var ds = new DataSet;
-            ds.ReadXml(Environment.CurrentDirectory  + "/config-core.xml");
+        //public int Loadds()
+        //{
+        //    var ds = new DataSet;
+        //    ds.ReadXml(Environment.CurrentDirectory  + "/config-core.xml");
 
 
-        }
+        //}
             
     }
 

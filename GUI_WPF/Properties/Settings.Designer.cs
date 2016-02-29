@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Tsunami_GUI_WPF.Properties
+namespace Tsunami.Gui.Wpf.Properties
 {
 
 
