@@ -168,6 +168,7 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="announce_entry.cpp" />
+    <ClCompile Include="crashrpt.cpp" />
     <ClCompile Include="create_torrent.cpp" />
     <ClCompile Include="dht_settings.cpp" />
     <ClCompile Include="entry.cpp" />
@@ -190,7 +191,17 @@
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets" Condition="Exists('..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets'))" />
+  </Target>
 </Project>
