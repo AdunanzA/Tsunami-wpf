@@ -29,11 +29,13 @@
             <TextBlock>C</TextBlock>
             <TextBlock>A</TextBlock>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
-            
+
             <DataGrid></DataGrid>
+
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Click="AutoKill_Click">Autodistruzione</Button>
                 <TextBlock Foreground="Violet">BarrA</TextBlock>
             </StackPanel>
         </StackPanel>
@@ -53,5 +55,6 @@
             <TextBlock>N</TextBlock>
             <TextBlock>D</TextBlock>
         </StackPanel>
+        <Button x:Name="button" Content="Read XML" Grid.Column="1" HorizontalAlignment="Left" Margin="410,233,0,0" VerticalAlignment="Top" Width="75" Click="ReadXML_Click"/>
     </Grid>
 </Window>
