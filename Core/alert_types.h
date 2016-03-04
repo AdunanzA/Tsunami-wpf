@@ -86,6 +86,86 @@ namespace Tsunami
 {
 	namespace Core
 	{
+		/*public enum
+		{
+			torrent_alert,
+			peer_alert,
+			tracker_alert,
+			torrent_added_alert,
+			torrent_removed_alert,
+			read_piece_alert,
+			file_completed_alert,
+			file_renamed_alert,
+			file_rename_failed_alert,
+			performance_alert,
+			state_changed_alert,
+			tracker_error_alert,
+			tracker_warning_alert,
+			scrape_reply_alert,
+			scrape_failed_alert,
+			tracker_reply_alert,
+			dht_reply_alert,
+			tracker_announce_alert,
+			hash_failed_alert,
+			peer_ban_alert,
+			peer_unsnubbed_alert,
+			peer_snubbed_alert,
+			peer_error_alert,
+			peer_connect_alert,
+			peer_disconnected_alert,
+			invalid_request_alert,
+			torrent_finished_alert,
+			piece_finished_alert,
+			request_dropped_alert,
+			block_timeout_alert,
+			block_finished_alert,
+			block_downloading_alert,
+			unwanted_block_alert,
+			storage_moved_alert,
+			storage_moved_failed_alert,
+			torrent_deleted_alert,
+			torrent_delete_failed_alert,
+			save_resume_data_alert,
+			save_resume_data_failed_alert,
+			torrent_paused_alert,
+			torrent_resumed_alert,
+			torrent_checked_alert,
+			url_seed_alert,
+			file_error_alert,
+			metadata_failed_alert,
+			metadata_received_alert,
+			udp_error_alert,
+			external_ip_alert,
+			listen_failed_alert,
+			listen_succeeded_alert,
+			portmap_error_alert,
+			portmap_alert,
+			portmap_log_alert,
+			fastresume_rejected_alert,
+			peer_blocked_alert,
+			dht_announce_alert,
+			dht_get_peers_alert,
+			stats_alert,
+			cache_flushed_alert,
+			anonymous_mode_alert,
+			lsd_peer_alert,
+			trackerid_alert,
+			dht_bootstrap_alert,
+			//struct rsss
+			torrent_error_alert,
+			torrent_need_cert_alert,
+			incoming_connection_alert,
+			add_torrent_alert,
+			state_update_alert,
+			torrent_update_alert,
+			//struct rss item alert
+			dht_error_alert,
+			dht_immutable_item_alert,
+			dht_mutable_item_alert,
+			dht_put_alert,
+			i2p_alert,
+		};*/
+
 		ref class Entry;
 		ref class ErrorCode;
 		ref class Sha1Hash;
@@ -96,7 +176,7 @@ namespace Tsunami
 		/// This is a base class for alerts that are associated with a specific
 		/// torrent. It contains a handle to the torrent.
 		/// </summary>
-		private ref class torrent_alert : Alert
+		public ref class torrent_alert : Alert
 		{
 		public:
 			torrent_alert(libtorrent::torrent_alert* alert);
@@ -115,7 +195,7 @@ namespace Tsunami
 		/// peer. It includes all the information to identify the peer. i.e. ip and
 		/// peer-id.
 		/// </summary>
-		private ref class peer_alert : torrent_alert
+		public ref class peer_alert : torrent_alert
 		{
 		public:
 			peer_alert(libtorrent::peer_alert* alert);
@@ -131,7 +211,7 @@ namespace Tsunami
 		/// specific tracker. It derives from torrent_alert since a tracker is also
 		/// associated with a specific torrent.
 		/// </summary>
-		private ref class tracker_alert : torrent_alert
+		public ref class tracker_alert : torrent_alert
 		{
 		public:
 			tracker_alert(libtorrent::tracker_alert* alert);
@@ -148,7 +228,7 @@ namespace Tsunami
 		///ut inherits the torrent handle from its base class. It's posted
 		///when the status_notification bit is set in the alert_mask.
 		///</summary>
-		private ref class torrent_added_alert : torrent_alert
+		public ref class torrent_added_alert : torrent_alert
 		{
 		public:
 			torrent_added_alert(libtorrent::torrent_added_alert* alert);
@@ -161,7 +241,7 @@ namespace Tsunami
 		///identify it. It's posted when the status_notification bit is set in the
 		///alert_mask.
 		///</summary>
-		private ref class torrent_removed_alert : torrent_alert
+		public ref class torrent_removed_alert : torrent_alert
 		{
 		public:
 			torrent_removed_alert(libtorrent::torrent_removed_alert* alert);
@@ -175,7 +255,7 @@ namespace Tsunami
 		///the data of the piece. piece is the piece index that was read. size is
 		///the number of bytes that was read.
 		///</summary>
-		private ref class read_piece_alert : torrent_alert
+		public ref class read_piece_alert : torrent_alert
 		{
 		public:
 			read_piece_alert(libtorrent::read_piece_alert* alert);
@@ -197,7 +277,7 @@ namespace Tsunami
 		///This is posted whenever an individual file completes its download. i.e.
 		///All pieces overlapping this file have passed their hash check.
 		///</summary>
-		private ref class file_completed_alert : torrent_alert
+		public ref class file_completed_alert : torrent_alert
 		{
 		public:
 			file_completed_alert(libtorrent::file_completed_alert* alert);
@@ -213,7 +293,7 @@ namespace Tsunami
 		///This is posted as a response to a torrent_handle::rename_file() call, 
 		///if the rename operation succeeds.
 		///</summary>
-		private ref class file_renamed_alert : torrent_alert
+		public ref class file_renamed_alert : torrent_alert
 		{
 		public:
 			file_renamed_alert(libtorrent::file_renamed_alert* alert);
@@ -232,7 +312,7 @@ namespace Tsunami
 		///This is posted as a response to a torrent_handle::rename_file() call,
 		///if the rename operation failed.
 		///</summary>
-		private ref class file_rename_failed_alert : torrent_alert
+		public ref class file_rename_failed_alert : torrent_alert
 		{
 		public:
 			file_rename_failed_alert(libtorrent::file_rename_failed_alert* alert);
@@ -250,7 +330,7 @@ namespace Tsunami
 		/// This alert is generated when a limit is reached that might have a
 		/// negative impact on upload or download rate performance.
 		/// </summary>
-		private ref class performance_alert : torrent_alert
+		public ref class performance_alert : torrent_alert
 		{
 		public:
 			performance_alert(libtorrent::performance_alert* alert);
@@ -264,7 +344,7 @@ namespace Tsunami
 		/// <summary>
 		/// Generated whenever a torrent changes its state.
 		/// </summary>
-		private ref class state_changed_alert : torrent_alert
+		public ref class state_changed_alert : torrent_alert
 		{
 		public:
 			state_changed_alert(libtorrent::state_changed_alert* alert);
@@ -281,7 +361,7 @@ namespace Tsunami
 		/// invalid response or a HTTP response other than "200 OK". From the alert
 		/// you can get the handle to the torrent the tracker belongs to.
 		/// </summary>
-		private ref class tracker_error_alert : tracker_alert
+		public ref class tracker_error_alert : tracker_alert
 		{
 		public:
 			tracker_error_alert(libtorrent::tracker_error_alert* alert);
@@ -300,7 +380,7 @@ namespace Tsunami
 		/// Usually this means that the tracker announce was successful, but the
 		/// tracker has a message to the client.
 		/// </summary>
-		private ref class tracker_warning_alert : tracker_alert
+		public ref class tracker_warning_alert : tracker_alert
 		{
 		public:
 			tracker_warning_alert(libtorrent::tracker_warning_alert* alert);
@@ -314,7 +394,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a scrape request succeeds.
 		/// </summary>
-		private ref class scrape_reply_alert : tracker_alert
+		public ref class scrape_reply_alert : tracker_alert
 		{
 		public:
 			scrape_reply_alert(libtorrent::scrape_reply_alert* alert);
@@ -331,7 +411,7 @@ namespace Tsunami
 		/// to the tracker timing out, refusing connection or returning an http
 		/// response code indicating an error.
 		/// </summary>
-		private ref class scrape_failed_alert : tracker_alert
+		public ref class scrape_failed_alert : tracker_alert
 		{
 		public:
 			scrape_failed_alert(libtorrent::scrape_failed_alert* alert);
@@ -347,7 +427,7 @@ namespace Tsunami
 		/// tracker announce succeeds. It is generated regardless what kind of
 		/// tracker was used, be it UDP, HTTP or the DHT.
 		/// </summary>
-		private ref class tracker_reply_alert : tracker_alert
+		public ref class tracker_reply_alert : tracker_alert
 		{
 		public:
 			tracker_reply_alert(libtorrent::tracker_reply_alert* alert);
@@ -364,7 +444,7 @@ namespace Tsunami
 		/// these packets are received from multiple DHT nodes, and so the alerts
 		/// are typically generated a few at a time.
 		/// </summary>
-		private ref class dht_reply_alert : tracker_alert
+		public ref class dht_reply_alert : tracker_alert
 		{
 		public:
 			dht_reply_alert(libtorrent::dht_reply_alert* alert);
@@ -380,7 +460,7 @@ namespace Tsunami
 		/// attempted to be sent). There are no extra data members in this alert.
 		/// The url can be found in the base class however.
 		/// </summary>
-		private ref class tracker_announce_alert : tracker_alert
+		public ref class tracker_announce_alert : tracker_alert
 		{
 		public:
 			tracker_announce_alert(libtorrent::tracker_announce_alert* alert);
@@ -396,7 +476,7 @@ namespace Tsunami
 		/// You can get the handle to the torrent which got the failed piece and
 		/// the index of the piece itself from the alert.
 		/// </summary>
-		private ref class hash_failed_alert : torrent_alert
+		public ref class hash_failed_alert : torrent_alert
 		{
 		public:
 			hash_failed_alert(libtorrent::hash_failed_alert* alert);
@@ -411,7 +491,7 @@ namespace Tsunami
 		/// This alert is generated when a peer is banned because it has sent too
 		/// many corrupt pieces to us. ip is the endpoint to the peer that was banned.
 		/// </summary>
-		private ref class peer_ban_alert : peer_alert
+		public ref class peer_ban_alert : peer_alert
 		{
 		public:
 			peer_ban_alert(libtorrent::peer_ban_alert* alert);
@@ -422,7 +502,7 @@ namespace Tsunami
 		/// was snubbed for stalling sending data, and now it started sending data
 		/// again.
 		/// </summary>
-		private ref class peer_unsnubbed_alert : peer_alert
+		public ref class peer_unsnubbed_alert : peer_alert
 		{
 		public:
 			peer_unsnubbed_alert(libtorrent::peer_unsnubbed_alert* alert);
@@ -432,7 +512,7 @@ namespace Tsunami
 		/// This alert is generated when a peer is snubbed, when it stops sending
 		/// data when we request it.
 		/// </summary>
-		private ref class peer_snubbed_alert : peer_alert
+		public ref class peer_snubbed_alert : peer_alert
 		{
 		public:
 			peer_snubbed_alert(libtorrent::peer_snubbed_alert* alert);
@@ -443,7 +523,7 @@ namespace Tsunami
 		/// peer-peer protocol. The peer will be disconnected, but you get its ip
 		/// address from the alert, to identify it.
 		/// </summary>
-		private ref class peer_error_alert : peer_alert
+		public ref class peer_error_alert : peer_alert
 		{
 		public:
 			peer_error_alert(libtorrent::peer_error_alert* alert);
@@ -456,7 +536,7 @@ namespace Tsunami
 		/// This alert is posted every time an outgoing peer connect attempts
 		/// succeeds.
 		/// </summary>
-		private ref class peer_connect_alert : peer_alert
+		public ref class peer_connect_alert : peer_alert
 		{
 		public:
 			peer_connect_alert(libtorrent::peer_connect_alert* alert);
@@ -470,7 +550,7 @@ namespace Tsunami
 		/// This alert is generated when a peer is disconnected for any reason
 		/// (other than the ones covered by peer_error_alert).
 		/// </summary>
-		private ref class peer_disconnected_alert : peer_alert
+		public ref class peer_disconnected_alert : peer_alert
 		{
 		public:
 			peer_disconnected_alert(libtorrent::peer_disconnected_alert* alert);
@@ -484,7 +564,7 @@ namespace Tsunami
 		/// request. ip is the address of the peer and the request is the actual
 		/// incoming request from the peer. See peer_request for more info.
 		/// </summary>
-		private ref class invalid_request_alert : peer_alert
+		public ref class invalid_request_alert : peer_alert
 		{
 		public:
 			invalid_request_alert(libtorrent::invalid_request_alert* alert);
@@ -498,7 +578,7 @@ namespace Tsunami
 		/// to a seed. It will only be generated once per torrent. It contains a
 		/// torrent_handle to the torrent in question.
 		/// </summary>
-		private ref class torrent_finished_alert : torrent_alert
+		public ref class torrent_finished_alert : torrent_alert
 		{
 		public:
 			torrent_finished_alert(libtorrent::torrent_finished_alert* alert);
@@ -509,7 +589,7 @@ namespace Tsunami
 		/// passes the hash check. This alert derives from torrent_alert which
 		/// contains the torrent_handle to the torrent the piece belongs to.
 		/// </summary>
-		private ref class piece_finished_alert : torrent_alert
+		public ref class piece_finished_alert : torrent_alert
 		{
 		public:
 			piece_finished_alert(libtorrent::piece_finished_alert* alert);
@@ -522,7 +602,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a peer rejects or ignores a piece request.
 		/// </summary>
-		private ref class request_dropped_alert : peer_alert
+		public ref class request_dropped_alert : peer_alert
 		{
 		public:
 			request_dropped_alert(libtorrent::request_dropped_alert* alert);
@@ -536,7 +616,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a block request times out.
 		/// </summary>
-		private ref class block_timeout_alert : peer_alert
+		public ref class block_timeout_alert : peer_alert
 		{
 		public:
 			block_timeout_alert(libtorrent::block_timeout_alert* alert);
@@ -550,7 +630,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a block request receives a response.
 		/// </summary>
-		private ref class block_finished_alert : peer_alert
+		public ref class block_finished_alert : peer_alert
 		{
 		public:
 			block_finished_alert(libtorrent::block_finished_alert* alert);
@@ -564,7 +644,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a block request is sent to a peer.
 		/// </summary>
-		private ref class block_downloading_alert : peer_alert
+		public ref class block_downloading_alert : peer_alert
 		{
 		public:
 			block_downloading_alert(libtorrent::block_downloading_alert* alert);
@@ -580,7 +660,7 @@ namespace Tsunami
 		/// This alert is generated when a block is received that was not requeste
 		/// or whose request timed out.
 		/// </summary>
-		private ref class unwanted_block_alert : peer_alert
+		public ref class unwanted_block_alert : peer_alert
 		{
 		public:
 			unwanted_block_alert(libtorrent::unwanted_block_alert* alert);
@@ -597,7 +677,7 @@ namespace Tsunami
 		/// torrent_handle::move_storage. This is useful to synchronize with the
 		/// actual disk. The path member is the new path of the storage.
 		/// </summary>
-		private ref class storage_moved_alert : torrent_alert
+		public ref class storage_moved_alert : torrent_alert
 		{
 		public:
 			storage_moved_alert(libtorrent::storage_moved_alert* alert);
@@ -611,7 +691,7 @@ namespace Tsunami
 		/// The storage_moved_failed_alert is generated when an attempt to move the
 		/// storage, via torrent_handle::move_storage(), fails.
 		/// </summary>
-		private ref class storage_moved_failed_alert : torrent_alert
+		public ref class storage_moved_failed_alert : torrent_alert
 		{
 		public:
 			storage_moved_failed_alert(libtorrent::storage_moved_failed_alert* alert);
@@ -628,7 +708,7 @@ namespace Tsunami
 		/// deleted.The info_hash member is hence the main way of identifying which
 		/// torrent just completed the delete.
 		/// </summary>
-		private ref class torrent_deleted_alert : torrent_alert
+		public ref class torrent_deleted_alert : torrent_alert
 		{
 		public:
 			torrent_deleted_alert(libtorrent::torrent_deleted_alert* alert);
@@ -641,7 +721,7 @@ namespace Tsunami
 		/// This alert is generated when a request to delete the files of a torrent
 		/// fails. Just removing a torrent from the session cannot fail.
 		/// </summary>
-		private ref class torrent_delete_failed_alert : torrent_alert
+		public ref class torrent_delete_failed_alert : torrent_alert
 		{
 		public:
 			torrent_delete_failed_alert(libtorrent::torrent_delete_failed_alert* alert);
@@ -656,7 +736,7 @@ namespace Tsunami
 		/// torrent_handle::save_resume_data request. It is generated once the disk
 		/// IO thread is done writing the state for this torrent.
 		/// </summary>
-		private ref class save_resume_data_alert : torrent_alert
+		public ref class save_resume_data_alert : torrent_alert
 		{
 		public:
 			save_resume_data_alert(libtorrent::save_resume_data_alert* alert);
@@ -670,7 +750,7 @@ namespace Tsunami
 		/// This alert is generated instead of save_resume_data_alert if there was
 		/// an error generating the resume data. error describes what went wrong.
 		/// </summary>
-		private ref class save_resume_data_failed_alert : torrent_alert
+		public ref class save_resume_data_failed_alert : torrent_alert
 		{
 		public:
 			save_resume_data_failed_alert(libtorrent::save_resume_data_failed_alert* alert);
@@ -685,7 +765,7 @@ namespace Tsunami
 		/// the torrent have been closed. This is useful for synchronizing with the
 		/// disk.
 		/// </summary>
-		private ref class torrent_paused_alert : torrent_alert
+		public ref class torrent_paused_alert : torrent_alert
 		{
 		public:
 			torrent_paused_alert(libtorrent::torrent_paused_alert* alert);
@@ -696,7 +776,7 @@ namespace Tsunami
 		/// request. It is generated when a torrent goes from a paused state to an
 		/// active state.
 		/// </summary>
-		private ref class torrent_resumed_alert : torrent_alert
+		public ref class torrent_resumed_alert : torrent_alert
 		{
 		public:
 			torrent_resumed_alert(libtorrent::torrent_resumed_alert* alert);
@@ -707,7 +787,7 @@ namespace Tsunami
 		/// transitions out of the checking files state into a state where it is
 		/// ready to start downloading
 		/// </summary>
-		private ref class torrent_checked_alert : torrent_alert
+		public ref class torrent_checked_alert : torrent_alert
 		{
 		public:
 			torrent_checked_alert(libtorrent::torrent_checked_alert* alert);
@@ -716,7 +796,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is generated when a HTTP seed name lookup fails.
 		/// </summary>
-		private ref class url_seed_alert : torrent_alert
+		public ref class url_seed_alert : torrent_alert
 		{
 		public:
 			url_seed_alert(libtorrent::url_seed_alert* alert);
@@ -731,7 +811,7 @@ namespace Tsunami
 		/// If the storage fails to read or write files that it needs access to,
 		/// this alert is generated and the torrent is paused.
 		/// </summary>
-		private ref class file_error_alert : torrent_alert
+		public ref class file_error_alert : torrent_alert
 		{
 		public:
 			file_error_alert(libtorrent::file_error_alert* alert);
@@ -749,7 +829,7 @@ namespace Tsunami
 		/// in this case. This is only relevant when running a torrent-less
 		/// download, with the metadata extension provided by libtorrent.
 		/// </summary>
-		private ref class metadata_failed_alert : torrent_alert
+		public ref class metadata_failed_alert : torrent_alert
 		{
 		public:
 			metadata_failed_alert(libtorrent::metadata_failed_alert* alert);
@@ -767,7 +847,7 @@ namespace Tsunami
 		/// alert, you would want to save the torrent file in order to load it back
 		/// up again when the session is restarted.
 		/// </summary>
-		private ref class metadata_received_alert : torrent_alert
+		public ref class metadata_received_alert : torrent_alert
 		{
 		public:
 			metadata_received_alert(libtorrent::metadata_received_alert* alert);
@@ -778,7 +858,7 @@ namespace Tsunami
 		/// socket is used for all uTP, DHT and UDP tracker traffic. It's global to
 		/// the session.
 		/// </summary>
-		private ref class udp_error_alert : Alert
+		public ref class udp_error_alert : Alert
 		{
 		public:
 			udp_error_alert(libtorrent::udp_error_alert* alert);
@@ -794,7 +874,7 @@ namespace Tsunami
 		/// (if it supports that) or from peers that supports the extension
 		/// protocol. The address can be accessed through the external_address
 		/// member.
-		private ref class external_ip_alert : Alert
+		public ref class external_ip_alert : Alert
 		{
 		public:
 			external_ip_alert(libtorrent::external_ip_alert* alert);
@@ -812,7 +892,7 @@ namespace Tsunami
 		/// that's free). If that fails you may see a listen_failed_alert with port
 		/// 0 even if you didn't ask to listen on it.
 		/// </summary>
-		private ref class listen_failed_alert : Alert
+		public ref class listen_failed_alert : Alert
 		{
 		public:
 			listen_failed_alert(libtorrent::listen_failed_alert* alert);
@@ -830,7 +910,7 @@ namespace Tsunami
 		/// particular interface. endpoint is the endpoint that successfully was
 		/// opened for listening.
 		/// </summary>
-		private ref class listen_succeeded_alert : Alert
+		public ref class listen_succeeded_alert : Alert
 		{
 		public:
 			listen_succeeded_alert(libtorrent::listen_succeeded_alert* alert);
@@ -849,7 +929,7 @@ namespace Tsunami
 		/// network or if it appears there is no NAT router that can be remote
 		/// controlled to add port mappings.
 		/// </summary>
-		private ref class portmap_error_alert : Alert
+		public ref class portmap_error_alert : Alert
 		{
 		public:
 			portmap_error_alert(libtorrent::portmap_error_alert* alert);
@@ -867,7 +947,7 @@ namespace Tsunami
 		/// capable router, this is typically generated once when mapping the TCP
 		/// port and, if DHT is enabled, when the UDP port is mapped.
 		/// </summary>
-		private ref class portmap_alert : Alert
+		public ref class portmap_alert : Alert
 		{
 		public:
 			portmap_alert(libtorrent::portmap_alert* alert);
@@ -885,7 +965,7 @@ namespace Tsunami
 		/// 1 = UPnP). Displaying these messages to an end user is only useful for
 		/// debugging the UPnP or NAT-PMP implementation.
 		/// </summary>
-		private ref class portmap_log_alert : Alert
+		public ref class portmap_log_alert : Alert
 		{
 		public:
 			portmap_log_alert(libtorrent::portmap_log_alert* alert);
@@ -901,7 +981,7 @@ namespace Tsunami
 		/// add_torrent() but the files on disk did not match the fastresume file.
 		/// The error_code explains the reason why the resume file was rejected.
 		/// </summary>
-		private ref class fastresume_rejected_alert : torrent_alert
+		public ref class fastresume_rejected_alert : torrent_alert
 		{
 		public:
 			fastresume_rejected_alert(libtorrent::fastresume_rejected_alert* alert);
@@ -914,7 +994,7 @@ namespace Tsunami
 		/// This alert is posted when an incoming peer connection, or a peer that's
 		/// about to be added to our peer list, is blocked for some reason.
 		/// </summary>
-		private ref class peer_blocked_alert : torrent_alert
+		public ref class peer_blocked_alert : torrent_alert
 		{
 		public:
 			peer_blocked_alert(libtorrent::peer_blocked_alert* alert);
@@ -929,7 +1009,7 @@ namespace Tsunami
 		/// This alert is generated when a DHT node announces to an info-hash on
 		/// our DHT node. It belongs to the dht_notification category.
 		/// </summary>
-		private ref class dht_announce_alert : Alert
+		public ref class dht_announce_alert : Alert
 		{
 		public:
 			dht_announce_alert(libtorrent::dht_announce_alert* alert);
@@ -945,7 +1025,7 @@ namespace Tsunami
 		/// This alert is generated when a DHT node sends a get_peers message to
 		/// our DHT node. It belongs to the dht_notification category.
 		/// </summary>
-		private ref class dht_get_peers_alert : Alert
+		public ref class dht_get_peers_alert : Alert
 		{
 		public:
 			dht_get_peers_alert(libtorrent::dht_get_peers_alert* alert);
@@ -959,7 +1039,7 @@ namespace Tsunami
 		/// byte counters of most statistics that's tracked for torrents. Each
 		/// active torrent posts these alerts regularly.
 		/// </summary>
-		private ref class stats_alert : torrent_alert
+		public ref class stats_alert : torrent_alert
 		{
 		public:
 			stats_alert(libtorrent::stats_alert* alert);
@@ -979,7 +1059,7 @@ namespace Tsunami
 		/// session, once the outstanding cache flush is complete and the torrent
 		/// does no longer have any files open.
 		/// </summary>
-		private ref class cache_flushed_alert : torrent_alert
+		public ref class cache_flushed_alert : torrent_alert
 		{
 		public:
 			cache_flushed_alert(libtorrent::cache_flushed_alert* alert);
@@ -991,7 +1071,7 @@ namespace Tsunami
 		/// no trackers will be used, because trackers can only be used through
 		/// proxies when in anonymous mode.
 		/// </summary>
-		private ref class anonymous_mode_alert : torrent_alert
+		public ref class anonymous_mode_alert : torrent_alert
 		{
 		public:
 			anonymous_mode_alert(libtorrent::anonymous_mode_alert* alert);
@@ -1006,7 +1086,7 @@ namespace Tsunami
 		/// This alert is generated when we receive a local service discovery
 		/// message from a peer for a torrent we're currently participating in.
 		/// </summary>
-		private ref class lsd_peer_alert : peer_alert
+		public ref class lsd_peer_alert : peer_alert
 		{
 		public:
 			lsd_peer_alert(libtorrent::lsd_peer_alert* alert);
@@ -1017,7 +1097,7 @@ namespace Tsunami
 		/// tracker ID is like a cookie. The libtorrent will store the tracker ID
 		/// for this tracker and repeat it in subsequent announces.
 		/// </summary>
-		private ref class trackerid_alert : tracker_alert
+		public ref class trackerid_alert : tracker_alert
 		{
 		public:
 			trackerid_alert(libtorrent::trackerid_alert* alert);
@@ -1030,7 +1110,7 @@ namespace Tsunami
 		/// <summary>
 		/// This alert is posted when the initial DHT bootstrap is done.
 		/// </summary>
-		private ref class dht_bootstrap_alert : Alert
+		public ref class dht_bootstrap_alert : Alert
 		{
 		public:
 			dht_bootstrap_alert(libtorrent::dht_bootstrap_alert* alert);
@@ -1039,7 +1119,7 @@ namespace Tsunami
 		/// <summary>
 		/// This is posted whenever a torrent is transitioned into the error state.
 		/// </summary>
-		private ref class torrent_error_alert : torrent_alert
+		public ref class torrent_error_alert : torrent_alert
 		{
 		public:
 			torrent_error_alert(libtorrent::torrent_error_alert* alert);
@@ -1055,7 +1135,7 @@ namespace Tsunami
 		/// certificate. Valid certificates MUST be signed by the SSL certificate
 		/// in the .torrent file.
 		/// </summary>
-		private ref class torrent_need_cert_alert : torrent_alert
+		public ref class torrent_need_cert_alert : torrent_alert
 		{
 		public:
 			torrent_need_cert_alert(libtorrent::torrent_need_cert_alert* alert);
@@ -1072,7 +1152,7 @@ namespace Tsunami
 		/// connections may also be accepted ofer a Socks5 or i2p listen socket, or
 		/// via a torrent specific listen socket for SSL torrents.
 		/// </summary>
-		private ref class incoming_connection_alert : Alert
+		public ref class incoming_connection_alert : Alert
 		{
 		public:
 			incoming_connection_alert(libtorrent::incoming_connection_alert* alert);
@@ -1089,11 +1169,11 @@ namespace Tsunami
 		/// handle of the new torrent can be found in the base class' handle
 		/// member. If adding the torrent failed, error contains the error code.
 		/// </summary>
-		private ref class add_torrent_alert : torrent_alert
+		public ref class add_torrent_alert : torrent_alert
 		{
 		public:
 			add_torrent_alert(libtorrent::add_torrent_alert* alert);
-
+			
 			// TODO params
 			property ErrorCode^ error { ErrorCode^ get(); }
 		private:
@@ -1107,7 +1187,7 @@ namespace Tsunami
 		/// posted. Its category is status_notification, but it's not subject to
 		/// filtering, since it's only manually posted anyway.
 		/// </summary>
-		private ref class state_update_alert : Alert
+		public ref class state_update_alert : Alert
 		{
 		public:
 			state_update_alert(libtorrent::state_update_alert* alert);
@@ -1124,7 +1204,7 @@ namespace Tsunami
 		/// download completes, the torrent_update_alert is posted to notify the
 		/// client of the info - hash changing.
 		/// </summary>
-		private ref class torrent_update_alert : torrent_alert
+		public ref class torrent_update_alert : torrent_alert
 		{
 		public:
 			torrent_update_alert(libtorrent::torrent_update_alert* alert);
@@ -1138,7 +1218,7 @@ namespace Tsunami
 		/// Posted when something fails in the DHT. This is not necessarily a fatal
 		/// error, but it could prevent proper operation
 		/// </summary>
-		private ref class dht_error_alert : Alert
+		public ref class dht_error_alert : Alert
 		{
 		public:
 			dht_error_alert(libtorrent::dht_error_alert* alert);
