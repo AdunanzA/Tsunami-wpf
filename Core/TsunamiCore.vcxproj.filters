@@ -149,11 +149,5 @@
     <ClCompile Include="create_torrent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="crashrpt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>

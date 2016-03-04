@@ -32,7 +32,8 @@
 
         <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
 
-            <DataGrid></DataGrid>
+            <DataGrid Name="dataGridx" Grid.Row="0" ItemsSource="{Binding }">
+            </DataGrid>
 
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button Click="AutoKill_Click">Autodistruzione</Button>

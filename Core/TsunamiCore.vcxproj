@@ -168,7 +168,6 @@
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="announce_entry.cpp" />
-    <ClCompile Include="crashrpt.cpp" />
     <ClCompile Include="create_torrent.cpp" />
     <ClCompile Include="dht_settings.cpp" />
     <ClCompile Include="entry.cpp" />
@@ -191,23 +190,15 @@
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets" Condition="Exists('..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets')" />
-    <Import Project="..\packages\boost.1.56.0.0\build\native\boost.targets" Condition="Exists('..\packages\boost.1.56.0.0\build\native\boost.targets')" />
-    <Import Project="..\packages\openssl_vc120.1.0.1.800\build\native\openssl_vc120.targets" Condition="Exists('..\packages\openssl_vc120.1.0.1.800\build\native\openssl_vc120.targets')" />
-    <Import Project="..\packages\libtorrent-src.1.0.2\build\native\libtorrent-src.targets" Condition="Exists('..\packages\libtorrent-src.1.0.2\build\native\libtorrent-src.targets')" />
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets'))" />
     <Error Condition="!Exists('..\packages\boost.1.56.0.0\build\native\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.56.0.0\build\native\boost.targets'))" />
     <Error Condition="!Exists('..\packages\openssl_vc120.1.0.1.800\build\native\openssl_vc120.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\openssl_vc120.1.0.1.800\build\native\openssl_vc120.targets'))" />
     <Error Condition="!Exists('..\packages\libtorrent-src.1.0.2\build\native\libtorrent-src.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libtorrent-src.1.0.2\build\native\libtorrent-src.targets'))" />
+    <Error Condition="!Exists('..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CrashRpt.CPP.2.0.18.0\build\native\CrashRpt.CPP.targets'))" />
   </Target>
 </Project>

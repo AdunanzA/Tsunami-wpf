@@ -22,24 +22,19 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        
-
         public MainWindow()
         {
             InitializeComponent();
-
-        }
+         
+    }
         
         private void AutoKill_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
-            //Session s = new Session();
-            //var tor = s.get_torrents();
             //var set = new Settings();
             //set.PATH_DOWNLOAD = "ciao";
+    
 
-           
 
         }
 
@@ -48,6 +43,14 @@ namespace Tsunami.Gui.Wpf
             MessageBox.Show("Non toccare cio' che non comprendi!" +Environment.NewLine+"Feature in development!");
             //    var ds = new DataSet;
             //    ds.ReadXml(Environment.CurrentDirectory  + "/config-core.xml");
+            var s = new Session();
+            TorrentHandle[] th = s.get_torrents();
+            List<String> a = new List<String>();
+            foreach (TorrentHandle t in th)
+            {
+                a.Add((t.torrent_file()).name());
+            }
+            dataGridx.ItemsSource = a;
         }
     }
 
