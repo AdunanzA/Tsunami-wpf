@@ -33,14 +33,14 @@ System::TimeSpan TorrentStatus::next_announce::get()
 {
 	using std::chrono::duration_cast;
 	using std::chrono::seconds;
-	return System::TimeSpan(0, 0, duration_cast<seconds>(status_->next_announce).count());
+	return System::TimeSpan(0, 0, (int)duration_cast<seconds>(status_->next_announce).count());
 }
 
 System::TimeSpan TorrentStatus::announce_interval::get()
 {
 	using std::chrono::duration_cast;
 	using std::chrono::seconds;
-    return System::TimeSpan(0, 0, duration_cast<seconds>(status_->announce_interval).count());
+    return System::TimeSpan(0, 0, (int)duration_cast<seconds>(status_->announce_interval).count());
 }
 
 System::String^ TorrentStatus::current_tracker::get()
@@ -105,17 +105,17 @@ long long TorrentStatus::all_time_download::get()
 
 System::DateTime TorrentStatus::added_time::get()
 {
-    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds(status_->added_time).ToLocalTime();
+    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds((double)status_->added_time).ToLocalTime();
 }
 
 System::DateTime TorrentStatus::completed_time::get()
 {
-    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds(status_->completed_time).ToLocalTime();
+    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds((double)status_->completed_time).ToLocalTime();
 }
 
 System::DateTime TorrentStatus::last_seen_complete::get()
 {
-    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds(status_->last_seen_complete).ToLocalTime();
+    return System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds((double)status_->last_seen_complete).ToLocalTime();
 }
 
 float TorrentStatus::progress::get()

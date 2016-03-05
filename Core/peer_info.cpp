@@ -48,17 +48,17 @@ PEER_INT_PROP(download_limit);
 
 System::TimeSpan PeerInfo::last_request::get()
 {
-    return System::TimeSpan(0, 0, libtorrent::total_seconds(info_->last_request));
+    return System::TimeSpan(0, 0, (int)libtorrent::total_seconds(info_->last_request));
 }
 
 System::TimeSpan PeerInfo::last_active::get()
 {
-    return System::TimeSpan(0, 0, libtorrent::total_seconds(info_->last_active));
+    return System::TimeSpan(0, 0, (int)libtorrent::total_seconds(info_->last_active));
 }
 
 System::TimeSpan PeerInfo::download_queue_time::get()
 {
-    return System::TimeSpan(0, 0, libtorrent::total_seconds(info_->download_queue_time));
+    return System::TimeSpan(0, 0, (int)libtorrent::total_seconds(info_->download_queue_time));
 }
 
 PEER_INT_PROP(queue_bytes);
