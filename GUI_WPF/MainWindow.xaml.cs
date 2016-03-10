@@ -91,5 +91,20 @@ namespace Tsunami.Gui.Wpf
         {
             
         }
+
+        //gobne start
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string message_close = "Vuoi Uscire da Tsunami?";
+            string caption = "Confirmation";
+            MessageBoxButton buttons = MessageBoxButton.YesNo;
+            MessageBoxImage icon = MessageBoxImage.Question;
+            if (MessageBox.Show(message_close,caption,buttons, icon) == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+
+        }
+        //gobne end
     }
 }
