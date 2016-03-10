@@ -103,7 +103,12 @@ namespace Tsunami.Gui.Wpf
             {
                 e.Cancel = true;
             }
-
+            string str = "something to put in File";
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
+            var path = Environment.CurrentDirectory + "test.xml";
+            System.IO.FileStream file = System.IO.File.Create(path);
+            writer.Serialize(file, str);
+            file.Close();
         }
         //gobne end
     }
