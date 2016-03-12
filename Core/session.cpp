@@ -1,6 +1,5 @@
 #include "session.h"
 
-
 #include "alert.h"
 #include "add_torrent_params.h"
 #include "dht_settings.h"

@@ -175,6 +175,11 @@ void TorrentHandle::set_metadata(cli::array<System::Byte>^ metadata)
     handle_->set_metadata(pbegin, metadata->Length);
 }
 
+bool TorrentHandle::has_metadata()
+{
+	return handle_->has_metadata();
+}
+
 bool TorrentHandle::is_valid()
 {
     return handle_->is_valid();
