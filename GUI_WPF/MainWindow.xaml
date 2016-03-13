@@ -37,13 +37,13 @@
             </DataGrid>
 
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Background="Violet" Click="AddTorrent_Click">Add Torrent / Link</Button>
-                <Button Background="Green" Click="StartATorrent_Click">Start</Button>
-                <Button Background="#FF961515">Stop</Button>
-                <Button Background="Red">Delete</Button>
+                <Button Name="Add" Background="Violet" Content="{DynamicResource Add}"/>
+                <Button Name="Start" Background="Green" Content="{DynamicResource Start}"/>
+                <Button Name="Stop" Background="#FF961515" Content="{DynamicResource Stop}"/>
+                <Button Name="Delete" Background="Red" Content="{DynamicResource Delete}"/>
             </StackPanel>
-            <Button Click="AutoKill_Click">Autodistruzione</Button>
-            <Button x:Name="button" Content="Read XML" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click"/>
+            <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"/>
+            <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click"/>
         </StackPanel>
         <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
             <TextBlock>D</TextBlock>
@@ -61,6 +61,6 @@
             <TextBlock>N</TextBlock>
             <TextBlock>D</TextBlock>
         </StackPanel>
-       
+
     </Grid>
 </Window>
