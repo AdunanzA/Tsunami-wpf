@@ -104,5 +104,17 @@ namespace Tsunami.Gui.Wpf
         private class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
         {
         }
+
+        //gobne start
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string str = "something to put in File";
+            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
+            var path = Environment.CurrentDirectory + "test.xml";
+            System.IO.FileStream file = System.IO.File.Create(path);
+            writer.Serialize(file, str);
+            file.Close();
+        }
+        //gobne end
     }
 }

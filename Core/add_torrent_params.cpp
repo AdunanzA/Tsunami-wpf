@@ -28,6 +28,16 @@ void AddTorrentParams::name::set(System::String^ value)
     params_->name = interop::to_std_string(value);
 }
 
+System::String^ AddTorrentParams::url::get()
+{
+	return interop::from_std_string(params_->url);
+}
+
+void AddTorrentParams::url::set(System::String^ value)
+{
+	params_->url = interop::to_std_string(value);
+}
+
 System::String^ AddTorrentParams::save_path::get()
 {
     return interop::from_std_string(params_->save_path);

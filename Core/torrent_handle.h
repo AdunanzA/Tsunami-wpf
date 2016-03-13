@@ -46,6 +46,7 @@ namespace Tsunami
 			cli::array<System::String^>^ http_seeds();
 			// TODO add extensino
 			void set_metadata(cli::array<System::Byte>^ metadata);
+			bool has_metadata();
 			bool is_valid();
 			void pause();
 			void resume();

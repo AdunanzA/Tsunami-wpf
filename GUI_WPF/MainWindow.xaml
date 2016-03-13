@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-        
+        Title="MainWindow" Height="350" Width="525"
+        Closing="Window_Closing">
+
     <Grid >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -30,25 +31,15 @@
             <TextBlock>A</TextBlock>
         </StackPanel>
 
-        <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Top" Background="Black" Orientation="Vertical">
 
-            <DataGrid Name="dataGridx" Grid.Row="0" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding TorrentList.Id}" />
-                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding}" />
-
-                    <DataGridTextColumn Header="Progress" IsReadOnly="True" Binding="{Binding}" />
-                </DataGrid.Columns>
             </DataGrid>
 
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" VerticalAlignment="Bottom">
                 <Button Background="Violet" Click="AddTorrent_Click">Add Torrent / Link</Button>
                 <Button Background="Green" Click="StartATorrent_Click">Start</Button>
                 <Button Background="#FF961515">Stop</Button>
                 <Button Background="Red">Delete</Button>
             </StackPanel>
             <Button Click="AutoKill_Click">Autodistruzione</Button>
-            <Button x:Name="button" Content="Read XML" Grid.Column="1" HorizontalAlignment="Left"  Click="ReadXML_Click"/>
         </StackPanel>
         <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
             <TextBlock>D</TextBlock>

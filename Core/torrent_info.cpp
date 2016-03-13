@@ -21,6 +21,7 @@ TorrentInfo::TorrentInfo(System::String^ fileName)
     info_ = new libtorrent::torrent_info(file);
 }
 
+
 TorrentInfo::TorrentInfo(const libtorrent::torrent_info& info)
 {
     info_ = new libtorrent::torrent_info(info);

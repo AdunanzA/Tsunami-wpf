@@ -21,6 +21,12 @@ namespace Tsunami
 				void set(System::String^ value);
 			}
 
+			property System::String^ url
+			{
+				System::String^ get();
+				void set(System::String^ value);
+			}
+
 			property System::String^ save_path
 			{
 				System::String^ get();
