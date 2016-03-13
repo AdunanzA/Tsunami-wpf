@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Shapes;
 using System.Data;
 using Tsunami.Core;
 using Microsoft.Win32;
+using System.IO;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -23,13 +25,16 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Session TorSession; 
+        public Session TorSession;
+        public ObservableCollection<string> Torrentlist { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
-           
+            TorSession = new Session();
+            Torrentlist = new ObservableCollection<int,string,double>();
+            this.DataContext = Torrentlist;
         }
-        
+
         private void AutoKill_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
@@ -39,11 +44,10 @@ namespace Tsunami.Gui.Wpf
 
         private void ReadXML_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Non toccare cio' che non comprendi!" +Environment.NewLine+"Feature in development!");
+            MessageBox.Show("Non toccare cio' che non comprendi!" + Environment.NewLine + "Feature in development!");
             //    var ds = new DataSet;
             //    ds.ReadXml(Environment.CurrentDirectory  + "/config-core.xml");
-         
-                 }
+        }
 
         private void AddTorrent_Click(object sender, RoutedEventArgs e)
         {
@@ -52,44 +56,53 @@ namespace Tsunami.Gui.Wpf
             // altrimenti chiedo di indicare un file torrent
             if (Clipboard.GetText(df).Contains("magnet"))
             {
-
                 string message = "Aggiungere questo magnet ai downloads ? ";
-            string caption = "Confirmation";
-            MessageBoxButton buttons = MessageBoxButton.YesNo;
-            MessageBoxImage icon = MessageBoxImage.Question;
-            if (MessageBox.Show(message, caption, buttons, icon) == MessageBoxResult.OK)
-            {
-                // OK Aggiungo
+                string caption = "Confirmation";
+                MessageBoxButton buttons = MessageBoxButton.YesNo;
+                MessageBoxImage icon = MessageBoxImage.Question;
+                if (MessageBox.Show(message, caption, buttons, icon) == MessageBoxResult.OK)
+                {
+                    // ok aggiungo 
+                    //TorSession.add_magnet(Clipboard.GetText(df));
+                }
+                else AddTorrent();
             }
             else
             {
-                    // Cancel code here Opening filedialog
-                    OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.DefaultExt=".torrent";
-                    ofd.CheckFileExists = true;
-                    ofd.CheckPathExists = true;
-                    ofd.Title = "Select Torrent to Add";
-                    ofd.ShowDialog();
+                AddTorrent();
             }
+        }
+
+        public void AddTorrent()
+        {
+            // Cancel code here Opening filedialog
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.DefaultExt = ".torrent";
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.Title = "Select Torrent to Add";
+            ofd.ShowDialog();
+            var atp = new AddTorrentParams();
+            TorrentInfo ti = new TorrentInfo(ofd.FileName);
+            atp.save_path = Environment.CurrentDirectory;
+            atp.ti = ti;
             
-                //TorSession.add_torrent(Clipboard.GetText().First());
-                //TorrentHandle[] th = TorSession.get_torrents();
-                //List<String> a = new List<String>();
-                //foreach (TorrentHandle t in th)
-                //{
-                //    a.Add((t.torrent_file()).name());
-                //}
-
-                //dataGridx.ItemsSource = a;
-
+            TorSession.add_torrent(atp);
+            TorrentHandle[] th = TorSession.get_torrents();
+            foreach (TorrentHandle t in th)
+            {
+                Torrentlist.Add(t.torrent_file().name());
             }
-
-        
+            dataGridx.ItemsSource = Torrentlist;
         }
 
         private void StartATorrent_Click(object sender, RoutedEventArgs e)
         {
-            
+            TorSession.get_torrents();
+        }
+
+        private class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
+        {
         }
     }
 }
