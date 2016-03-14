@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -30,9 +31,13 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
+<<<<<<< HEAD
             TorSession = new Session();
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
+=======
+            this.SetLanguageDictionary();
+>>>>>>> LANGUAGE
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
@@ -114,6 +119,25 @@ namespace Tsunami.Gui.Wpf
             System.IO.FileStream file = System.IO.File.Create(path);
             writer.Serialize(file, str);
             file.Close();
+        }
+
+        private void SetLanguageDictionary()
+        {
+            ResourceDictionary dict = new ResourceDictionary();
+            switch (Thread.CurrentThread.CurrentCulture.ToString())
+            {    
+                case "en-US":
+                    dict.Source = new Uri(Environment.CurrentDirectory+"../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+                case "it-IT":
+                    dict.Source = new Uri(Environment.CurrentDirectory+"../../../Resources/italian.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+
+                default:
+                    dict.Source = new Uri(Environment.CurrentDirectory+"../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+            }
+            this.Resources.MergedDictionaries.Add(dict);
         }
         //gobne end
     }

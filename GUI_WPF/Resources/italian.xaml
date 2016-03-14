@@ -1,0 +1,13 @@
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+  <!-- String resource that can be localized -->
+  <system:String x:Key="Start">Avvia</system:String>
+  <system:String x:Key="Add">Aggiungi Torrent / Link</system:String>
+  <system:String x:Key="Delete">Cancella</system:String>
+  <system:String x:Key="Stop">Ferma</system:String>
+  <system:String x:Key="Read">Leggi XML</system:String>
+  <system:String x:Key="AutoKill">Autodistruzione</system:String>
+</ResourceDictionary>
