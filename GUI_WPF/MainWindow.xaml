@@ -31,17 +31,16 @@
             <TextBlock>A</TextBlock>
         </StackPanel>
 
+        <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
 
+            <DataGrid Name="dataGridx" Grid.Row="0" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding TorrentList.Id}" />
+                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding}" />
+
+                    <DataGridTextColumn Header="Progress" IsReadOnly="True" Binding="{Binding}" />
+                </DataGrid.Columns>
             </DataGrid>
-
-<<<<<<< HEAD
-                <Button Background="Violet" Click="AddTorrent_Click">Add Torrent / Link</Button>
-                <Button Background="Green" Click="StartATorrent_Click">Start</Button>
-                <Button Background="#FF961515">Stop</Button>
-                <Button Background="Red">Delete</Button>
-            </StackPanel>
-            <Button Click="AutoKill_Click">Autodistruzione</Button>
-=======
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button Name="Add" Background="Violet" Content="{DynamicResource Add}"/>
                 <Button Name="Start" Background="Green" Content="{DynamicResource Start}"/>
@@ -50,8 +49,8 @@
             </StackPanel>
             <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"/>
             <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click"/>
->>>>>>> LANGUAGE
         </StackPanel>
+
         <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
             <TextBlock>D</TextBlock>
             <TextBlock>O</TextBlock>

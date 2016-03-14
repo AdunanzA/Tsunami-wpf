@@ -31,13 +31,10 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
-<<<<<<< HEAD
             TorSession = new Session();
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
-=======
             this.SetLanguageDictionary();
->>>>>>> LANGUAGE
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
