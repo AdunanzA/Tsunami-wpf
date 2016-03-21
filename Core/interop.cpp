@@ -22,6 +22,6 @@ std::string interop::to_std_string(System::String^ value)
     // Then, copy those bytes from the managed byte array to an unmanaged string.
     std::string str;
     str.resize(bytes->Length);
-    System::Runtime::InteropServices::Marshal::Copy(bytes, 0, System::IntPtr((int)str.data()), bytes->Length);
+    System::Runtime::InteropServices::Marshal::Copy(bytes, 0, System::IntPtr((void *)str.data()), bytes->Length);
     return str;
 }

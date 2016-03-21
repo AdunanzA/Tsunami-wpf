@@ -32,6 +32,28 @@ TorrentInfo::~TorrentInfo()
     delete info_;
 }
 
+System::String ^ TorrentInfo::file_path(int index)
+{
+	return interop::from_std_string(info_->files().file_path(index));
+}
+
+cli::array<System::String^>^ TorrentInfo::file_list()
+{
+	size_t files = info_->num_files();
+	cli::array<System::String^>^ result = gcnew cli::array<System::String^>(files);
+	
+	for (size_t i = 0; i < files; i++)
+	{
+		result[i] = gcnew System::String(file_path(i));
+	}
+	return result;
+}
+
+int64_t TorrentInfo::file_size(int index)
+{
+	return info_->files().file_size(index);
+}
+
 void TorrentInfo::rename_file(int index, System::String^ new_filename)
 {
     info_->rename_file(index, interop::to_std_string(new_filename));

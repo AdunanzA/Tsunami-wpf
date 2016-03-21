@@ -30,6 +30,8 @@ Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
     {
         ALERT_CASE(torrent_added_alert);
         ALERT_CASE(torrent_removed_alert);
+		ALERT_CASE(torrent_finished_alert);
+		ALERT_CASE(state_update_alert);
     default:
         return gcnew Alert(a);
     }

@@ -1,5 +1,7 @@
 #include "session.h"
 
+#include <msclr/marshal_cppstd.h>
+
 #include "alert.h"
 #include "add_torrent_params.h"
 #include "dht_settings.h"
@@ -191,10 +193,9 @@ void Session::set_settings(SessionSettings^ settings)
     session_->set_settings(settings->ptr());
 }
 
-void Session::set_alert_mask(unsigned int mask)
+void Session::set_alert_mask(AlertMask mask)
 {
-    // TODO
-    session_->set_alert_mask(libtorrent::alert::all_categories);
+	session_->set_alert_mask((unsigned int)(System::Object)mask);
 }
 
 void Session::set_alert_dispatch(System::Action<Alert^>^ dispatch)

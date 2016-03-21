@@ -19,7 +19,12 @@ namespace Tsunami
 
 			~TorrentInfo();
 
-			// TODO files
+			// TODO files, maybe done
+
+			System::String ^ file_path(int index);
+			cli::array<System::String^>^ file_list();
+			int64_t file_size(int index);
+
 			// TODO orig_files
 			void rename_file(int index, System::String^ new_filename);
 			// TODO remap files

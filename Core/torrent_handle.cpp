@@ -354,7 +354,7 @@ cli::array<int>^ TorrentHandle::file_priorities()
     std::vector<int> prios = handle_->file_priorities();
     cli::array<int>^ result = gcnew cli::array<int>(prios.size());
 
-    for (size_t i = 0; i < prios.size(); i++)
+    for (int i = 0; i < (int)prios.size(); i++)
     {
         result[i] = prios[i];
     }

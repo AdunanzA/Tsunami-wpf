@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <libtorrent/torrent_handle.hpp>
 #include <libtorrent/torrent_status.hpp>
 #include <libtorrent/torrent_info.hpp>
