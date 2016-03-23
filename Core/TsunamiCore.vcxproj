@@ -183,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="add_torrent_params.h" />
     <ClInclude Include="alert.h" />
+    <ClInclude Include="alert_mask.h" />
     <ClInclude Include="alert_types.h" />
     <ClInclude Include="announce_entry.h" />
     <ClInclude Include="create_torrent.h" />
