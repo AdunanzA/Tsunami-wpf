@@ -67,6 +67,7 @@
             <TextBlock>N</TextBlock>
             <TextBlock>D</TextBlock>
         </StackPanel>
+        <Button x:Name="btnOpenWeb" Content="Open Web" Grid.Column="1" HorizontalAlignment="Left" Margin="190,58,0,0" VerticalAlignment="Top" Width="112" Height="33" Click="btnOpenWeb_Click"/>
 
     </Grid>
 </Window>

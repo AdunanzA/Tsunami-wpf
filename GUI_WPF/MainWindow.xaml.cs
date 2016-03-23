@@ -18,6 +18,7 @@ using System.Data;
 using Tsunami.Core;
 using Microsoft.Win32;
 using System.IO;
+using Microsoft.Owin.Hosting;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -26,15 +27,21 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Session TorSession;
+        //public Session TorSession;
         public ObservableCollection<string> Torrentlist { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
-            TorSession = new Session();
+            //TorSession = new Session();
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
+
+            // web server
+            WebApp.Start<www.Startup>("http://localhost:4242");
+
+            SessionManager.Initialize();
+
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
@@ -84,23 +91,29 @@ namespace Tsunami.Gui.Wpf
             ofd.CheckPathExists = true;
             ofd.Title = "Select Torrent to Add";
             ofd.ShowDialog();
-            var atp = new AddTorrentParams();
-            TorrentInfo ti = new TorrentInfo(ofd.FileName);
-            atp.save_path = Environment.CurrentDirectory;
-            atp.ti = ti;
-            
-            TorSession.add_torrent(atp);
-            TorrentHandle[] th = TorSession.get_torrents();
-            foreach (TorrentHandle t in th)
+            if (!string.IsNullOrEmpty(ofd.FileName))
             {
-                Torrentlist.Add(t.torrent_file().name());
+                var atp = new AddTorrentParams();
+                TorrentInfo ti = new TorrentInfo(ofd.FileName);
+                atp.save_path = Environment.CurrentDirectory;
+                atp.ti = ti;
+
+                //TorSession.add_torrent(atp);
+                //TorrentHandle[] th = TorSession.get_torrents();
+                SessionManager.TorrentSession.add_torrent(atp);
+                TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
+                foreach (TorrentHandle t in th)
+                {
+                    Torrentlist.Add(t.torrent_file().name());
+                }
+                dataGridx.ItemsSource = Torrentlist;
             }
-            dataGridx.ItemsSource = Torrentlist;
         }
 
         private void StartATorrent_Click(object sender, RoutedEventArgs e)
         {
-            TorSession.get_torrents();
+            //TorSession.get_torrents();
+            SessionManager.TorrentSession.get_torrents();
         }
 
         private class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
@@ -137,5 +150,10 @@ namespace Tsunami.Gui.Wpf
             this.Resources.MergedDictionaries.Add(dict);
         }
         //gobne end
+
+        private void btnOpenWeb_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://localhost:4242");
+        }
     }
 }
