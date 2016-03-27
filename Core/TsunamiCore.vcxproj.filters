@@ -81,7 +81,13 @@
     <ClInclude Include="create_torrent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="alert_mask.h">
+    <ClInclude Include="enums.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="peer_request.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bitfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -150,6 +156,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="create_torrent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="peer_request.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="bitfield.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

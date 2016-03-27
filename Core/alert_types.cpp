@@ -8,6 +8,8 @@
 #include "sha1_hash.h"
 #include "torrent_handle.h"
 #include "torrent_status.h"
+#include "peer_request.h"
+
 
 using namespace Tsunami::Core;
 
@@ -114,15 +116,20 @@ int file_rename_failed_alert::index::get()
 	return alert_->index;
 }
 
+ErrorCode ^ file_rename_failed_alert::error::get()
+{
+	return gcnew ErrorCode(alert_->error);
+}
+
 performance_alert::performance_alert(libtorrent::performance_alert* a)
 	: torrent_alert(a),
 	alert_(a)
 {
 }
 
-int performance_alert::warning_code::get()
+performance_warning_t ^ performance_alert::warning_code::get()
 {
-	return (int)alert_->warning_code;
+	return (performance_warning_t)alert_->warning_code;
 }
 
 state_changed_alert::state_changed_alert(libtorrent::state_changed_alert* a)
@@ -301,6 +308,22 @@ invalid_request_alert::invalid_request_alert(libtorrent::invalid_request_alert* 
 	: peer_alert(a),
 	alert_(a)
 {
+	peer_request = gcnew PeerRequest(a->request);
+}
+
+bool invalid_request_alert::we_have::get()
+{
+	return alert_->we_have;
+}
+
+bool invalid_request_alert::peer_interested::get()
+{
+	return alert_->peer_interested;
+}
+
+bool invalid_request_alert::withheld::get()
+{
+	return alert_->withheld;
 }
 
 torrent_finished_alert::torrent_finished_alert(libtorrent::torrent_finished_alert* a)

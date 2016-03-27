@@ -10,6 +10,7 @@ namespace Tsunami
 	{
 		ref class AnnounceEntry;
 		ref class Sha1Hash;
+		ref class FileStorage;
 
 		public ref class TorrentInfo
 		{
@@ -19,17 +20,17 @@ namespace Tsunami
 
 			~TorrentInfo();
 
-			// TODO files, maybe done
-
+			FileStorage ^ files();
+			FileStorage ^ orig_files();
 			System::String ^ file_path(int index);
 			cli::array<System::String^>^ file_list();
 			int64_t file_size(int index);
-
-			// TODO orig_files
 			void rename_file(int index, System::String^ new_filename);
-			// TODO remap files
+			void remap_files(FileStorage ^ f);
 			cli::array<AnnounceEntry^>^ trackers();
 			void add_tracker(System::String^ url, int tier);
+			cli::array<Sha1Hash ^>^ similar_torrents();
+			cli::array<System::String^>^ collections();
 			// TODO add url seed
 			// TODO web seeds
 			// TODO add http seed

@@ -5,7 +5,7 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/aux_/session_impl.hpp>
 #include <libtorrent/session_status.hpp>
-#include "alert_mask.h"
+#include "enums.h"
 
 namespace Tsunami
 {

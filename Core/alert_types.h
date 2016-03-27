@@ -171,7 +171,8 @@ namespace Tsunami
 		ref class Sha1Hash;
 		ref class TorrentHandle;
 		ref class TorrentStatus;
-
+		ref class PeerRequest;
+		
 		/// <summary>
 		/// This is a base class for alerts that are associated with a specific
 		/// torrent. It contains a handle to the torrent.
@@ -319,8 +320,7 @@ namespace Tsunami
 
 			///<summary>The index of the file that was supposed to be renamed.</summary>
 			property int index { int get(); }
-
-			// TODO error code
+			property ErrorCode^ error { ErrorCode^ get(); }
 
 		private:
 			libtorrent::file_rename_failed_alert* alert_;
@@ -335,7 +335,7 @@ namespace Tsunami
 		public:
 			performance_alert(libtorrent::performance_alert* alert);
 
-			property int warning_code { int get(); } // TODO enum
+			property performance_warning_t ^ warning_code { performance_warning_t ^ get(); } 
 
 		private:
 			libtorrent::performance_alert* alert_;
@@ -349,8 +349,9 @@ namespace Tsunami
 		public:
 			state_changed_alert(libtorrent::state_changed_alert* alert);
 
-			property int state { int get(); } // TODO torrent_status::state_t
-			property int prev_state { int get(); } // TODO torrent_status::state_t
+			property int state { int get(); } 
+			property int prev_state { int get(); } 
+
 
 		private:
 			libtorrent::state_changed_alert* alert_;
@@ -568,7 +569,11 @@ namespace Tsunami
 		{
 		public:
 			invalid_request_alert(libtorrent::invalid_request_alert* alert);
-			// TODO peer request
+			PeerRequest ^ peer_request;
+			property bool we_have {bool get(); }
+			property bool peer_interested {bool get(); }
+			property bool withheld {bool get(); }
+
 		private:
 			libtorrent::invalid_request_alert* alert_;
 		};

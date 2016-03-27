@@ -157,7 +157,8 @@
   <ItemGroup>
     <ClInclude Include="add_torrent_params.h" />
     <ClInclude Include="alert.h" />
-    <ClInclude Include="alert_mask.h" />
+    <ClInclude Include="bitfield.h" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="alert_types.h" />
     <ClInclude Include="announce_entry.h" />
     <ClInclude Include="create_torrent.h" />
@@ -168,6 +169,7 @@
     <ClInclude Include="file_storage.h" />
     <ClInclude Include="interop.h" />
     <ClInclude Include="lazy_entry.h" />
+    <ClInclude Include="peer_request.h" />
     <ClInclude Include="peer_info.h" />
     <ClInclude Include="session.h" />
     <ClInclude Include="session_alert_dispatcher.h" />
@@ -184,6 +186,7 @@
     <ClCompile Include="alert.cpp" />
     <ClCompile Include="alert_types.cpp" />
     <ClCompile Include="announce_entry.cpp" />
+    <ClCompile Include="bitfield.cpp" />
     <ClCompile Include="create_torrent.cpp" />
     <ClCompile Include="dht_settings.cpp" />
     <ClCompile Include="entry.cpp" />
@@ -192,6 +195,7 @@
     <ClCompile Include="file_storage.cpp" />
     <ClCompile Include="interop.cpp" />
     <ClCompile Include="lazy_entry.cpp" />
+    <ClCompile Include="peer_request.cpp" />
     <ClCompile Include="peer_info.cpp" />
     <ClCompile Include="session.cpp" />
     <ClCompile Include="session_alert_dispatcher.cpp" />

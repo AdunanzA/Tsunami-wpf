@@ -8,6 +8,11 @@ namespace Tsunami
 {
 	namespace Core
 	{
+		ref class TorrentHandle;
+		ref class TorrentInfo;
+		ref class Sha1Hash;
+		ref class BitField;
+
 		public ref class TorrentStatus
 		{
 		internal:
@@ -16,12 +21,61 @@ namespace Tsunami
 		public:
 			~TorrentStatus();
 
-			// TODO handle
+			
 
+			enum class state_t
+			{
+#ifndef TORRENT_NO_DEPRECATE
+				// The torrent is in the queue for being checked. But there
+				// currently is another torrent that are being checked.
+				// This torrent will wait for its turn.
+				queued_for_checking,
+#else
+				// internal
+				unused_enum_for_backwards_compatibility,
+#endif
+
+				// The torrent has not started its download yet, and is
+				// currently checking existing files.
+				checking_files,
+
+				// The torrent is trying to download metadata from peers.
+				// This assumes the metadata_transfer extension is in use.
+				downloading_metadata,
+
+				// The torrent is being downloaded. This is the state
+				// most torrents will be in most of the time. The progress
+				// meter will tell how much of the files that has been
+				// downloaded.
+				downloading,
+
+				// In this state the torrent has finished downloading but
+				// still doesn't have the entire torrent. i.e. some pieces
+				// are filtered and won't get downloaded.
+				finished,
+
+				// In this state the torrent has finished downloading and
+				// is a pure seeder.
+				seeding,
+
+				// If the torrent was started in full allocation mode, this
+				// indicates that the (disk) storage for the torrent is
+				// allocated.
+				allocating,
+
+				// The torrent is currently checking the fastresume data and
+				// comparing it to the files on disk. This is typically
+				// completed in a fraction of a second, but if you add a
+				// large number of torrents at once, they will queue up.
+				checking_resume_data
+			};
+
+			
+			TorrentHandle^ handle();
+			TorrentInfo ^ torrent_file();
 			property System::String^ error { System::String^ get(); }
 			property System::String^ save_path { System::String^ get(); }
 			property System::String^ name { System::String^ get(); }
-			// TODO torrent file
 			property System::TimeSpan next_announce { System::TimeSpan get(); }
 			property System::TimeSpan announce_interval { System::TimeSpan get(); }
 			property System::String^ current_tracker { System::String^ get(); }
@@ -76,7 +130,7 @@ namespace Tsunami
 			property int last_scrape { int get(); }
 			//property int sparse_regions { int get(); }
 			property int priority { int get(); }
-			// TODO state
+			property state_t^ state { state_t^ get(); }
 			property bool need_save_resume { bool get(); }
 			property bool ip_filter_applies { bool get(); }
 			property bool upload_mode { bool get(); }
@@ -91,7 +145,10 @@ namespace Tsunami
 			property bool has_incoming { bool get(); }
 			property bool seed_mode { bool get(); }
 			property bool moving_storage { bool get(); }
-			// TODO info hash
+			property Sha1Hash ^ info_hash { Sha1Hash ^ get(); }
+			property BitField ^ pieces {BitField ^ get(); }
+			property BitField ^ verified_pieces {BitField ^ get(); }
+			
 
 		private:
 			libtorrent::torrent_status* status_;

@@ -1,6 +1,10 @@
 #include "torrent_status.h"
 
+#include "torrent_handle.h"
+#include "torrent_info.h"
 #include "interop.h"
+#include "sha1_hash.h"
+#include "bitfield.h"
 
 using namespace Tsunami::Core;
 
@@ -12,6 +16,16 @@ TorrentStatus::TorrentStatus(libtorrent::torrent_status& status)
 TorrentStatus::~TorrentStatus()
 {
     delete status_;
+}
+
+TorrentHandle ^ TorrentStatus::handle()
+{
+	return gcnew TorrentHandle(status_->handle);
+}
+
+TorrentInfo ^ Tsunami::Core::TorrentStatus::torrent_file()
+{
+	return gcnew TorrentInfo(*(status_->torrent_file.lock().get()));
 }
 
 System::String^ TorrentStatus::error::get()
@@ -356,4 +370,24 @@ bool TorrentStatus::seed_mode::get()
 bool TorrentStatus::moving_storage::get()
 {
     return status_->moving_storage;
+}
+
+TorrentStatus::state_t^ TorrentStatus::state::get()
+{
+	return (TorrentStatus::state_t)status_->state;
+}
+
+Sha1Hash ^ TorrentStatus::info_hash::get()
+{
+	return gcnew Sha1Hash(status_->info_hash);
+}
+
+BitField ^ TorrentStatus::pieces::get()
+{
+	return gcnew BitField(status_->pieces);
+}
+
+BitField ^ TorrentStatus::verified_pieces::get()
+{
+	return gcnew BitField(status_->verified_pieces);
 }

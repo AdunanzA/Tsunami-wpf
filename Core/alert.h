@@ -5,6 +5,8 @@
 #include <libtorrent/alert.hpp>
 #include <libtorrent/alert_types.hpp>
 
+#include "enums.h"
+
 namespace Tsunami
 {
 	namespace Core

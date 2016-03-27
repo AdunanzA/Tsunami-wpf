@@ -5,6 +5,7 @@
 #include "announce_entry.h"
 #include "interop.h"
 #include "sha1_hash.h"
+#include "file_storage.h"
 
 using namespace Tsunami::Core;
 
@@ -30,6 +31,16 @@ TorrentInfo::TorrentInfo(const libtorrent::torrent_info& info)
 TorrentInfo::~TorrentInfo()
 {
     delete info_;
+}
+
+FileStorage ^ Tsunami::Core::TorrentInfo::files()
+{
+	return gcnew FileStorage(info_->files());
+}
+
+FileStorage ^ Tsunami::Core::TorrentInfo::orig_files()
+{
+	return gcnew FileStorage(info_->orig_files());
 }
 
 System::String ^ TorrentInfo::file_path(int index)
@@ -59,6 +70,11 @@ void TorrentInfo::rename_file(int index, System::String^ new_filename)
     info_->rename_file(index, interop::to_std_string(new_filename));
 }
 
+void Tsunami::Core::TorrentInfo::remap_files(FileStorage ^ f)
+{
+	return info_->remap_files(f->ptr());
+}
+
 cli::array<AnnounceEntry^>^ TorrentInfo::trackers()
 {
     std::vector<libtorrent::announce_entry> trackers = info_->trackers();
@@ -75,6 +91,31 @@ cli::array<AnnounceEntry^>^ TorrentInfo::trackers()
 void TorrentInfo::add_tracker(System::String^ url, int tier)
 {
     info_->add_tracker(interop::to_std_string(url), tier);
+}
+
+cli::array<Sha1Hash^>^ Tsunami::Core::TorrentInfo::similar_torrents()
+{
+	auto similar = info_->similar_torrents();
+	size_t size = similar.size();
+	cli::array<Sha1Hash^> ^ similarTorrents = gcnew cli::array<Sha1Hash^>(size);
+
+	for (size_t i = 0; i < size; i++)
+	{
+		similarTorrents[i] = gcnew Sha1Hash(similar[i]);
+	}
+	return similarTorrents;
+}
+
+cli::array<System::String^>^ Tsunami::Core::TorrentInfo::collections()
+{
+	auto collect = info_->collections();
+	size_t size = collect.size();
+	cli::array<System::String^>^ collections = gcnew cli::array<System::String^>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		collections[i] = interop::from_std_string(collect[i]);
+	}
+	return collections;
 }
 
 int TorrentInfo::num_pieces()
