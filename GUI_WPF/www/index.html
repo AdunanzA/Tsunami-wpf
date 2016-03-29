@@ -8,28 +8,32 @@
 <body>
     <div>
         <h2>All Torrent</h2>
-        <ul id="torrentList"></ul>
+        <div id="isBusy" data-bind="text: 'isBusy: '+Busy()"></div>
     </div>
     <br />
-    <table style="width:100%">
+    <table style="width:100%" data-bind="">
         <tr>
+            <th width="10%">QueuePosition</th>
             <th>Name</th>
-            <th>Progress</th>
+            <th width="30%">Progress</th>
         </tr>
         <tbody data-bind="foreach: Torrents">
             <tr>
                 <td>
+                    <span data-bind="text: QueuePosition"></span>
+                </td>
+                <td>
                     <span data-bind="text: Name"></span>
                 </td>
                 <td>
-                    <span data-bind="text: Progress"></span>
+                    <!--<span data-bind="text: Progress"></span>-->
+                    <div class="progress" data-bind="attr: {'id': 'progress' + QueuePosition()}"></div>
                 </td>
             </tr>
         </tbody>
     </table>
-    <div class="progress" id="progress"></div>
 
-    <!--<img id="logo" src="img/zuLogo.jpg" />-->
+    <!--<img id="logo" src="img/background.jpg" />-->
     <script type='text/javascript' src='js/knockout-3.4.0.js'></script>
     <script type='text/javascript' src='js/jquery-2.2.2.min.js'></script>
     <script type='text/javascript' src="js/jquery.signalr-2.2.0.min.js"></script>

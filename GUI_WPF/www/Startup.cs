@@ -28,7 +28,7 @@ namespace Tsunami.Gui.Wpf.www
                 EnableDirectoryBrowsing = false
             });
 
-            // Only serve files requested by name.
+            // Only serve files requested by name in www.
             app.UseStaticFiles("/www");
 
             // Web API
