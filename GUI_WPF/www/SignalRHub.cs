@@ -13,10 +13,5 @@ namespace Tsunami.Gui.Wpf.www
         {
             Clients.All.notifyUpdateProgress(torrentName, progress);
         }
-
-        public void NotifyTorrentAdded(int id)
-        {
-            Clients.All.notifyTorrentAdded(id);
-        }
     }
 }

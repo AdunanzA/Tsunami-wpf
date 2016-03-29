@@ -27,48 +27,21 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<int, string, double> Torrentlist { get; private set; }
-
+        //public Session TorSession;
+        public ObservableCollection<string> Torrentlist { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
+            //TorSession = new Session();
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
 
-            SessionManager.Initialize();
-            SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
-            SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
-            
             // web server
-            WebApp.Start<www.Startup>(string.Format("http://{0}:{1}", Settings.WEB_URL, Settings.WEB_PORT));
+            WebApp.Start<www.Startup>("http://localhost:4242");
 
-            //dataGridx.ItemsSource = Torrentlist;
-        }
+            SessionManager.Initialize();
 
-        private void AddFromTsunamiCore(object sender, SessionManager.OnTorrentAddedEventArgs e)
-        {
-            // update list torrent
-            TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
-            foreach (TorrentHandle t in th)
-            {
-                if (t.queue_position() == e.QueuePosition)
-                {
-                    Torrentlist.Add(t.torrent_file().name());
-                }
-            }
-            //dataGridx.ItemsSource = Torrentlist;
-
-            // notify web that a new id must be requested via webapi
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyTorrentAdded(e.QueuePosition);
-        }
-
-        private void UpdateFromTsunamiCore(object sender, SessionManager.OnTorrentUpdatedEventArgs e)
-        {
-            // update web
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyUpdateProgress(e.QueuePosition, e.Name, e.Progress);
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
@@ -111,22 +84,22 @@ namespace Tsunami.Gui.Wpf
 
         public void AddTorrent()
         {
+            // Cancel code here Opening filedialog
             OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.DefaultExt = ".torrent";
-            ofd.Filter = "Torrent|*.torrent";
-            ofd.Multiselect = true;
+            ofd.DefaultExt = ".torrent";
             ofd.CheckFileExists = true;
             ofd.CheckPathExists = true;
             ofd.Title = "Select Torrent to Add";
             ofd.ShowDialog();
-            foreach (string file in ofd.FileNames)
+            if (!string.IsNullOrEmpty(ofd.FileName))
             {
                 var atp = new AddTorrentParams();
-                TorrentInfo ti = new TorrentInfo(file);
-                atp.save_path = Settings.PATH_DOWNLOAD;
+                TorrentInfo ti = new TorrentInfo(ofd.FileName);
+                atp.save_path = Environment.CurrentDirectory;
                 atp.ti = ti;
 
-                Torrentlist = new ObservableCollection<int, string, double>();
+                //TorSession.add_torrent(atp);
+                //TorrentHandle[] th = TorSession.get_torrents();
                 SessionManager.TorrentSession.add_torrent(atp);
                 TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
                 foreach (TorrentHandle t in th)
@@ -135,16 +108,15 @@ namespace Tsunami.Gui.Wpf
                 }
                 dataGridx.ItemsSource = Torrentlist;
             }
-            //dataGridx.ItemsSource = Torrentlist;
         }
 
         private void StartATorrent_Click(object sender, RoutedEventArgs e)
         {
             //TorSession.get_torrents();
-            //SessionManager.TorrentSession.get_torrents();
+            SessionManager.TorrentSession.get_torrents();
         }
 
-        public class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
+        private class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
         {
         }
 
@@ -184,5 +156,4 @@ namespace Tsunami.Gui.Wpf
             System.Diagnostics.Process.Start("http://localhost:4242");
         }
     }
-
 }
