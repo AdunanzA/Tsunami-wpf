@@ -165,6 +165,10 @@
     <ClInclude Include="dht_settings.h" />
     <ClInclude Include="entry.h" />
     <ClInclude Include="error_code.h" />
+    <ClInclude Include="feed_handle.h" />
+    <ClInclude Include="feed_item.h" />
+    <ClInclude Include="feed_settings.h" />
+    <ClInclude Include="feed_status.h" />
     <ClInclude Include="file_entry.h" />
     <ClInclude Include="file_storage.h" />
     <ClInclude Include="interop.h" />
@@ -191,6 +195,10 @@
     <ClCompile Include="dht_settings.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="error_code.cpp" />
+    <ClCompile Include="feed_handle.cpp" />
+    <ClCompile Include="feed_item.cpp" />
+    <ClCompile Include="feed_settings.cpp" />
+    <ClCompile Include="feed_status.cpp" />
     <ClCompile Include="file_entry.cpp" />
     <ClCompile Include="file_storage.cpp" />
     <ClCompile Include="interop.cpp" />

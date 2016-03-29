@@ -15,6 +15,7 @@ namespace Tsunami
 			AddTorrentParams();
 			~AddTorrentParams();
 
+
 			property System::String^ name
 			{
 				System::String^ get();
@@ -41,7 +42,7 @@ namespace Tsunami
 
 		internal:
 			libtorrent::add_torrent_params* ptr();
-
+			AddTorrentParams(libtorrent::add_torrent_params & params);
 		private:
 			libtorrent::add_torrent_params* params_;
 		};

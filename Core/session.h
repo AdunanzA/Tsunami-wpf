@@ -20,6 +20,8 @@ namespace Tsunami
 		ref class SessionStatus;
 		ref class Sha1Hash;
 		ref class TorrentHandle;
+		ref class FeedSettings;
+		ref class FeedHandle;
 
 		class SessionAlertDispatcher;
 
@@ -45,9 +47,12 @@ namespace Tsunami
 			SessionStatus^ status();
 			// TODO get cache status
 			// TODO get cache info
-			// TODO add feed
-			// TODO remove feed
-			// TODO get feeds
+			
+
+			FeedHandle ^ add_feed(FeedSettings ^ feed);
+			void remove_feed(FeedHandle ^ handle);
+			cli::array<FeedHandle ^> ^ get_feeds();
+			
 			bool is_dht_running();
 			DhtSettings^ get_dht_settings();
 			void start_dht();

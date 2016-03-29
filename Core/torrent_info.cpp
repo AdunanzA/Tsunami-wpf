@@ -33,12 +33,12 @@ TorrentInfo::~TorrentInfo()
     delete info_;
 }
 
-FileStorage ^ Tsunami::Core::TorrentInfo::files()
+FileStorage ^ TorrentInfo::files()
 {
 	return gcnew FileStorage(info_->files());
 }
 
-FileStorage ^ Tsunami::Core::TorrentInfo::orig_files()
+FileStorage ^ TorrentInfo::orig_files()
 {
 	return gcnew FileStorage(info_->orig_files());
 }
@@ -70,7 +70,7 @@ void TorrentInfo::rename_file(int index, System::String^ new_filename)
     info_->rename_file(index, interop::to_std_string(new_filename));
 }
 
-void Tsunami::Core::TorrentInfo::remap_files(FileStorage ^ f)
+void TorrentInfo::remap_files(FileStorage ^ f)
 {
 	return info_->remap_files(f->ptr());
 }
@@ -93,7 +93,7 @@ void TorrentInfo::add_tracker(System::String^ url, int tier)
     info_->add_tracker(interop::to_std_string(url), tier);
 }
 
-cli::array<Sha1Hash^>^ Tsunami::Core::TorrentInfo::similar_torrents()
+cli::array<Sha1Hash^>^ TorrentInfo::similar_torrents()
 {
 	auto similar = info_->similar_torrents();
 	size_t size = similar.size();
@@ -106,7 +106,7 @@ cli::array<Sha1Hash^>^ Tsunami::Core::TorrentInfo::similar_torrents()
 	return similarTorrents;
 }
 
-cli::array<System::String^>^ Tsunami::Core::TorrentInfo::collections()
+cli::array<System::String^>^ TorrentInfo::collections()
 {
 	auto collect = info_->collections();
 	size_t size = collect.size();
@@ -176,17 +176,17 @@ System::Nullable<System::DateTime>^ TorrentInfo::creation_date()
 
 System::String^ TorrentInfo::name()
 {
-    return Tsunami::Core::interop::from_std_string(info_->name());
+    return interop::from_std_string(info_->name());
 }
 
 System::String^ TorrentInfo::comment()
 {
-    return Tsunami::Core::interop::from_std_string(info_->comment());
+    return interop::from_std_string(info_->comment());
 }
 
 System::String^ TorrentInfo::creator()
 {
-    return Tsunami::Core::interop::from_std_string(info_->creator());
+    return interop::from_std_string(info_->creator());
 }
 
 int TorrentInfo::metadata_size()

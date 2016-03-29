@@ -23,7 +23,7 @@ TorrentHandle ^ TorrentStatus::handle()
 	return gcnew TorrentHandle(status_->handle);
 }
 
-TorrentInfo ^ Tsunami::Core::TorrentStatus::torrent_file()
+TorrentInfo ^ TorrentStatus::torrent_file()
 {
 	return gcnew TorrentInfo(*(status_->torrent_file.lock().get()));
 }

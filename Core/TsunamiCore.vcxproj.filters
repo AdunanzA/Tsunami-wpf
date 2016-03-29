@@ -90,6 +90,18 @@
     <ClInclude Include="bitfield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="feed_item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feed_settings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feed_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feed_handle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="session.cpp">
@@ -162,6 +174,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="bitfield.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="feed_item.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="feed_settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="feed_status.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="feed_handle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,6 +13,11 @@ AddTorrentParams::AddTorrentParams()
     params_ = new libtorrent::add_torrent_params();
 }
 
+AddTorrentParams::AddTorrentParams(libtorrent::add_torrent_params & params)
+{
+	params_ = new libtorrent::add_torrent_params(params);
+}
+
 AddTorrentParams::~AddTorrentParams()
 {
     delete params_;

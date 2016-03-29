@@ -13,6 +13,8 @@
 #include "session_status.h"
 #include "sha1_hash.h"
 #include "torrent_handle.h"
+#include "feed_handle.h"
+#include "feed_settings.h"
 
 using namespace Tsunami::Core;
 
@@ -100,6 +102,37 @@ bool Session::is_paused()
 SessionStatus^ Session::status()
 {
     return gcnew SessionStatus(session_->status());
+}
+
+
+FeedHandle ^ Session::add_feed(FeedSettings ^ feed)
+{
+	libtorrent::feed_settings & s = *feed->ptr();
+
+	if (s.url.empty())
+	{
+		throw gcnew System::Exception("Feed url empty");
+	}
+	libtorrent::feed_handle h = session_->add_feed(s);
+	return gcnew FeedHandle(h);
+}
+
+void Session::remove_feed(FeedHandle ^ handle)
+{
+	session_->remove_feed(*handle->ptr());
+}
+
+cli::array<FeedHandle^>^ Session::get_feeds()
+{
+	std::vector<libtorrent::feed_handle> f;
+	session_->get_feeds(f);
+	size_t size = f.size();
+	cli::array<FeedHandle ^ > ^ feeds = gcnew cli::array<FeedHandle ^ >(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		feeds[i] = gcnew FeedHandle(f[i]);
+	}
+	return feeds;
 }
 
 bool Session::is_dht_running()
@@ -195,7 +228,7 @@ void Session::set_settings(SessionSettings^ settings)
 
 void Session::set_alert_mask(AlertMask mask)
 {
-	session_->set_alert_mask((unsigned int)(System::Object)mask);
+	session_->set_alert_mask((uint32_t)(System::Object)mask);
 }
 
 void Session::set_alert_dispatch(System::Action<Alert^>^ dispatch)
