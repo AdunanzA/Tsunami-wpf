@@ -13,19 +13,38 @@ var twm = new TorrentViewModel;
 
 function Torrent(data) {
     if (!data) { data = {}; }
+    var pl;
+
     this.Name = ko.observable(data.status.name);
     this.Progress = ko.observable(data.status.progress);
+    this.QueuePosition = ko.observable(data.queue_position);
+
+    this.updateProgress = function (progress) {
+        var perc = precise_round(progress * 100, 2) + ' %';
+        this.Progress(perc);
+        if (this.pl == null) {
+            this.pl = new ProgressBar.Line('#progress' + this.QueuePosition(), {
+                color: '#FCB03C',
+                trailColor: '#f4f4f4',
+                height: '15px',
+                text: {
+                    value: perc
+                }
+            });
+        }
+        this.pl.animate(progress);
+        this.pl.setText(perc);
+    }
 }
 
 function TorrentViewModel() {
     var self = this;
     self.Torrents = ko.observableArray([]);
-    //self.Name = ko.observable();
-    //self.Progress = ko.observable();
+    self.Busy = ko.observable(false);
 
     self.AddTorrent = function (trdata) {
         self.Torrents.push(trdata);
-    }.bind(self);
+    };//.bind(self);
 
     //$.getJSON(uri)
     //.done(function (results) {
@@ -36,39 +55,28 @@ function TorrentViewModel() {
 };
 
 $(document).ready(function () {
-    $.connection.hub.url = "http://localhost:4242/signalr";
+    $.connection.hub.url = location.origin + "/signalr";
     var sr = $.connection.signalRHub;
 
-    var line = new ProgressBar.Line('#progress', {
-        color: '#FCB03C',
-        trailColor: '#f4f4f4',
-        text: {
-            value: '0 %'
-        }
-    });
+    retrieveTorrentList();
 
-    $.getJSON(uri).done(function (results) {
-        //var torrents = $.map(results.d, function (item) { return new Torrent(item) });
-        //twm.Torrents = torrents;
-        $.each(results, function (k, i) {
-            twm.AddTorrent(new Torrent(i));
-        });
-        ko.applyBindings(twm);
-    });
-
-    sr.client.notifyUpdateProgress = function (name, progress) {
+    // on notification from SessionManager update progress
+    sr.client.notifyUpdateProgress = function (queue_position, name, progress) {
         $.each(twm.Torrents(), function (k, i) {
-            if (i.Name() == name) {
-                var perc = precise_round(progress * 100, 2) + ' %';
-                i.Progress(perc);
-                line.animate(progress);
-                line.setText(perc);
+            if (i.Name() == name && i.QueuePosition() == queue_position) {
+                i.updateProgress(progress);
             }
         });
     }
 
-    $.connection.hub.start().done(function () {
+    // on notification from SessionManager torrent added
+    sr.client.notifyTorrentAdded = function (id) {
+        retrieveTorrent(id);
+    }
 
+    // start listening from SessionManager
+    $.connection.hub.start().done(function () {
+        ko.applyBindings(twm);
     });
     //$.getJSON(uri)
     //    .done(function(results) {
@@ -80,10 +88,35 @@ $(document).ready(function () {
     //    });
 });
 
+function retrieveTorrent(id) {
+    twm.Busy(true);
+    $.getJSON(uri + '/' + id).done(function (result) {
+        //$.each(results, function (k, i) {
+            //twm.AddTorrent(new Torrent(i));
+        //});
+        twm.AddTorrent(new Torrent(result));
+        //ko.applyBindings(twm);
+    });
+    twm.Busy(false);
+}
+
+function retrieveTorrentList() {
+    twm.Busy(true);
+    $.getJSON(uri).done(function (results) {
+        //var torrents = $.map(results.d, function (item) { return new Torrent(item) });
+        //twm.Torrents = torrents;
+        $.each(results, function (k, i) {
+            twm.AddTorrent(new Torrent(i));
+        });
+        //ko.applyBindings(twm);
+    });
+    twm.Busy(false);
+}
+
 function precise_round(value, decPlaces) {
     var val = value * Math.pow(10, decPlaces);
     var fraction = (Math.round((val - parseInt(val)) * 10) / 10);
     if (fraction == -0.5) fraction = -0.6;
     val = Math.round(parseInt(val) + fraction) / Math.pow(10, decPlaces);
-    return val;
+    return val.toFixed(decPlaces);
 }

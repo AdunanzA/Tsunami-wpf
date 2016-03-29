@@ -33,22 +33,33 @@ namespace Tsunami.Gui.Wpf.www.Controllers
                 ts = t.status();
                 ti = t.torrent_file();
                 mi = new Models.TorrentItem();
+                mi.queue_position = t.queue_position();
                 mi.status = new Models.TorrentStatus();
                 mi.torrent_file = new Models.TorrentInfo();
                 mi.status.name = ts.name;
                 mi.status.progress = ts.progress;
                 res.Add(mi);
-                //res.Add(String.Format("{0} --> {1}", t.torrent_file().name(), string.Join("", t.file_progress(0))));
-                //res.Add(String.Format("{0} --> {1}", ts.name, (ts.progress * 100).ToString()));
             }
-            //return new string[] { "value1", "value2" };
             return res;
         }
 
         // GET api/torrents/5 
-        public string Get(int id)
+        public Models.TorrentItem Get(int id)
         {
-            return "value";
+            Core.TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
+            Models.TorrentItem mi = new Models.TorrentItem();
+            mi.status = new Models.TorrentStatus();
+            mi.torrent_file = new Models.TorrentInfo();
+            foreach (Core.TorrentHandle t in th)
+            {
+                if (t.queue_position() == id)
+                {
+                    mi.queue_position = id;
+                    mi.status.name = t.status().name;
+                    mi.status.progress = t.status().progress;
+                }
+            }
+            return mi;
         }
 
         // POST api/torrents 
