@@ -7,8 +7,6 @@ namespace Tsunami
 	namespace Core
 	{
 		ref class FeedStatus;
-		ref class FeedSettings;
-		ref class Feed;
 
 		public ref class FeedHandle
 		{

@@ -1,6 +1,3 @@
-#ifndef _LTNET_INTEROP_H
-#define _LTNET_INTEROP_H
-
 #pragma once
 
 #include <string>
@@ -17,4 +14,4 @@ namespace Tsunami
 	}
 }
 
-#endif
+

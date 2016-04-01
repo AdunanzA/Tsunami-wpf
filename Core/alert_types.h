@@ -67,19 +67,19 @@ namespace libtorrent
     struct lsd_peer_alert;
     struct trackerid_alert;
     struct dht_bootstrap_alert;
-    // struct rsss
+    struct rss_alert;
     struct torrent_error_alert;
     struct torrent_need_cert_alert;
     struct incoming_connection_alert;
     struct add_torrent_alert;
     struct state_update_alert;
     struct torrent_update_alert;
-    // struct rss item alert
+    struct rss item alert
     struct dht_error_alert;
     struct dht_immutable_item_alert;
     struct dht_mutable_item_alert;
     struct dht_put_alert;
-    struct i2p_alert;
+    //struct i2p_alert;
 }*/
 
 namespace Tsunami
@@ -172,6 +172,8 @@ namespace Tsunami
 		ref class TorrentHandle;
 		ref class TorrentStatus;
 		ref class PeerRequest;
+		ref class FeedHandle;
+		ref class FeedItem;
 		
 		/// <summary>
 		/// This is a base class for alerts that are associated with a specific
@@ -1122,6 +1124,22 @@ namespace Tsunami
 		};
 
 		/// <summary>
+		/// This alert is posted on RSS feed events such as start of RSS feed updates, 
+		/// successful completed updates and errors during updates.
+		/// </summary>
+
+		public ref class rss_alert : Alert
+		{
+		public:
+			rss_alert(libtorrent::rss_alert * alert);
+			property FeedHandle ^ handle { FeedHandle ^ get(); }
+			property System::String ^ url { System::String ^ get(); }
+			property int state { int get(); }
+			property ErrorCode ^ error { ErrorCode ^ get(); }
+		private:
+			libtorrent::rss_alert * alert_;
+		};
+		/// <summary>
 		/// This is posted whenever a torrent is transitioned into the error state.
 		/// </summary>
 		public ref class torrent_error_alert : torrent_alert
@@ -1219,6 +1237,20 @@ namespace Tsunami
 			libtorrent::torrent_update_alert* alert_;
 		};
 
+		///<summary>
+		/// This alert is posted every time a new RSS item (i.e. torrent) is received from an RSS feed.
+		/// It is only posted if the rss_notifications category is enabled in the alert_mask.
+		/// </summary>
+		public ref class rss_item_alert : Alert
+		{
+		public:
+			rss_item_alert(libtorrent::rss_item_alert * alert);
+			property FeedHandle ^ handle { FeedHandle ^ get(); }
+			property FeedItem ^ item { FeedItem ^ get(); }
+		private:
+			libtorrent::rss_item_alert * alert_;
+		};
+
 		/// <summary>
 		/// Posted when something fails in the DHT. This is not necessarily a fatal
 		/// error, but it could prevent proper operation
@@ -1231,6 +1263,63 @@ namespace Tsunami
 			// TODO operation
 		private:
 			libtorrent::dht_error_alert* alert_;
+		};
+
+		/// <summary>
+		/// this alert is posted as a response to a call to session::get_item(), 
+		/// specifically the overload for looking up immutable items in the DHT.
+		/// </summary>
+		public ref class dht_immutable_item_alert : Alert
+		{
+		public:
+			dht_immutable_item_alert(libtorrent::dht_immutable_item_alert * alert);
+			property Sha1Hash ^ target { Sha1Hash ^ get(); }
+			property Entry ^ item { Entry ^ get(); }
+		private: 
+			libtorrent::dht_immutable_item_alert* alert_;
+		};
+
+		/// <summary>
+		/// this alert is posted as a response to a call to session::get_item(), 
+		/// specifically the overload for looking up mutable items in the DHT.
+		/// </summary>
+		public ref class dht_mutable_item_alert : Alert
+		{
+		public: 
+			dht_mutable_item_alert(libtorrent::dht_mutable_item_alert * alert);
+			property Entry ^ item { Entry ^ get(); }
+			property System::String ^ salt { System::String ^ get(); }
+		private:
+			libtorrent::dht_mutable_item_alert* alert_;
+		};
+
+		/// <summary>
+		/// this is posted when a DHT put operation completes. 
+		/// This is useful if the client is waiting for a put to complete before shutting down for instance.
+		/// </summary>
+		public ref class  dht_put_alert : Alert
+		{
+		public:
+			dht_put_alert(libtorrent::dht_put_alert * alert);
+			property Sha1Hash ^ target { Sha1Hash ^ get(); }
+			property cli::array<char> ^ public_key { cli::array<char> ^ get(); }
+			property cli::array<char> ^ signature { cli::array<char> ^ get(); }
+			property System::String ^ salt { System::String ^ get(); }
+			property long long seq {long long get(); }
+		private:
+			libtorrent::dht_put_alert * alert_;
+		};
+
+		/// <summary>
+		/// this alert is used to report errors in the i2p SAM connection
+		/// </summary>
+		public ref class i2p_alert : Alert
+		{
+		public:
+			i2p_alert(libtorrent::i2p_alert * alert);
+			property ErrorCode ^ error {ErrorCode ^ get(); }
+		private:
+			libtorrent::i2p_alert * alert_;
 		};
 	}
 }

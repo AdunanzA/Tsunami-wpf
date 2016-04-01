@@ -19,7 +19,7 @@ namespace Tsunami
 				property System::String ^ url { System::String ^ get(); }
 				property System::String ^ title { System::String ^ get(); }
 				property System::String ^ description { System::String ^ get(); }
-				property System::DateTime ^ last_update { System::DateTime ^ get(); } //time_t last_update;
+				property System::DateTime last_update { System::DateTime get(); } 
 				property int next_update { int get(); }
 				property bool updating { bool get(); }
 				cli::array<FeedItem^>^ items();

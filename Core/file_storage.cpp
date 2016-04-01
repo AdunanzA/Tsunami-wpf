@@ -4,6 +4,8 @@
 
 #include "file_entry.h"
 #include "interop.h"
+#include "file_slice.h"
+#include "peer_request.h"
 
 using namespace Tsunami::Core;
 
@@ -50,6 +52,23 @@ void FileStorage::add_file(FileEntry^ entry)
 void FileStorage::rename_file(int index, System::String^ new_filename)
 {
     storage_->rename_file(index, interop::to_std_string(new_filename));
+}
+
+cli::array<FileSlice^>^ FileStorage::map_block(int piece, long long offset, int size)
+{
+	std::vector<libtorrent::file_slice> file_slices = storage_->map_block(piece, offset, size);
+	size_t vectorSize = file_slices.size();
+	cli::array<FileSlice^>^ slices = gcnew cli::array<FileSlice^>(vectorSize);
+	for (size_t i = 0; i < vectorSize; i++)
+	{
+		slices[i] = gcnew FileSlice(file_slices[i]);
+	}
+	return slices;
+}
+
+PeerRequest ^ FileStorage::map_file(int file, long long offset, int size)
+{
+	return gcnew PeerRequest(storage_->map_file(file, offset, size));
 }
 
 int FileStorage::num_files()
@@ -120,6 +139,12 @@ System::String^ FileStorage::file_name(int index)
 long long FileStorage::file_offset(int index)
 {
     return storage_->file_offset(index);
+}
+
+System::DateTime FileStorage::mtime(int index)
+{
+	double msec = static_cast<double>(storage_->mtime(index));
+	return System::DateTime(1970, 1, 1, 0, 0, 0, System::DateTimeKind::Utc).AddMilliseconds(msec);
 }
 
 bool FileStorage::pad_file_at(int index)

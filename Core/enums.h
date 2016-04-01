@@ -192,5 +192,24 @@ namespace Tsunami
 
 			num_warnings
 		};
+
+		public enum class storage_mode_t
+		{
+			// All pieces will be written to their final position, all files will be
+			// allocated in full when the torrent is first started. This is done with
+			// ``fallocate()`` and similar calls. This mode minimizes fragmentation.
+			storage_mode_allocate,
+
+			// All pieces will be written to the place where they belong and sparse files
+			// will be used. This is the recommended, and default mode.
+			storage_mode_sparse,
+
+			// internal
+			internal_storage_mode_compact_deprecated
+#ifndef TORRENT_NO_DEPRECATE
+			, // comma here to avoid compiler warning
+			storage_mode_compact = internal_storage_mode_compact_deprecated
+#endif
+		};
 	}
 }

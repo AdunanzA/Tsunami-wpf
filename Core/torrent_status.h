@@ -4,6 +4,9 @@
 #include <libtorrent/torrent_status.hpp>
 #include <libtorrent/torrent_info.hpp>
 
+#include "enums.h"
+
+
 namespace Tsunami
 {
 	namespace Core
@@ -85,8 +88,8 @@ namespace Tsunami
 			property long long total_payload_upload { long long get(); }
 			property long long total_failed_bytes { long long get(); }
 			property long long total_reduntant_bytes { long long get(); }
-			// TODO pieces
-			// TODO verified pieces
+			property BitField ^ pieces {BitField ^ get(); }
+			property BitField ^ verified_pieces {BitField ^ get(); }
 			property long long total_done { long long get(); }
 			property long long total_wanted_done { long long get(); }
 			property long long total_wanted { long long get(); }
@@ -95,7 +98,7 @@ namespace Tsunami
 			property System::DateTime added_time { System::DateTime get(); }
 			property System::DateTime completed_time { System::DateTime get(); }
 			property System::DateTime last_seen_complete { System::DateTime get(); }
-			// TODO storage mode
+			property storage_mode_t ^ storage_mode { storage_mode_t ^ get(); }
 			property float progress { float get(); }
 			property int progress_ppm { int get(); }
 			property int queue_position { int get(); }
@@ -146,8 +149,6 @@ namespace Tsunami
 			property bool seed_mode { bool get(); }
 			property bool moving_storage { bool get(); }
 			property Sha1Hash ^ info_hash { Sha1Hash ^ get(); }
-			property BitField ^ pieces {BitField ^ get(); }
-			property BitField ^ verified_pieces {BitField ^ get(); }
 			
 
 		private:

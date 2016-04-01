@@ -9,6 +9,8 @@ namespace Tsunami
 {
 	namespace Core
 	{
+		ref class Sha1Hash;
+
 		public ref class FileEntry
 		{
 		internal:
@@ -23,8 +25,8 @@ namespace Tsunami
 			FE_PROP(long long, offset);
 			FE_PROP(long long, size);
 			FE_PROP(long long, file_base);
-			// TODO mtime
-			// TODO filehash
+			FE_PROP(System::DateTime, mtime);
+			FE_PROP(Sha1Hash ^, filehash);
 			FE_PROP(bool, pad_file);
 			FE_PROP(bool, hidden_attribute);
 			FE_PROP(bool, executable_attribute);

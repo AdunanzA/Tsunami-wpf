@@ -102,6 +102,9 @@
     <ClInclude Include="feed_handle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="file_slice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="session.cpp">
@@ -186,6 +189,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="feed_handle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_slice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

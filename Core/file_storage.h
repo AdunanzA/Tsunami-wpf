@@ -7,6 +7,8 @@ namespace Tsunami
 	namespace Core
 	{
 		ref class FileEntry;
+		ref class FileSlice;
+		ref class PeerRequest;
 
 		public ref class FileStorage
 		{
@@ -23,8 +25,8 @@ namespace Tsunami
 			void add_file(System::String^ p, long long size);
 			void add_file(FileEntry^ entry);
 			void rename_file(int index, System::String^ new_filename);
-			// TODO map block
-			// TODO map file
+			cli::array<FileSlice ^> ^ map_block(int piece, long long offset, int size);
+			PeerRequest ^ map_file(int file, long long offset, int size);
 			int num_files();
 			FileEntry^ at(int index);
 			long long total_size();
@@ -39,7 +41,7 @@ namespace Tsunami
 			long long file_size(int index);
 			System::String^ file_name(int index);
 			long long file_offset(int index);
-			// TODO mtime(index);
+			System::DateTime mtime(int index);
 			bool pad_file_at(int index);
 			System::String^ symlink(int index);
 			System::String^ file_path(int index, System::String^ save_path);

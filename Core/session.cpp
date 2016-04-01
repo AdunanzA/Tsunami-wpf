@@ -170,6 +170,16 @@ void Session::add_dht_node(System::String^ host, int port)
     session_->add_dht_node(std::make_pair(interop::to_std_string(host), port));
 }
 
+Sha1Hash ^ Session::dht_put_item(Entry ^ entry)
+{
+	return gcnew Sha1Hash(session_->dht_put_item(*entry->ptr()));
+}
+
+void Session::dht_get_item(Sha1Hash ^ target)
+{
+	session_->dht_get_item(target->ptr());
+}
+
 void Session::load_country_db(System::String^ file)
 {
     session_->load_country_db(interop::to_std_string(file).c_str());

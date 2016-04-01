@@ -3,6 +3,7 @@
 
 
 #include "interop.h"
+#include "sha1_hash.h"
 
 #define FE_PROP_IMPL(type, name) \
     type FileEntry::name::get() \
@@ -51,11 +52,32 @@ void FileEntry::symlink_path::set(System::String^ val)
     entry_->symlink_path = interop::to_std_string(val);
 }
 
+System::DateTime FileEntry::mtime::get()
+{
+	double msec = static_cast<double>(entry_->mtime);
+	return System::DateTime(1970, 1, 1, 0, 0, 0, System::DateTimeKind::Utc).AddMilliseconds(msec);
+}
+
+void FileEntry::mtime::set(System::DateTime value)
+{
+	System::DateTime unix(1970, 1, 1);
+	int totalSeconds = System::Convert::ToInt32((value - unix.ToLocalTime()).TotalSeconds);
+	entry_->mtime = std::time_t(totalSeconds);
+}
+
+Sha1Hash ^ FileEntry::filehash::get()
+{
+	return gcnew Sha1Hash(entry_->filehash);
+}
+
+void FileEntry::filehash::set(Sha1Hash ^ hash)
+{
+	entry_->filehash = hash->ptr();
+}
+
 FE_PROP_IMPL(long long, offset);
 FE_PROP_IMPL(long long, size);
 FE_PROP_IMPL(long long, file_base);
-// TODO mtime
-// TODO filehash
 FE_PROP_IMPL(bool, pad_file);
 FE_PROP_IMPL(bool, hidden_attribute);
 FE_PROP_IMPL(bool, executable_attribute);

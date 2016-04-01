@@ -2,6 +2,7 @@
 
 
 #include "interop.h"
+#include "error_code.h"
 
 using namespace Tsunami::Core;
 
@@ -71,6 +72,23 @@ System::String^ AnnounceEntry::trackerid::get()
 System::String^ AnnounceEntry::message::get()
 {
     return interop::from_std_string(entry_->message);
+}
+
+ErrorCode ^ AnnounceEntry::last_error::get()
+{
+	return gcnew ErrorCode(entry_->last_error);
+}
+
+System::DateTime AnnounceEntry::next_announce::get()
+{
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(entry_->next_announce.time_since_epoch());
+	return System::DateTime(1970, 1, 1, 0, 0, 0, System::DateTimeKind::Utc).AddMilliseconds(static_cast<double>(ms.count()));
+}
+
+System::DateTime AnnounceEntry::min_announce::get()
+{
+	std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(entry_->min_announce.time_since_epoch());
+	return System::DateTime(1970, 1, 1, 0, 0, 0, System::DateTimeKind::Utc).AddMilliseconds(static_cast<double>(ms.count()));
 }
 
 int AnnounceEntry::scrape_incomplete::get()

@@ -170,6 +170,7 @@
     <ClInclude Include="feed_settings.h" />
     <ClInclude Include="feed_status.h" />
     <ClInclude Include="file_entry.h" />
+    <ClInclude Include="file_slice.h" />
     <ClInclude Include="file_storage.h" />
     <ClInclude Include="interop.h" />
     <ClInclude Include="lazy_entry.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="feed_settings.cpp" />
     <ClCompile Include="feed_status.cpp" />
     <ClCompile Include="file_entry.cpp" />
+    <ClCompile Include="file_slice.cpp" />
     <ClCompile Include="file_storage.cpp" />
     <ClCompile Include="interop.cpp" />
     <ClCompile Include="lazy_entry.cpp" />

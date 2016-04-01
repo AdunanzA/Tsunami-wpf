@@ -74,9 +74,19 @@ namespace Tsunami
 			/// are only used for bootstrapping, to keep the load off them.
 			/// </summary>
 			void add_dht_node(System::String^ host, int port);
+			/// <summary>
+			/// store the given bencoded data as an immutable item in the DHT.
+			/// the returned hash is the key that is to be used to look the item
+			/// up agan. It's just the sha-1 hash of the bencoded form of the
+			/// structure.
+			/// </summary>
+			Sha1Hash ^ dht_put_item(Entry ^ entry);
+			/// <summary>
+			/// query the DHT for an immutable item at the ``target`` hash.
+			/// the result is posted as a dht_immutable_item_alert.
+			/// </summary>
+			void dht_get_item(Sha1Hash ^ target);
 
-			// TODO dht get item
-			// TODO dht put item
 			// TODO add extension
 			void load_country_db(System::String^ file);
 			void load_asnum_db(System::String^ file);

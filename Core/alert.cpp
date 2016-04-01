@@ -32,12 +32,84 @@ Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
         ALERT_CASE(torrent_removed_alert);
 		ALERT_CASE(torrent_finished_alert);
 		ALERT_CASE(state_update_alert);
+		ALERT_CASE(read_piece_alert);
+		ALERT_CASE(file_completed_alert);
+		ALERT_CASE(file_renamed_alert);
+		ALERT_CASE(file_rename_failed_alert);
+		ALERT_CASE(performance_alert);
+		ALERT_CASE(state_changed_alert);
+		ALERT_CASE(tracker_error_alert);
+		ALERT_CASE(tracker_warning_alert);
+		ALERT_CASE(scrape_reply_alert);
+		ALERT_CASE(scrape_failed_alert);
+		ALERT_CASE(tracker_reply_alert);
+		ALERT_CASE(dht_reply_alert);
+		ALERT_CASE(tracker_announce_alert);
+		ALERT_CASE(hash_failed_alert);
+		ALERT_CASE(peer_ban_alert);
+		ALERT_CASE(peer_unsnubbed_alert);
+		ALERT_CASE(peer_snubbed_alert);
+		ALERT_CASE(peer_error_alert);
+		ALERT_CASE(peer_connect_alert);
+		ALERT_CASE(peer_disconnected_alert);
+		ALERT_CASE(invalid_request_alert);
+		ALERT_CASE(piece_finished_alert);
+		ALERT_CASE(request_dropped_alert);
+		ALERT_CASE(block_timeout_alert);
+		ALERT_CASE(block_finished_alert);
+		ALERT_CASE(block_downloading_alert);
+		ALERT_CASE(unwanted_block_alert);
+		ALERT_CASE(storage_moved_alert);
+		ALERT_CASE(storage_moved_failed_alert);
+		ALERT_CASE(torrent_deleted_alert);
+		ALERT_CASE(torrent_delete_failed_alert);
+		ALERT_CASE(save_resume_data_alert);
+		ALERT_CASE(save_resume_data_failed_alert);
+		ALERT_CASE(torrent_paused_alert);
+		ALERT_CASE(torrent_resumed_alert);
+		ALERT_CASE(torrent_checked_alert);
+		ALERT_CASE(url_seed_alert);
+		ALERT_CASE(file_error_alert);
+		ALERT_CASE(metadata_failed_alert);
+		ALERT_CASE(metadata_received_alert);
+		ALERT_CASE(udp_error_alert);
+		ALERT_CASE(external_ip_alert);
+		ALERT_CASE(listen_failed_alert);
+		ALERT_CASE(listen_succeeded_alert);
+		ALERT_CASE(portmap_error_alert);
+		ALERT_CASE(portmap_alert);
+		ALERT_CASE(portmap_log_alert);
+		ALERT_CASE(fastresume_rejected_alert);
+		ALERT_CASE(peer_blocked_alert);
+		ALERT_CASE(dht_announce_alert);
+		ALERT_CASE(dht_get_peers_alert);
+		ALERT_CASE(stats_alert);
+		ALERT_CASE(cache_flushed_alert);
+		ALERT_CASE(anonymous_mode_alert);
+		ALERT_CASE(lsd_peer_alert);
+		ALERT_CASE(trackerid_alert);
+		ALERT_CASE(dht_bootstrap_alert);
+		ALERT_CASE(rss_alert);
+		ALERT_CASE(torrent_error_alert);
+		ALERT_CASE(torrent_need_cert_alert);
+		ALERT_CASE(incoming_connection_alert);
+		ALERT_CASE(add_torrent_alert);
+		ALERT_CASE(torrent_update_alert);
+		ALERT_CASE(rss_item_alert);
+		ALERT_CASE(dht_error_alert);
+		ALERT_CASE(dht_immutable_item_alert);
+		ALERT_CASE(dht_mutable_item_alert);
+		ALERT_CASE(dht_put_alert);
+		ALERT_CASE(i2p_alert);
     default:
         return gcnew Alert(a);
     }
 
     throw gcnew System::NotImplementedException();
 }
+
+
+
 
 System::DateTime Alert::timestamp()
 {

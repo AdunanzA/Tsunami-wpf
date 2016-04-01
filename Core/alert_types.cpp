@@ -9,6 +9,8 @@
 #include "torrent_handle.h"
 #include "torrent_status.h"
 #include "peer_request.h"
+#include "feed_handle.h"
+#include "feed_item.h"
 
 
 using namespace Tsunami::Core;
@@ -858,6 +860,133 @@ dht_error_alert::dht_error_alert(libtorrent::dht_error_alert* a)
 }
 
 ErrorCode^ dht_error_alert::error::get()
+{
+	return gcnew ErrorCode(alert_->error);
+}
+
+dht_mutable_item_alert::dht_mutable_item_alert(libtorrent::dht_mutable_item_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+Entry ^ dht_mutable_item_alert::item::get()
+{
+	return gcnew Entry(alert_->item);
+}
+
+System::String ^ dht_mutable_item_alert::salt::get()
+{
+	return interop::from_std_string(alert_->salt);
+}
+
+dht_immutable_item_alert::dht_immutable_item_alert(libtorrent::dht_immutable_item_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+Entry ^ dht_immutable_item_alert::item::get()
+{
+	return gcnew Entry(alert_->item);
+}
+
+Sha1Hash ^ dht_immutable_item_alert::target::get()
+{
+	return gcnew Sha1Hash(alert_->target);
+}
+
+rss_item_alert::rss_item_alert(libtorrent::rss_item_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+FeedHandle ^ rss_item_alert::handle::get()
+{
+	return gcnew FeedHandle(alert_->handle);
+}
+
+FeedItem ^ rss_item_alert::item::get()
+{
+	return gcnew FeedItem(alert_->item);
+}
+
+dht_put_alert::dht_put_alert(libtorrent::dht_put_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+Sha1Hash ^ dht_put_alert::target::get()
+{
+	return gcnew Sha1Hash(alert_->target);
+}
+
+cli::array<char> ^ dht_put_alert::public_key::get()
+{
+	cli::array<char> ^ key = gcnew cli::array<char>(32);
+	for (size_t i = 0; i < 32; i++)
+	{
+		key[i] = alert_->public_key[i];
+	}
+	return key;
+}
+
+cli::array<char> ^ dht_put_alert::signature::get()
+{
+	cli::array<char> ^ sig = gcnew cli::array<char>(64);
+	for (size_t i = 0; i < 64; i++)
+	{
+		sig[i] = alert_->signature[i];
+	}
+	return sig;
+}
+
+
+System::String ^ dht_put_alert::salt::get()
+{
+	return interop::from_std_string(alert_->salt);
+}
+
+long long dht_put_alert::seq::get()
+{
+	return alert_->seq;
+}
+
+rss_alert::rss_alert(libtorrent::rss_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+FeedHandle ^ rss_alert::handle::get()
+{
+	return gcnew FeedHandle(alert_->handle);
+}
+
+System::String ^ rss_alert::url::get()
+{
+	return interop::from_std_string(alert_->url);
+}
+
+int rss_alert::state::get()
+{
+	return alert_->state;
+}
+
+ErrorCode ^ rss_alert::error::get()
+{
+	return gcnew ErrorCode(alert_->error);
+}
+
+i2p_alert::i2p_alert(libtorrent::i2p_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+}
+
+ErrorCode ^ i2p_alert::error::get()
 {
 	return gcnew ErrorCode(alert_->error);
 }

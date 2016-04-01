@@ -391,3 +391,8 @@ BitField ^ TorrentStatus::verified_pieces::get()
 {
 	return gcnew BitField(status_->verified_pieces);
 }
+
+storage_mode_t ^ TorrentStatus::storage_mode::get()
+{
+	return (storage_mode_t)status_->storage_mode;
+}

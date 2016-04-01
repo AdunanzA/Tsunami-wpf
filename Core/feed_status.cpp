@@ -44,7 +44,7 @@ System::String ^ FeedStatus::description::get()
 	return interop::from_std_string(feed_status_->description);
 }
 
-System::DateTime ^ FeedStatus::last_update::get()
+System::DateTime FeedStatus::last_update::get()
 {
 	double msec = static_cast<double>(feed_status_->last_update);
 	return System::DateTime(1970, 1, 1, 0, 0, 0, System::DateTimeKind::Utc).AddMilliseconds(msec);

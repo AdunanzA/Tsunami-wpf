@@ -7,6 +7,8 @@ namespace Tsunami
 {
 	namespace Core
 	{
+		ref class ErrorCode;
+
 		public ref class AnnounceEntry
 		{
 		internal:
@@ -28,9 +30,9 @@ namespace Tsunami
 			property System::String^ url { System::String^ get(); }
 			property System::String^ trackerid { System::String^ get(); }
 			property System::String^ message { System::String^ get(); }
-			// TODO last error
-			// TODO property System::DateTime next_announce { System::DateTime get(); }
-			// TODO property System::DateTime min_announce { System::DateTime get(); }
+			property ErrorCode ^ last_error {ErrorCode ^ get(); }
+			property System::DateTime next_announce { System::DateTime get(); }
+			property System::DateTime min_announce { System::DateTime get(); }
 			property int scrape_incomplete { int get(); }
 			property int scrape_complete { int get(); }
 			property int scrape_downloaded { int get(); }
