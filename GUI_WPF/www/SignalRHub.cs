@@ -9,14 +9,19 @@ namespace Tsunami.Gui.Wpf.www
 {
     public class SignalRHub : Hub
     {
-        public void NotifyUpdateProgress(string torrentName, float progress)
+        public void NotifyUpdateProgress(string hash, int queuePosition, string torrentName, float progress, string status)
         {
-            Clients.All.notifyUpdateProgress(torrentName, progress);
+            Clients.All.notifyUpdateProgress(hash, queuePosition, torrentName, progress, status);
         }
 
-        public void NotifyTorrentAdded(int id)
+        public void NotifyTorrentAdded(string hash)
         {
-            Clients.All.notifyTorrentAdded(id);
+            Clients.All.notifyTorrentAdded(hash);
+        }
+
+        public void NotifyNeedRefreshList()
+        {
+            Clients.All.refreshList();
         }
     }
 }

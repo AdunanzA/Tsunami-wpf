@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Tsunami.Gui.Wpf.www.Models
+namespace Tsunami.Models
 {
     public class TorrentStatus
     {
@@ -159,6 +159,9 @@ namespace Tsunami.Gui.Wpf.www.Models
         [JsonIgnore]
         public bool share_mode { get; set; }
 
+
+        public string State { get; set; }
+
         [JsonIgnore]
         public bool super_seeding { get; set; }
 
@@ -209,5 +212,41 @@ namespace Tsunami.Gui.Wpf.www.Models
 
         [JsonIgnore]
         public int up_bandwidth_queue { get; set; }
+
+        public static string GiveMeStateFromEnum(System.Enum stateFromCore)
+        {
+            string res = "";
+            switch (stateFromCore.ToString())
+            {
+                case "queued_for_checking":
+                    res = "Queued For Checking";
+                    break;
+                case "checking_files":
+                    res = "Checking Files";
+                    break;
+                case "downloading_metadata":
+                    res = "Downloading Metadata";
+                    break;
+                case "downloading":
+                    res = "Downloading";
+                    break;
+                case "finished":
+                    res = "Finished";
+                    break;
+                case "seeding":
+                    res = "Seeding";
+                    break;
+                case "allocating":
+                    res = "Allocating";
+                    break;
+                case "checking_resume_data":
+                    res = "Checking Resume Data";
+                    break;
+                default:
+                    res = "Error";
+                    break;
+            }
+            return res;
+        }
     }
 }

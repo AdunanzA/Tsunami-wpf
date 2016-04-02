@@ -1,0 +1,117 @@
+﻿body
+{
+    /*background-image:url(../img/background.jpg);*/
+    margin:0px;
+    padding:0px;
+    font-family:monospace !important;
+    line-height: 1;
+    text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.head{
+    background: linear-gradient(0, #fc5a00 10%, #fcda00 90%);
+    -webkit-animation: move 10s ease infinite;
+    animation: move 10s ease infinite;
+    padding:20px 0px 20px 20px;
+    font-size:40px;
+}
+
+#container {
+    padding:10px 30px;
+}
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.progressBar {
+    width: 400px;
+    height: 22px;
+    border: 1px solid #FFF;
+    background-color: #EEE;
+    -webkit-box-shadow: 0 0 1px 0.5px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 1px 0.5px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.progressBar div {
+    height: 100%;
+    color: #000;
+    text-align: right;
+    line-height: 22px;
+    width: 0;
+    background-color: #fcda00;
+    -webkit-transition: 0.4s linear;
+    -moz-transition: 0.4s linear;
+    -o-transition: 0.4s linear;
+    transition: 0.4s linear;
+    -webkit-transition-property: width, background-color;
+    -moz-transition-property: width, background-color;
+    -o-transition-property: width, background-color;
+    transition-property: width, background-color;
+}
+
+.noItems{
+    text-align: center;
+    padding: 32px;
+    color: #999;
+    font-style: italic;
+    font-size: x-large;
+}
+
+.rowPaused {
+    -webkit-transition: 0.4s linear;
+    -moz-transition: 0.4s linear;
+    -o-transition: 0.4s linear;
+    transition: 0.4s linear;
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -o-transition-property: all;
+    transition-property: all;
+    font-style:italic;
+    color:#ccc;
+}
+
+.pbPaused {
+    background-color:#ddd !important;
+}

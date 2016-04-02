@@ -3,45 +3,113 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Tsunami</title>
-</head>
-<body>
-    <div>
-        <h2>All Torrent</h2>
-        <div id="isBusy" data-bind="text: 'isBusy: '+Busy()"></div>
-    </div>
-    <br />
-    <table style="width:100%" data-bind="">
-        <tr>
-            <th width="10%">QueuePosition</th>
-            <th>Name</th>
-            <th width="30%">Progress</th>
-        </tr>
-        <tbody data-bind="foreach: Torrents">
-            <tr>
-                <td>
-                    <span data-bind="text: QueuePosition"></span>
-                </td>
-                <td>
-                    <span data-bind="text: Name"></span>
-                </td>
-                <td>
-                    <!--<span data-bind="text: Progress"></span>-->
-                    <div class="progress" data-bind="attr: {'id': 'progress' + QueuePosition()}"></div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
-    <!--<img id="logo" src="img/background.jpg" />-->
-    <script type='text/javascript' src='js/knockout-3.4.0.js'></script>
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/tsunami.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="css/toastr.min.css" rel="stylesheet" />
+
+    <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
     <script type='text/javascript' src='js/jquery-2.2.2.min.js'></script>
+    <script type='text/javascript' src="js/toastr.min.js"></script>
     <script type='text/javascript' src="js/jquery.signalr-2.2.0.min.js"></script>
     <script type='text/javascript' src="signalr/hubs"></script>
+    <script type='text/javascript' src='js/knockout-3.4.0.js'></script>
     <script type='text/javascript' src="js/tsunami.js"></script>
-    <script type='text/javascript' src="js/progressbar-1.0.0.min.js"></script>
-
-    <script>
-    </script>
+    <script type='text/javascript' src="js/bootstrap.min.js"></script>
+    <script type='text/javascript' src="js/knockstrap.min.js"></script>
+</head>
+<body>
+    <div class="head animated fadeIn">
+        Tsunami
+    </div>
+    isBusy: <span class="animated pulse"><b data-bind="text: Busy()"></b></span>
+    <br />
+    <div class="container-fluid">
+        <table style="width:100%" class="table table-striped animated fadeIn">
+            <tr>
+                <th width="45px"></th>
+                <th>Name</th>
+                <th width="170px">Status</th>
+                <th width="100px">Progress</th>
+                <th width="45px"></th>
+            </tr>
+            <tbody data-bind="foreach: Torrents">
+                <!-- ko if: $parent.Torrents().length > 0 -->
+                <tr class="animated flipInX" data-bind="css: { rowPaused: IsPaused() }">
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.DeleteTorrent">
+                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                    <td>
+                        <span data-bind="text: Name"></span>
+                    </td>
+                    <td>
+                        <span data-bind="text: State"></span>
+                    </td>
+                    <td>
+                        <div class="progressBar">
+                            <div data-bind="attr: {'style': 'width:' + Progress() + '%'}, text: Progress().toFixed(2) + '%', css: { pbPaused: IsPaused() }"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.PauseTorrent, visible: !IsPaused()">
+                            <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.ResumeTorrent, visible: IsPaused()">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                <!-- /ko -->
+            </tbody>
+            <!-- ko if: Torrents().length == 0 && !Busy() -->
+            <tbody class="animated fadeIn">
+                <tr>
+                    <td style="text-align:center !important" colspan="5">
+                        <br />
+                        No torrent to download...<br />
+                        <br />
+                        <br />
+                    </td>
+                </tr>
+            </tbody>
+            <!-- /ko -->
+            <!-- ko if: Torrents().length == 0 && Busy() -->
+            <tbody class="animated infinite flash">
+                <tr>
+                    <td style="text-align:center !important" colspan="5">
+                        <br />
+                            Retrieving information<br/>
+                            Please wait...
+                        <br />
+                    </td>
+                </tr>
+            </tbody>
+            <!-- /ko -->
+        </table>
+    </div>
+    <!-- confirmation delete modal -->
+    <div id="confirmDeleteModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="sml">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Delete confirmation</h4>
+                </div>
+                <div class="modal-body">
+                    Do you really want to delete this torrent?
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmNo" type="button" class="btn btn-default">NO</button>
+                    <button id="confirmYes" type="button" class="btn btn-primary">YES</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

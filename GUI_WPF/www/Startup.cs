@@ -5,6 +5,8 @@ using Owin;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using System.Web.Http;
+using System.Collections.Generic;
+using Microsoft.Owin.StaticFiles.ContentTypes;
 
 [assembly: OwinStartup(typeof(Tsunami.Gui.Wpf.www.Startup))]
 
@@ -31,12 +33,17 @@ namespace Tsunami.Gui.Wpf.www
             // Only serve files requested by name in www.
             app.UseStaticFiles("/www");
 
-            // Web API
             HttpConfiguration config = new HttpConfiguration();
+
+            //  Enable attribute based routing
+            //  http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2
+            config.MapHttpAttributeRoutes();
+
+            // Web API
             config.Routes.MapHttpRoute(
                 name: "api", 
-                routeTemplate: "api/{controller}/{id}", 
-                defaults: new { id = RouteParameter.Optional}
+                routeTemplate: "api/{controller}/{sha1}", 
+                defaults: new { sha1 = RouteParameter.Optional}
             );
             app.UseWebApi(config);
 

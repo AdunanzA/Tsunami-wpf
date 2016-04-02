@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Tsunami.Gui.Wpf.www.Models
+namespace Tsunami.Models
 {
     public class TorrentInfo
     {

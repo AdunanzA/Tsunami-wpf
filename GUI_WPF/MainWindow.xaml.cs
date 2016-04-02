@@ -39,36 +39,33 @@ namespace Tsunami.Gui.Wpf
             SessionManager.Initialize();
             SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
+            SessionManager.TorrentRemoved += new EventHandler<SessionManager.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
             
             // web server
-            WebApp.Start<www.Startup>(string.Format("http://{0}:{1}", Settings.WEB_URL, Settings.WEB_PORT));
+            WebApp.Start<www.Startup>(string.Format("http://{0}:{1}", Settings.User.WebAddress, Settings.User.WebPort));
 
             //dataGridx.ItemsSource = Torrentlist;
         }
 
+        private void RemovedFromTsunamiCore(object sender, SessionManager.OnTorrentRemovedEventArgs e)
+        {
+            // notify web that needs to refresh torrent list
+            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+            //context.Clients.All.refreshList();
+        }
+
         private void AddFromTsunamiCore(object sender, SessionManager.OnTorrentAddedEventArgs e)
         {
-            // update list torrent
-            TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
-            foreach (TorrentHandle t in th)
-            {
-                if (t.queue_position() == e.QueuePosition)
-                {
-                    Torrentlist.Add(t.torrent_file().name());
-                }
-            }
-            //dataGridx.ItemsSource = Torrentlist;
-
             // notify web that a new id must be requested via webapi
             var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyTorrentAdded(e.QueuePosition);
+            context.Clients.All.notifyTorrentAdded(e.Hash);
         }
 
         private void UpdateFromTsunamiCore(object sender, SessionManager.OnTorrentUpdatedEventArgs e)
         {
             // update web
             var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyUpdateProgress(e.QueuePosition, e.Name, e.Progress);
+            context.Clients.All.notifyUpdateProgress(e.Hash, e.QueuePosition, e.Name, e.Progress, e.Status);
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
@@ -121,20 +118,24 @@ namespace Tsunami.Gui.Wpf
             ofd.ShowDialog();
             foreach (string file in ofd.FileNames)
             {
-                var atp = new AddTorrentParams();
-                TorrentInfo ti = new TorrentInfo(file);
-                atp.save_path = Settings.PATH_DOWNLOAD;
-                atp.ti = ti;
-
-                Torrentlist = new ObservableCollection<int, string, double>();
-                SessionManager.TorrentSession.add_torrent(atp);
-                TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
-                foreach (TorrentHandle t in th)
+                using (var atp = new AddTorrentParams())
+                using (var ti = new TorrentInfo(file))
                 {
-                    Torrentlist.Add(t.torrent_file().name());
+                    atp.save_path = Settings.User.PathDownload;
+                    atp.ti = ti;
+                    atp.flags &= ~ATPFlags.flag_auto_managed; // remove auto managed flag
+                    atp.flags &= ~ATPFlags.flag_paused; // remove pause on added torrent
+                    SessionManager.TorrentSession.async_add_torrent(atp);
                 }
-                dataGridx.ItemsSource = Torrentlist;
             }
+            
+            //Torrentlist = new ObservableCollection<int, string, double>();
+            //SessionManager.TorrentSession.add_torrent(atp);
+            //TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
+            //foreach (TorrentHandle t in th)
+            //{
+            //    Torrentlist.Add(t.torrent_file().name());
+            //}
             //dataGridx.ItemsSource = Torrentlist;
         }
 
@@ -157,6 +158,7 @@ namespace Tsunami.Gui.Wpf
             System.IO.FileStream file = System.IO.File.Create(path);
             writer.Serialize(file, str);
             file.Close();
+            SessionManager.Terminate();
         }
 
         private void SetLanguageDictionary()
@@ -181,7 +183,7 @@ namespace Tsunami.Gui.Wpf
 
         private void btnOpenWeb_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start("http://localhost:4242");
+            System.Diagnostics.Process.Start("http://"+Settings.User.WebAddress+":"+Settings.User.WebPort);
         }
     }
 
