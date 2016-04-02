@@ -62,12 +62,17 @@ read_piece_alert::read_piece_alert(libtorrent::read_piece_alert* a)
 	: torrent_alert(a),
 	alert_(a)
 {
-	// TODO set buffer
 }
 
 cli::array<System::Byte>^ read_piece_alert::buffer::get()
 {
-	throw gcnew System::NotImplementedException();
+	size_t size = alert_->size;
+	cli::array<BYTE> ^ buff = gcnew cli::array<BYTE>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		buff[i] = alert_->buffer[i];
+	}
+	return buff;
 }
 
 int read_piece_alert::piece::get()

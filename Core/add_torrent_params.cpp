@@ -72,3 +72,13 @@ libtorrent::add_torrent_params* AddTorrentParams::ptr()
 {
     return params_;
 }
+
+ATPFlags AddTorrentParams::flags::get()
+{
+	return ATPFlags(params_->flags);
+}
+
+void AddTorrentParams::flags::set(ATPFlags flag)
+{
+	params_->flags = (uint64_t)(System::Object)flag;
+}

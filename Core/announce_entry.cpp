@@ -46,7 +46,7 @@ bool AnnounceEntry::can_announce(System::DateTime now, bool is_seed)
     System::DateTime unix(1970, 1, 1);
     int totalSeconds = System::Convert::ToInt32((now - unix.ToLocalTime()).TotalSeconds);
 	const std::chrono::seconds sc(totalSeconds);
-    return entry_->can_announce(libtorrent::ptime(sc), is_seed); // TODO: investigate ptime
+    return entry_->can_announce(libtorrent::ptime(sc), is_seed); 
 }
 
 bool AnnounceEntry::is_working()

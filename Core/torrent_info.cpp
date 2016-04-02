@@ -77,10 +77,11 @@ void TorrentInfo::remap_files(FileStorage ^ f)
 
 cli::array<AnnounceEntry^>^ TorrentInfo::trackers()
 {
-    std::vector<libtorrent::announce_entry> trackers = info_->trackers();
-    cli::array<AnnounceEntry^>^ result = gcnew cli::array<AnnounceEntry^>(trackers.size());
+    auto trackers = info_->trackers();
+	size_t size = trackers.size();
+    cli::array<AnnounceEntry^>^ result = gcnew cli::array<AnnounceEntry^>(size);
 
-    for (size_t i = 0; i < trackers.size(); i++)
+    for (size_t i = 0; i < size; i++)
     {
         result[i] = gcnew AnnounceEntry(trackers[i]);
     }
@@ -170,8 +171,12 @@ int TorrentInfo::piece_size(int index)
 
 System::Nullable<System::DateTime>^ TorrentInfo::creation_date()
 {
-    // TODO
-    throw gcnew System::NotImplementedException();
+	auto date = info_->creation_date();
+	if (date)
+	{
+		return gcnew System::Nullable<System::DateTime>(System::DateTime(1970, 1, 1, 0, 0, 0, 0, System::DateTimeKind::Utc).AddSeconds((double)(*date)).ToLocalTime());
+	}
+	else return gcnew System::Nullable<System::DateTime>();
 }
 
 System::String^ TorrentInfo::name()
@@ -196,8 +201,14 @@ int TorrentInfo::metadata_size()
 
 cli::array<System::Byte>^ TorrentInfo::metadata()
 {
-    // TODO
-    throw gcnew System::NotImplementedException();
+	auto meta = info_->metadata();
+	size_t size = info_->metadata_size();
+	cli::array<System::Byte> ^ metadata_ = gcnew cli::array<System::Byte>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		metadata_[i] = meta[i];
+	}
+	return metadata_;
 }
 
 bool TorrentInfo::is_merkle_torrent()

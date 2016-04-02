@@ -2,19 +2,25 @@
 
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_info.hpp>
+#include "enums.h"
 
 namespace Tsunami
 {
 	namespace Core
 	{
 		ref class TorrentInfo;
-
+		
 		public ref class AddTorrentParams
 		{
 		public:
 			AddTorrentParams();
 			~AddTorrentParams();
 
+			property ATPFlags flags
+			{
+				ATPFlags get();
+				void set(ATPFlags value);
+			}
 
 			property System::String^ name
 			{
