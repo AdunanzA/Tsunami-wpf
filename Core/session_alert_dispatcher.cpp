@@ -8,7 +8,6 @@ using namespace Tsunami::Core;
 
 void SessionAlertDispatcher::invoke_callback(std::auto_ptr<libtorrent::alert> al)
 {
-
 	gcroot<Alert^> a = Alert::create(al);
 	System::Threading::Monitor::Enter(a);
 	try
@@ -19,7 +18,6 @@ void SessionAlertDispatcher::invoke_callback(std::auto_ptr<libtorrent::alert> al
 	{
 		System::Threading::Monitor::Exit(a);
 	}
-
 }
 
 void SessionAlertDispatcher::set_callback(gcroot<System::Action<Alert^>^> callback)

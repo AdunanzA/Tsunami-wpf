@@ -98,7 +98,7 @@ namespace Tsunami
 			property System::DateTime added_time { System::DateTime get(); }
 			property System::DateTime completed_time { System::DateTime get(); }
 			property System::DateTime last_seen_complete { System::DateTime get(); }
-			property storage_mode_t ^ storage_mode { storage_mode_t ^ get(); }
+			property storage_mode_t storage_mode { storage_mode_t get(); }
 			property float progress { float get(); }
 			property int progress_ppm { int get(); }
 			property int queue_position { int get(); }
@@ -133,7 +133,7 @@ namespace Tsunami
 			property int last_scrape { int get(); }
 			//property int sparse_regions { int get(); }
 			property int priority { int get(); }
-			property state_t^ state { state_t^ get(); }
+			property state_t state { state_t get(); }
 			property bool need_save_resume { bool get(); }
 			property bool ip_filter_applies { bool get(); }
 			property bool upload_mode { bool get(); }

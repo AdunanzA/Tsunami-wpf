@@ -238,7 +238,7 @@ void Session::set_settings(SessionSettings^ settings)
 
 void Session::set_alert_mask(AlertMask mask)
 {
-	session_->set_alert_mask((uint32_t)(System::Object)mask);
+	session_->set_alert_mask(static_cast<uint32_t>(mask));
 }
 
 void Session::set_alert_dispatch(System::Action<Alert^>^ dispatch)
