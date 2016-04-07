@@ -42,13 +42,13 @@
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Name="Add" Background="Violet" Click="AddTorrent_Click" Content="{DynamicResource Add}" />
-                <Button Name="Start" Background="Green" Content="{DynamicResource Start}"/>
-                <Button Name="Stop" Background="#FF961515" Content="{DynamicResource Stop}"/>
-                <Button Name="Delete" Background="Red" Content="{DynamicResource Delete}"/>
+                <Button Name="Add" Background="Violet" Click="AddTorrent_Click" Content="{DynamicResource Add}" Width="140" Height="20" />
+                <Button Name="Start" Background="Green" Content="{DynamicResource Start}" Width="40" Height="20"/>
+                <Button Name="Stop" Background="#FF961515" Content="{DynamicResource Stop}"  Width="40" Height="20"/>
+                <Button Name="Delete" Background="Red" Content="{DynamicResource Delete}"  Width="50" Height="20"/>
             </StackPanel>
-            <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"/>
-            <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click"/>
+            <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"  Width="110" Height="20"/>
+            <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click" Width="60" Height="20"/>
         </StackPanel>
 
         <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
