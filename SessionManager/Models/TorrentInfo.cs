@@ -7,56 +7,202 @@ using Newtonsoft.Json;
 
 namespace Tsunami.Models
 {
-    public class TorrentInfo
+    public class TorrentInfo : IDisposable
     {
-        [JsonIgnore]
-        public string comment { get; set; }
+        private Core.TorrentInfo _ti;
 
-        [JsonIgnore]
-        public ValueType creation_date { get; set; }
+        public TorrentInfo(Core.TorrentInfo ti)
+        {
+            _ti = ti;
+        }
 
-        [JsonIgnore]
-        public string creator { get; set; }
-        /*public Sha1Hash info_hash { get; set; }*/
+        public void AddTracker(string url, int tier)
+        {
+            _ti.add_tracker(url, tier);
+        }
 
-        [JsonIgnore]
-        public bool is_i2p { get; set; }
+        public List<string> Collections()
+        {
+            List<string> sr = new List<string>();
+            foreach (string item in _ti.collections())
+            {
+                sr.Add(item);
+            }
+            return sr;
+        }
 
-        [JsonIgnore]
-        public bool is_merkle_torrent { get; set; }
+        public string Comment()
+        {
+            return _ti.comment();
+        }
 
-        [JsonIgnore]
-        public bool is_valid { get; set; }
+        public ValueType CreationDate()
+        {
+            return _ti.creation_date();
+        }
 
-        [JsonIgnore]
-        public byte[] metadata { get; set; }
+        public string Creator()
+        {
+            return _ti.creator();
+        }
 
-        [JsonIgnore]
-        public int metadata_size { get; set; }
+        public FileStorage Files()
+        {
+            return new FileStorage(_ti.files());
+        }
 
-        [JsonIgnore]
-        public string name { get; set; }
+        public List<string> FileList()
+        {
+            List<string> sr = new List<string>();
+            foreach (string item in _ti.file_list())
+            {
+                sr.Add(item);
+            }
+            return sr;
+        }
 
-        [JsonIgnore]
-        public int num_files { get; set; }
+        public string FilePath(int index)
+        {
+            return _ti.file_path(index);
+        }
 
-        [JsonIgnore]
-        public int num_pieces { get; set; }
+        public long FileSize(int index)
+        {
+            return _ti.file_size(index);
+        }
 
-        [JsonIgnore]
-        public int piece_length { get; set; }
+        public string InfoHash()
+        {
+            return _ti.info_hash().ToString();
+        }
 
-        [JsonIgnore]
-        public int piece_size { get; set; }
+        public bool IsI2p()
+        {
+            return _ti.is_i2p();
+        }
 
-        [JsonIgnore]
-        public bool priv { get; set; }
+        public bool IsMerkleTorrent()
+        {
+            return _ti.is_merkle_torrent();
+        }
 
-        [JsonIgnore]
-        public string ssl_cert { get; set; }
+        public bool IsValid()
+        {
+            return _ti.is_valid();
+        }
 
-        [JsonIgnore]
-        public long total_size { get; set; }
+        public byte[] Metadata()
+        {
+            return _ti.metadata();
+        }
+
+        public int MetadataSize()
+        {
+            return _ti.metadata_size();
+        }
+
+        public string Name()
+        {
+           return _ti.name();
+        }
+
+        public int NumFiles()
+        {
+            return _ti.num_files();
+        }
+
+        public int NumPieces()
+        {
+            return _ti.num_pieces();
+        }
+
+        public FileStorage OrigFiles()
+        {
+            return new FileStorage(_ti.orig_files());
+        }
+
+        public int PieceLength()
+        {
+            return _ti.piece_length();
+        }
+
+        public int PieceSize(int index)
+        {
+            return _ti.piece_size(index);
+        }
+
+        public bool Priv()
+        {
+            return _ti.priv();
+        }
+
+        public void RemapFiles(FileStorage f)
+        {
+            _ti.remap_files(f.FileStorageCore());
+        }
+
+        public void RenameFile(int index, string new_filename)
+        {
+            _ti.rename_file(index, new_filename);
+        }
+
+        public List<string> SimilarTorrents()
+        {
+            List<string> sr = new List<string>();
+            foreach (Core.Sha1Hash item in _ti.similar_torrents())
+            {
+                sr.Add(item.ToString());
+            }
+            return sr;
+        }
+
+        public string SslCert()
+        {
+            return _ti.ssl_cert();
+        }
+
+        public long TotalSize()
+        {
+            return _ti.total_size();
+        }
+
+        public List<AnnounceEntry> Trackers()
+        {
+            List<AnnounceEntry> sr = new List<AnnounceEntry>();
+            foreach (Core.AnnounceEntry item in _ti.trackers())
+            {
+                sr.Add(new AnnounceEntry(item));
+            }
+            return sr;
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _ti.Dispose();
+                }
+                _ti = null;
+                disposedValue = true;
+            }
+        }
+
+        ~TorrentInfo()
+        {
+            Dispose(false);
+        }
+
+        void IDisposable.Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
 
     }
 }

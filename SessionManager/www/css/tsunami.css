@@ -5,64 +5,15 @@
     padding:0px;
     font-family:monospace !important;
     line-height: 1;
-    text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
+    background-color:#FFFFEE;
 }
 
 .head{
-    background: linear-gradient(0, #fc5a00 10%, #fcda00 90%);
+    /*background: linear-gradient(0, #fc5a00 10%, #fcda00 90%);
     -webkit-animation: move 10s ease infinite;
     animation: move 10s ease infinite;
-    padding:20px 0px 20px 20px;
+    padding:20px 0px 20px 20px;*/
     font-size:40px;
-}
-
-#container {
-    padding:10px 30px;
-}
-
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline;
-}
-
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-  display: block;
-}
-
-ol, ul {
-  list-style: none;
-}
-
-blockquote, q {
-  quotes: none;
-}
-
-blockquote:before, blockquote:after,
-q:before, q:after {
-  content: '';
-  content: none;
-}
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
 }
 
 .progressBar {
@@ -77,7 +28,7 @@ table {
 .progressBar div {
     height: 100%;
     color: #000;
-    text-align: right;
+    text-align: center;
     line-height: 22px;
     width: 0;
     background-color: #fcda00;
@@ -89,6 +40,7 @@ table {
     -moz-transition-property: width, background-color;
     -o-transition-property: width, background-color;
     transition-property: width, background-color;
+    text-shadow: 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .noItems{
@@ -99,7 +51,7 @@ table {
     font-size: x-large;
 }
 
-.rowPaused {
+.rowGeneric {
     -webkit-transition: 0.4s linear;
     -moz-transition: 0.4s linear;
     -o-transition: 0.4s linear;
@@ -108,10 +60,70 @@ table {
     -moz-transition-property: all;
     -o-transition-property: all;
     transition-property: all;
+}
+
+.rowPaused {
     font-style:italic;
     color:#ccc;
 }
 
 .pbPaused {
     background-color:#ddd !important;
+}
+
+.pbFinished {
+    background-color:#51a351 !important;
+    color:#FFF !important;
+}
+
+/*
+    Inherited from label (bootstrap), remove css to enable full width and fill table's cells
+*/
+.tsunamiLabel {
+    display:block !important;
+    font-weight:normal !important;
+    line-height:1.8 !important;
+    -webkit-transition: 1s ease;
+    -moz-transition: 1s ease;
+    -o-transition: 1s ease;
+    transition: 1s ease;
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -o-transition-property: all;
+    transition-property: all;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
 }

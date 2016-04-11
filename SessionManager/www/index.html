@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tsunami</title>
+
+    <link href="css/animate.css" rel="stylesheet" />
+    <link href="css/tsunami.css" rel="stylesheet" />
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="css/toastr.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-toggle.min.css" rel="stylesheet" />
+
+    <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <script type='text/javascript' src='js/jquery-2.2.2.min.js'></script>
+    <script type='text/javascript' src="js/toastr.min.js"></script>
+    <script type='text/javascript' src="js/jquery.signalr-2.2.0.min.js"></script>
+    <script type='text/javascript' src="signalr/hubs"></script>
+    <script type='text/javascript' src='js/knockout-3.4.0.js'></script>
+    <script type='text/javascript' src="js/tsunami.js"></script>
+    <script type='text/javascript' src="js/bootstrap.min.js"></script>
+    <script type='text/javascript' src="js/knockstrap.min.js"></script>
+    <script type='text/javascript' src="js/bootstrap-toggle.min.js"></script>
+    <script type='text/javascript' src="js/filesize.min.js"></script>
+    <script type='text/javascript' src="js/chart.min.js"></script>
+</head>
+<body>
+    <br />
+    <div class="container-fluid">
+        <!--<div class="page-header">
+            <h1 class="head animated fadeIn">
+                <img src="img/tsunami.png" />
+            </h1>
+        </div>-->
+        <div class="panel panel-default animated fadeIn">
+            <!--<div class="panel-body">-->
+                <div class="row" style="height:100px">
+                    <div class="col-md-3">
+                        <img src="img/tsunami.png" />
+                    </div>
+                    <div class="col-md-2" style="height:100px">
+                        IsConnected: <span class="animated pulse"><b data-bind="text: twm.Connected()"></b></span><br />
+                        IsBusy: <span class="animated pulse"><b data-bind="text: twm.Busy()"></b></span><br />
+                        Download rate <b data-bind="text: filesize(twm.DownloadRate())"></b><br />
+                        Upload rate <b data-bind="text: filesize(twm.UploadRate())"></b>
+                    </div>
+                    <div class="col-md-4">
+                        <canvas id="torrentChart" width="300" height="90"></canvas>
+                    </div>
+                    <div class="col-md-3" style="height:100%">
+                        <table cellpadding="0" cellspacing="0" style="width:100%;height:100%">
+                            <tr>
+                                <td width="80%"></td>
+                                <td valign="middle">
+                                    <!-- http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/ -->
+                                    <button type="button" class="btn btn-default" data-bind="click: twm.AddNewTorrent, disable: twm.Busy()">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                                <td width="10%"></td>
+                                <td valign="middle">
+                                    <button type="button" class="btn btn-default" data-bind="click: retrieveTorrentList(), disable: twm.Busy()">
+                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                                    </button>
+                                </td>
+                                <td width="10%"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            <!--</div>-->
+        </div>
+        <div class="panel panel-warning">
+            <table style="width:100%" class="table table-striped animated fadeIn">
+                <thead>
+                    <tr>
+                        <th width="45px"></th>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th width="95px">Length</th>
+                        <th width="95px">Downloaded</th>
+                        <th width="170px">Status</th>
+                        <th>Progress</th>
+                        <th>Priority</th>
+                        <th width="95px">Download speed</th>
+                        <th width="95px">Upload speed</th>
+                        <th width="75px">
+                            <button type="button" class="btn btn-default btn-xs" data-bind="click: twm.PauseAllTorrent(), visible: Torrents().length > 0, disable: twm.Busy()">
+                                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs" data-bind="click: twm.ResumeAllTorrent(), visible: Torrents().length > 0, disable: twm.Busy()">
+                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <!-- ko if: Torrents().length > 0 -->
+                <tbody data-bind="foreach: Torrents">
+                    <tr class="rowGeneric animated flipInX" data-bind="css: { rowPaused: IsPaused() }">
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.DeleteTorrent, disable: $parent.Busy()">
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                        <td>
+                            <span data-bind="text: QueuePosition, visible: QueuePosition() > -1"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: Name"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: filesize(TotalWanted())"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: filesize(TotalDone())"></span>
+                        </td>
+                        <td>
+                            <span class="tsunamiLabel label" data-bind="text: State, css: stateLabel()"></span>
+                        </td>
+                        <td>
+                            <div class="progressBar">
+                                <div data-bind="attr: {'style': 'width:' + Progress() + '%'},
+                                        text: Progress().toFixed(2) + '%',
+                                        css: { pbPaused: IsPaused(), pbFinished: IsFinished() }">
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span data-bind="text: Priority"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: filesize(DownloadRate())"></span>
+                        </td>
+                        <td>
+                            <span data-bind="text: filesize(UploadRate())"></span>
+                        </td>
+                        <td style="text-align:center">
+                            <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.PauseTorrent, 
+                                                                                            visible: !IsPaused(), 
+                                                                                            disable: $parent.Busy()">
+                                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-default btn-xs" data-bind="click: $parent.ResumeTorrent, 
+                                                                                            visible: IsPaused(), 
+                                                                                            disable: $parent.Busy()">
+                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- /ko -->
+                <!-- ko if: twm.Torrents().length == 0 && !twm.Busy() -->
+                <tbody>
+                    <tr>
+                        <td class="animated pulse" style="text-align:center !important" colspan="11">
+                            <br />
+                            No torrent to download...<br />
+                            <br />
+                            <br />
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- /ko -->
+                <!-- ko if: twm.Torrents().length == 0 && twm.Busy() -->
+                <tbody class="animated fadeIn">
+                    <tr>
+                        <td style="text-align:center !important" colspan="11">
+                            <br />
+                            Retrieving information<br />
+                            Please wait...<br />
+                            <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> 
+                        </td>
+                    </tr>
+                </tbody>
+                <!-- /ko -->
+            </table>
+        </div>
+    </div>
+
+    <!-- confirmation delete modal -->
+    <div id="confirmDeleteModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="sml">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete confirmation</h4>
+                </div>
+                <div id="confirmDeleteModalBody" class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <label>
+                        <input id="checkDeleteFileToo" type="checkbox" value="" data-toggle="toggle" data-size="small" data-width="200" 
+                               data-onstyle="danger" data-on="Delete files from disk too"
+                               data-offstyle="success" data-off="Keep files on disk">
+                    </label>&nbsp;&nbsp;
+                    <button id="confirmNo" type="button" class="btn btn-default">NO</button>
+                    <button id="confirmYes" type="button" class="btn btn-primary">YES</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- add torrent modal -->
+    <div id="addTorrentModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="sml">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Torrent</h4>
+                </div>
+                <div class="modal-body">
+                    <span class="btn btn-default btn-file">
+                        Browse <input type="file">
+                    </span>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmCancel" type="button" class="btn btn-default">CANCEL</button>
+                    <button id="confirmAdd" type="button" class="btn btn-primary">ADD</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

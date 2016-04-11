@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -15,49 +16,42 @@ namespace Tsunami.Controllers
 {
     public class TorrentsController : ApiController
     {
+        private static Logger log = LogManager.GetLogger("TorrentsController");
+
         // GET api/torrents 
-        public IEnumerable<Models.TorrentItem> Get()
+        public IEnumerable<Models.TorrentStatus> Get()
         {
-            List<Models.TorrentItem> res = new List<Models.TorrentItem>();
-            Core.TorrentStatus ts;
-            Core.TorrentInfo ti;
-            Models.TorrentItem mi;
-            foreach (KeyValuePair<string, Core.TorrentHandle> kvt in SessionManager.TorrentHandles)
+            try
             {
-                Core.TorrentHandle t = kvt.Value;
-                ts = t.status();
-                ti = t.torrent_file();
-                mi = new Models.TorrentItem();
-                mi.Hash = t.info_hash().ToString();
-                mi.queue_position = t.queue_position();
-                mi.status = new Models.TorrentStatus();
-                mi.torrent_file = new Models.TorrentInfo();
-                mi.status.name = ts.name;
-                mi.status.progress = ts.progress;
-                mi.status.State = Models.TorrentStatus.GiveMeStateFromEnum(ts.state);
-                res.Add(mi);
+                log.Trace("requested get()");
+                return SessionManager.getTorrentStatusList();
             }
-            return res;
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
         }
 
         // GET api/torrents/5 
-        public Models.TorrentItem Get(string sha1)
+        public Models.TorrentStatus Get(string sha1)
         {
-            Core.TorrentHandle th1;
-            if (!SessionManager.TorrentHandles.TryGetValue(sha1, out th1))
+            try
             {
+                log.Trace("requested get({0})", sha1);
+                return SessionManager.getTorrentStatus(sha1);
+            }
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
-            Models.TorrentItem mi = new Models.TorrentItem();
-            mi.status = new Models.TorrentStatus();
-            mi.torrent_file = new Models.TorrentInfo();
-            mi.Hash = sha1;
-            mi.queue_position = th1.queue_position();
-            mi.status.name = th1.status().name;
-            mi.status.progress = th1.status().progress;
-            mi.status.State = Models.TorrentStatus.GiveMeStateFromEnum(th1.status().state);
-
-            return mi;
         }
 
         // POST api/torrents 
@@ -79,41 +73,57 @@ namespace Tsunami.Controllers
         [HttpPost]
         public bool PauseTorrent([FromBody]string sha1)
         {
-            Core.TorrentHandle th;
-            if (!SessionManager.TorrentHandles.TryGetValue(sha1, out th))
+            try
             {
+                log.Trace("requested pause({0})", sha1);
+                return SessionManager.pauseTorrent(sha1);
+            }
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
-            //Core.TorrentHandle th2 = SessionManager.TorrentSession.find_torrent(th1.info_hash());
-            //th2.pause();
-            th.pause();
-            return (th.status().paused == true);
         }
 
         [Route("api/torrents/resume")]
         [HttpPost]
         public bool ResumeTorrent([FromBody]string sha1)
         {
-            Core.TorrentHandle th;
-            if (!SessionManager.TorrentHandles.TryGetValue(sha1, out th))
+            try
             {
+                log.Trace("requested resume({0})", sha1);
+                return SessionManager.resumeTorrent(sha1);
+            }
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
-            th.resume();
-            return (th.status().paused == true);
         }
 
-        [Route("api/torrents/delete")]
+        [Route("api/torrents/delete/{deleteFile:bool}")]
         [HttpPost]
-        public void DeleteTorrent([FromBody]string sha1)
+        public void DeleteTorrent([FromBody]string sha1, [FromUri]bool deleteFile)
         {
-            Core.TorrentHandle th;
-            if (!SessionManager.TorrentHandles.TryGetValue(sha1, out th))
+            try
             {
+                log.Trace("requested delete({0}, deleteFile:{1})", sha1, deleteFile);
+                SessionManager.deleteTorrent(sha1, deleteFile);
+            }
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
-            SessionManager.TorrentSession.remove_torrent(th, 1);
-            SessionManager.TorrentHandles.TryRemove(sha1, out th);
         }
     }
 }

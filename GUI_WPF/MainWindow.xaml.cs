@@ -1,24 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data;
-using Tsunami.Core;
 using Microsoft.Win32;
-using System.IO;
-using Microsoft.Owin.Hosting;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -40,37 +24,41 @@ namespace Tsunami.Gui.Wpf
             SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
             SessionManager.TorrentRemoved += new EventHandler<SessionManager.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
-            
-            // web server
-            WebApp.Start<www.Startup>(string.Format("http://{0}:{1}", Settings.User.WebAddress, Settings.User.WebPort));
+            SessionManager.SessionStatisticsUpdate += new EventHandler<SessionManager.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
+
 
             //dataGridx.ItemsSource = Torrentlist;
         }
 
+        private void UpdateFromSessionStatistics(object sender, SessionManager.OnSessionStatisticsEventArgs e)
+        {
+            // notify web of new session statistics
+            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+            //context.Clients.All.notifySessionStatistics(e);
+        }
+
         private void RemovedFromTsunamiCore(object sender, SessionManager.OnTorrentRemovedEventArgs e)
         {
-            // notify web that needs to refresh torrent list
-            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            //context.Clients.All.refreshList();
+
         }
 
         private void AddFromTsunamiCore(object sender, SessionManager.OnTorrentAddedEventArgs e)
         {
             // notify web that a new id must be requested via webapi
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyTorrentAdded(e.Hash);
+            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+            //context.Clients.All.notifyTorrentAdded(e.Hash);
         }
 
         private void UpdateFromTsunamiCore(object sender, SessionManager.OnTorrentUpdatedEventArgs e)
         {
             // update web
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyUpdateProgress(e.Hash, e.QueuePosition, e.Name, e.Progress, e.Status);
+            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+            //context.Clients.All.notifyUpdateProgress(e);
         }
 
         private void AutoKill_Click(object sender, RoutedEventArgs e)
         {
-            Environment.Exit(0);
+            //Environment.Exit(0);
             //var set = new Settings();
             //set.PATH_DOWNLOAD = "ciao";
         }
@@ -118,15 +106,7 @@ namespace Tsunami.Gui.Wpf
             ofd.ShowDialog();
             foreach (string file in ofd.FileNames)
             {
-                using (var atp = new AddTorrentParams())
-                using (var ti = new TorrentInfo(file))
-                {
-                    atp.save_path = Settings.User.PathDownload;
-                    atp.ti = ti;
-                    atp.flags &= ~ATPFlags.flag_auto_managed; // remove auto managed flag
-                    atp.flags &= ~ATPFlags.flag_paused; // remove pause on added torrent
-                    SessionManager.TorrentSession.async_add_torrent(atp);
-                }
+                SessionManager.addTorrent(file);
             }
             
             //Torrentlist = new ObservableCollection<int, string, double>();

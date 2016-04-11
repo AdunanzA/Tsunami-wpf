@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 
-namespace Tsunami.Gui.Wpf.www
+namespace Tsunami.www
 {
     public class SignalRHub : Hub
     {
-        public void NotifyUpdateProgress(string hash, int queuePosition, string torrentName, float progress, string status)
+        public void NotifyUpdateProgress(SessionManager.OnTorrentUpdatedEventArgs e)
         {
-            Clients.All.notifyUpdateProgress(hash, queuePosition, torrentName, progress, status);
+            Clients.All.notifyUpdateProgress(e);
         }
 
         public void NotifyTorrentAdded(string hash)
@@ -22,6 +22,11 @@ namespace Tsunami.Gui.Wpf.www
         public void NotifyNeedRefreshList()
         {
             Clients.All.refreshList();
+        }
+
+        public void notifySessionStatistics(SessionManager.OnSessionStatisticsEventArgs ss)
+        {
+            Clients.All.notifySessionStatistics(ss);
         }
     }
 }

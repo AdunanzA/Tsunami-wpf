@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>
+
+    

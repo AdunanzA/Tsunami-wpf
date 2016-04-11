@@ -8,9 +8,9 @@ using System.Web.Http;
 using System.Collections.Generic;
 using Microsoft.Owin.StaticFiles.ContentTypes;
 
-[assembly: OwinStartup(typeof(Tsunami.Gui.Wpf.www.Startup))]
+//[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
 
-namespace Tsunami.Gui.Wpf.www
+namespace Tsunami.www
 {
     public class Startup
     {
