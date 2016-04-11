@@ -129,7 +129,6 @@ namespace Tsunami.Gui.Wpf
         {
         }
 
-        //gobne start
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string str = "something to put in File";
@@ -138,6 +137,10 @@ namespace Tsunami.Gui.Wpf
             System.IO.FileStream file = System.IO.File.Create(path);
             writer.Serialize(file, str);
             file.Close();
+
+            //Save MainWindow Settings
+            Properties.Settings.Default.Save();
+
             SessionManager.Terminate();
         }
 
@@ -164,6 +167,11 @@ namespace Tsunami.Gui.Wpf
         private void btnOpenWeb_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("http://"+Settings.User.WebAddress+":"+Settings.User.WebPort);
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+ 
         }
     }
 

@@ -10,4 +10,5 @@
   <system:String x:Key="Stop">Stop</system:String>
   <system:String x:Key="Read">Read XML</system:String>
   <system:String x:Key="AutoKill">Self-destruction</system:String>
+  <system:String x:Key="OpenWeb">Open Web</system:String>
 </ResourceDictionary>
