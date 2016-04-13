@@ -21,7 +21,7 @@
             <Button Content="Sharing"   MinWidth="100" Margin="10,0,0,0" Click="sharingButton_Click"/>
             <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>            
         </StackPanel>
-        <Frame x:Name="PageContainer" Height="Auto" Width="Auto" Margin="0,20,0,0"/>
+        <Frame x:Name="PageContainer" Height="Auto" Width="Auto" Margin="0,20,0,0" NavigationUIVisibility="Hidden"/>
         </Grid>
 
 </Window>
