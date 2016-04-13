@@ -14,66 +14,14 @@
         Title="MainWindow"
         Closing="Window_Closing">
 
-    <Grid >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="9*"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0"  Grid.Column="0" Background="red" Orientation="Vertical">
-            <TextBlock>R</TextBlock>
-            <TextBlock>I</TextBlock>
-            <TextBlock>C</TextBlock>
-            <TextBlock>E</TextBlock>
-            <TextBlock>R</TextBlock>
-            <TextBlock>C</TextBlock>
-            <TextBlock>A</TextBlock>
+        <Grid >
+        <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Top">
+            <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
+            <Button Content="Search" MinWidth="100" Margin="10,0,0,0" Click="searchButton_Click"/>
+            <Button Content="Sharing"   MinWidth="100" Margin="10,0,0,0" Click="sharingButton_Click"/>
+            <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>            
         </StackPanel>
+        <Frame x:Name="PageContainer" Height="Auto" Width="Auto" Margin="0,20,0,0"/>
+        </Grid>
 
-        <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
-
-            <DataGrid Name="dataGridx" Grid.Row="0" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding TorrentList.Id}" />
-                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding}" />
-
-                    <DataGridTextColumn Header="Progress" IsReadOnly="True" Binding="{Binding}" />
-                </DataGrid.Columns>
-            </DataGrid>
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Name="Add" Background="Violet" Click="AddTorrent_Click" Content="{DynamicResource Add}" Width="140" Height="20" />
-                <Button Name="Start" Background="Green" Content="{DynamicResource Start}" Width="40" Height="20"/>
-                <Button Name="Stop" Background="#FF961515" Content="{DynamicResource Stop}"  Width="40" Height="20"/>
-                <Button Name="Delete" Background="Red" Content="{DynamicResource Delete}"  Width="50" Height="20"/>
-            </StackPanel>
-            <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"  Width="110" Height="20"/>
-            <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click" Width="60" Height="20"/>
-        </StackPanel>
-
-        <StackPanel Background="Azure" Grid.Column="2" Orientation="Vertical">
-            <TextBlock>D</TextBlock>
-            <TextBlock>O</TextBlock>
-            <TextBlock>W</TextBlock>
-            <TextBlock>N</TextBlock>
-            <TextBlock>L</TextBlock>
-            <TextBlock>O</TextBlock>
-            <TextBlock>A</TextBlock>
-            <TextBlock>D</TextBlock>
-        </StackPanel>
-        <StackPanel Background="Yellow" Grid.Column="3" Orientation="Vertical">
-            <TextBlock>S</TextBlock>
-            <TextBlock>E</TextBlock>
-            <TextBlock>N</TextBlock>
-            <TextBlock>D</TextBlock>
-        </StackPanel>
-        <Button x:Name="btnOpenWeb" Content="{DynamicResource OpenWeb}" Grid.Column="1" HorizontalAlignment="Left" Margin="190,58,0,0" VerticalAlignment="Top" Width="112" Height="33" Click="btnOpenWeb_Click"/>
-
-    </Grid>
 </Window>
