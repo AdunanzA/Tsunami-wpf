@@ -1,0 +1,46 @@
+﻿<Page x:Class="Tsunami.Gui.Wpf.Downloads"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="Downloads">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0"  Grid.Column="1" VerticalAlignment="Bottom" Background="Black" Orientation="Vertical">
+
+            <DataGrid Name="dataGridx" Grid.Row="0" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding TorrentList.Id}" />
+                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding}" />
+
+                    <DataGridTextColumn Header="Progress" IsReadOnly="True" Binding="{Binding}" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button Name="Add" Background="Violet" Click="AddTorrent_Click" Content="{DynamicResource Add}" Width="140" Height="20" />
+                <Button Name="Start" Background="Green" Content="{DynamicResource Start}" Width="40" Height="20"/>
+                <Button Name="Stop" Background="#FF961515" Content="{DynamicResource Stop}"  Width="40" Height="20"/>
+                <Button Name="Delete" Background="Red" Content="{DynamicResource Delete}"  Width="50" Height="20"/>
+            </StackPanel>
+            <Button Name="AutoKill" Click="AutoKill_Click" Content="{DynamicResource AutoKill}"  Width="110" Height="20"/>
+            <Button x:Name="button" Content="{DynamicResource Read}" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top"  Click="ReadXML_Click" Width="60" Height="20"/>
+        </StackPanel>
+
+        <Button x:Name="btnOpenWeb" Content="{DynamicResource OpenWeb}" Grid.Column="1" HorizontalAlignment="Left" Margin="190,58,0,0" VerticalAlignment="Top" Width="112" Height="33" Click="btnOpenWeb_Click"/>
+    </Grid>
+</Page>
