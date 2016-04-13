@@ -24,6 +24,7 @@ namespace Tsunami.Gui.Wpf
         public Downloads()
         {
             InitializeComponent();
+            this.SetLanguageDictionary();
         }
 
         private void btnOpenWeb_Click(object sender, RoutedEventArgs e)
@@ -98,6 +99,25 @@ namespace Tsunami.Gui.Wpf
             {
                 SessionManager.addTorrent(file);
             }
+        }
+
+        private void SetLanguageDictionary()
+        {
+            ResourceDictionary dict = new ResourceDictionary();
+            switch (System.Threading.Thread.CurrentThread.CurrentCulture.ToString())
+            {
+                case "en-US":
+                    dict.Source = new Uri(Environment.CurrentDirectory + "../../../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+                case "it-IT":
+                    dict.Source = new Uri(Environment.CurrentDirectory + "../../../../Resources/italian.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+
+                default:
+                    dict.Source = new Uri(Environment.CurrentDirectory + "../../../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    break;
+            }
+            this.Resources.MergedDictionaries.Add(dict);
         }
     }
 
