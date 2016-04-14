@@ -22,7 +22,34 @@ namespace Tsunami.Gui.Wpf
     {
         public Player()
         {
+            
             InitializeComponent();
+            Stop.IsEnabled = false;
+            Pause.IsEnabled = false;
         }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            myPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
+            myPlayer.Play();
+            Play.IsEnabled = false;
+            Pause.IsEnabled = true;
+            Stop.IsEnabled = true;
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            myPlayer.PauseOrResume();
+           
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            myPlayer.Stop();
+            Stop.IsEnabled = false;
+            Pause.IsEnabled = false;
+            Play.IsEnabled = true;
+        }
+
     }
 }
