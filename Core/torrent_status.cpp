@@ -372,9 +372,9 @@ bool TorrentStatus::moving_storage::get()
     return status_->moving_storage;
 }
 
-TorrentStatus::state_t^ TorrentStatus::state::get()
+TorrentStatus::state_t TorrentStatus::state::get()
 {
-	return (TorrentStatus::state_t)status_->state;
+	return static_cast<TorrentStatus::state_t>(status_->state);
 }
 
 Sha1Hash ^ TorrentStatus::info_hash::get()
@@ -392,7 +392,7 @@ BitField ^ TorrentStatus::verified_pieces::get()
 	return gcnew BitField(status_->verified_pieces);
 }
 
-storage_mode_t ^ TorrentStatus::storage_mode::get()
+storage_mode_t  TorrentStatus::storage_mode::get()
 {
-	return (storage_mode_t)status_->storage_mode;
+	return static_cast<storage_mode_t>(status_->storage_mode);
 }
