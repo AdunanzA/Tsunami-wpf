@@ -3,6 +3,7 @@ using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
+using xZune.Vlc;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
@@ -30,6 +31,8 @@ using System.Windows;
 
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
+//Set the path of LibVlc
+[assembly: VlcSettings(@"..\..\..\LibVlc")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //dove si trovano i dizionari delle risorse specifiche del tema

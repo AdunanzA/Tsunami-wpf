@@ -49,7 +49,7 @@ namespace Tsunami.Gui.Wpf.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        [global::System.Configuration.DefaultSettingValueAttribute("800")]
         public string WindowWidth {
             get {
                 return ((string)(this["WindowWidth"]));
@@ -61,7 +61,7 @@ namespace Tsunami.Gui.Wpf.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("300")]
+        [global::System.Configuration.DefaultSettingValueAttribute("600")]
         public string WindowHeight {
             get {
                 return ((string)(this["WindowHeight"]));

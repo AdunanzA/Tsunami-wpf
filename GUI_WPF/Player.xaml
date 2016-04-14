@@ -1,7 +1,8 @@
 ﻿<Page x:Class="Tsunami.Gui.Wpf.Player"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:vlC="clr-namespace:xZune.Vlc.Wpf;assembly=xZune.Vlc.Wpf"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
       mc:Ignorable="d" 
@@ -9,6 +10,18 @@
       Title="Player">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <vlC:VlcPlayer x:Name="myPlayer" Background="Black" />
+        <Button Grid.Row="1" x:Name="Play" Click="playButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Play" Height="30" Width="30"/>
+        <Button Grid.Row="1" x:Name="Stop" Click="stopButton_Click" Content="Stop" Height="30" Width="30" RenderTransformOrigin="3.356,0.446" Margin="105,0,165,0"/>
+        <Button Grid.Row="1" x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="30" Width="30" RenderTransformOrigin="3.356,0.446" Margin="165,0,105,0"/>
+
     </Grid>
 </Page>
