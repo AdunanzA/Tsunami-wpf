@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using xZune.Vlc.Interop.MediaPlayer;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -20,10 +21,13 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page
     {
+        //private MediaPlayer mp = new MediaPlayer();
+
         public Player()
         {
             
             InitializeComponent();
+            volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
         }
@@ -46,10 +50,16 @@ namespace Tsunami.Gui.Wpf
         private void stopButton_Click(object sender, EventArgs e)
         {
             myPlayer.Stop();
+            myPlayer.Dispose(); 
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;
+
         }
 
+        private void manageVolume(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            myPlayer.Volume = (int)volumeControl.Value;
+        }
     }
 }
