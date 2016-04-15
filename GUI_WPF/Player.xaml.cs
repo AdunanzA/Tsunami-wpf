@@ -21,11 +21,9 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page
     {
-        //private MediaPlayer mp = new MediaPlayer();
 
         public Player()
-        {
-            
+        {            
             InitializeComponent();
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;

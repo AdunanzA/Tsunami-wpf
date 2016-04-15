@@ -19,12 +19,40 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <vlC:VlcPlayer x:Name="myPlayer" Background="Black" />
-        <Slider Grid.Row="1" x:Name="movieProgress" Height="20"/>
-        <Label Grid.Row="2" x:Name="Vol" Content="Volume" HorizontalAlignment="Right" Margin="0,0,81,0"/>
-        <Slider Grid.Row="2" x:Name="volumeControl" ValueChanged="manageVolume" HorizontalAlignment="Right" VerticalAlignment="Center" Width="80" RenderTransformOrigin="0,0.556" Margin="0,5,6,7" Maximum="100" />
-        <Button Grid.Row="2" x:Name="Play" Click="playButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Play" Height="30" Width="50" Margin="82,0,168,0"/>
-        <Button Grid.Row="2" x:Name="Stop" Click="stopButton_Click" Content="Stop" Height="30" Width="40" RenderTransformOrigin="3.356,0.446" Margin="42,0,218,0"/>
-        <Button Grid.Row="2" x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="30" Width="40" RenderTransformOrigin="3.356,0.446" Margin="132,0,128,0"/>
+        <StatusBar Grid.Row="2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Name="lblProgressStatus">00:00:00</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+                <Slider x:Name="movieProgress" Height="20"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
+                <Slider Grid.Row="2" x:Name="volumeControl" ValueChanged="manageVolume" Width="80" Maximum="100" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Stop" Click="stopButton_Click" Content="Stop" Height="20"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Play" Click="playButton_Click" Content="Play" Height="20" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="20"/>
+            </StatusBarItem>
+        </StatusBar>
 
     </Grid>
 </Page>
