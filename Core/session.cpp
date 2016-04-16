@@ -180,6 +180,17 @@ void Session::dht_get_item(Sha1Hash ^ target)
 	session_->dht_get_item(target->ptr());
 }
 
+void Session::dht_get_item(cli::array<char> ^ public_key, System::String ^ salt)
+{
+	if (public_key->Length != 32) return;
+	boost::array<char, 32> k;
+	for (size_t i = 0; i < 32; i++)
+	{
+		k[i] = public_key[i];
+	}
+	session_->dht_get_item(k, interop::to_std_string(salt));
+}
+
 void Session::load_country_db(System::String^ file)
 {
     session_->load_country_db(interop::to_std_string(file).c_str());

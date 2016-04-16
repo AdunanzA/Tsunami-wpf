@@ -3,8 +3,11 @@
 
 
 #include "interop.h"
+#include "bitfield.h"
+#include "sha1_hash.h"
 
 using namespace Tsunami::Core;
+using PeerId = Sha1Hash;
 
 #define PEER_INT_PROP(name) \
     int PeerInfo::name::get() \
@@ -43,6 +46,16 @@ long long PeerInfo::total_upload::get()
     return info_->total_upload;
 }
 
+BitField ^ PeerInfo::pieces::get()
+{
+	return gcnew BitField(info_->pieces);
+}
+
+PeerId ^ PeerInfo::pid::get()
+{
+	return gcnew PeerId(info_->pid);
+}
+
 PEER_INT_PROP(upload_limit);
 PEER_INT_PROP(download_limit);
 
@@ -79,7 +92,6 @@ System::String^ PeerInfo::inet_as_name::get()
 	return interop::from_std_string(info_->client); //inet_as_name
 }
 
-//PEER_INT_PROP(inet_as);
 PEER_INT_PROP(download_queue_length);
 PEER_INT_PROP(timed_out_requests);
 PEER_INT_PROP(busy_requests);

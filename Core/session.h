@@ -86,6 +86,14 @@ namespace Tsunami
 			/// the result is posted as a dht_immutable_item_alert.
 			/// </summary>
 			void dht_get_item(Sha1Hash ^ target);
+			/// <summary>
+			/// query the DHT for a mutable item under the public key ``key``.
+			/// this is an ed25519 key. ``salt`` is optional and may be left
+			/// as an empty string if no salt is to be used.
+			/// if the item is found in the DHT, a dht_mutable_item_alert is
+			/// posted.
+			/// </summary>
+			void dht_get_item(cli::array<char> ^ public_key, System::String ^ salt);
 
 			// TODO add extension
 			void load_country_db(System::String^ file);

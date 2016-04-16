@@ -7,11 +7,14 @@ namespace Tsunami
 {
 	namespace Core
 	{
+		ref class BitField;
+		ref class Sha1Hash;
+
 		public ref class PeerInfo
 		{
 		internal:
 			PeerInfo(libtorrent::peer_info& info);
-
+			using PeerId = Sha1Hash;
 		public:
 			~PeerInfo();
 
@@ -26,8 +29,8 @@ namespace Tsunami
 			property int payload_down_speed { int get(); }
 			property long long total_download { long long get(); }
 			property long long total_upload { long long get(); }
-			// TODO pid
-			// TODO pieces
+			property PeerId ^ pid { PeerId ^ get(); }
+			property BitField ^ pieces { BitField ^ get(); }
 			property int upload_limit { int get(); }
 			property int download_limit { int get(); }
 			property System::TimeSpan last_request { System::TimeSpan get(); }
@@ -42,7 +45,6 @@ namespace Tsunami
 			property int num_hashfails { int get(); }
 			property System::String^ country { System::String^ get(); }
 			property System::String^ inet_as_name { System::String^ get(); }
-			//property int inet_as { int get(); }
 			property int download_queue_length { int get(); }
 			property int timed_out_requests { int get(); }
 			property int busy_requests { int get(); }
