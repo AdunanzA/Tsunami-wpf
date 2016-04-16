@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using xZune.Vlc.Interop.MediaPlayer;
+using xZune.Vlc.Wpf;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -21,10 +22,19 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page
     {
-
+        VlcPlayer myPlayer = new VlcPlayer();
         public Player()
-        {            
+        {
+            if (IntPtr.Size == 8)       // 64 bit - impostare il vs. path
+                myPlayer.Initialize(@"C:\Program Files\VideoLAN\VLC", "--ignore-config");
+            else if (IntPtr.Size == 4)  // 32 bit - impostare il vs. path
+                myPlayer.Initialize(@"C:\DHT\TsunamiLocal\GUI_WPF\LibVlcx86", "--ignore-config");
             InitializeComponent();
+           //Grid.SetRow(myPlayer, 0);
+           // Grid.SetColumn(myPlayer, 0);
+    
+            myGrid.Children.Add(myPlayer);
+            
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;

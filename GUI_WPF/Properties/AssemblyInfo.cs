@@ -32,7 +32,7 @@ using xZune.Vlc;
 //[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
 //Set the path of LibVlc
-[assembly: VlcSettings(@"..\..\..\LibVlc")]
+//[assembly: VlcSettings(@"..\..\..\LibVlc")]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //dove si trovano i dizionari delle risorse specifiche del tema
