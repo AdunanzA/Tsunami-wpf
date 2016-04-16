@@ -58,7 +58,7 @@ namespace Tsunami.Gui.Wpf
         private void stopButton_Click(object sender, EventArgs e)
         {
             myPlayer.Stop();
-            myPlayer.Dispose(); 
+           // myPlayer.Dispose(); 
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;

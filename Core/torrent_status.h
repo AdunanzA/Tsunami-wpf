@@ -88,8 +88,8 @@ namespace Tsunami
 			property long long total_payload_upload { long long get(); }
 			property long long total_failed_bytes { long long get(); }
 			property long long total_reduntant_bytes { long long get(); }
-			property BitField ^ pieces {BitField ^ get(); }
-			property BitField ^ verified_pieces {BitField ^ get(); }
+			property BitField ^ pieces { BitField ^ get(); }
+			property BitField ^ verified_pieces { BitField ^ get(); }
 			property long long total_done { long long get(); }
 			property long long total_wanted_done { long long get(); }
 			property long long total_wanted { long long get(); }
@@ -131,7 +131,6 @@ namespace Tsunami
 			property int seeding_time { int get(); }
 			property int seed_rank { int get(); }
 			property int last_scrape { int get(); }
-			//property int sparse_regions { int get(); }
 			property int priority { int get(); }
 			property state_t state { state_t get(); }
 			property bool need_save_resume { bool get(); }
