@@ -1,4 +1,4 @@
-ï»¿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -76,29 +76,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.9\lib\x86\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.9\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.9\lib\x86\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Release;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.9\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.9\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -223,7 +223,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
-      <ErrorText>Questo progetto fa riferimento a uno o piÃ¹ pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante Ã¨ {0}.</ErrorText>
+      <ErrorText>Questo progetto fa riferimento a uno o più pacchetti NuGet che non sono presenti in questo computer. Usare lo strumento di ripristino dei pacchetti NuGet per scaricarli. Per altre informazioni, vedere http://go.microsoft.com/fwlink/?LinkID=322105. Il file mancante è {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\boost.1.60.0.0\build\native\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.60.0.0\build\native\boost.targets'))" />
   </Target>

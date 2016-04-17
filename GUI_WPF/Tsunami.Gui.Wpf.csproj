@@ -217,13 +217,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if "$(ConfigurationName)"=="Debug" (
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\libtorrent.dll" "$(TargetDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\boost_random-vc140-mt-gd-1_60.dll" "$(TargetDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\boost_system-vc140-mt-gd-1_60.dll" "$(TargetDir)"
+echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(PlatformName)\Debug\libtorrent.dll" "$(TargetDir)"
+echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(PlatformName)\Debug\boost_random-vc140-mt-gd-1_60.dll" "$(TargetDir)"
+echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(PlatformName)\Debug\boost_system-vc140-mt-gd-1_60.dll" "$(TargetDir)"
 )
 if "$(ConfigurationName)"=="Release" (
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Release\libtorrent.dll" "$(TargetDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Release\boost_system-vc140-mt-1_60.dll" "$(TargetDir)"
+echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(PlatformName)\Release\libtorrent.dll" "$(TargetDir)"
+echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(PlatformName)\Release\boost_system-vc140-mt-1_60.dll" "$(TargetDir)"
 )
 
 </PostBuildEvent>
