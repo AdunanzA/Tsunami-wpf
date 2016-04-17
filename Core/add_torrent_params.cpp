@@ -6,6 +6,7 @@
 #include "interop.h"
 #include "torrent_info.h"
 #include "sha1_hash.h"
+#include "error_code.h"
 
 using namespace Tsunami::Core;
 
@@ -225,5 +226,31 @@ void AddTorrentParams::url_seeds::set(cli::array<System::String ^> ^ value)
 	{
 		params_->url_seeds.push_back(interop::to_std_string(s));
 	}
+}
+
+cli::array<char> ^ AddTorrentParams::resume_data::get()
+{
+	size_t size = params_->resume_data.size();
+	cli::array<char> ^ resume = gcnew cli::array<char>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		resume[i] = params_->resume_data[i];
+	}
+	return resume;
+}
+
+void AddTorrentParams::resume_data::set(cli::array<char> ^ value)
+{
+	params_->resume_data.clear();
+	params_->resume_data.reserve(value->Length);
+	for each (char c in value)
+	{
+		params_->resume_data.push_back(c);
+	}
+}
+
+ErrorCode ^ AddTorrentParams::internal_resume_data_error::get()
+{
+	return gcnew ErrorCode(params_->internal_resume_data_error);
 }
 
