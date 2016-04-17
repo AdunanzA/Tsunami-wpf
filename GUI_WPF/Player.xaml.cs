@@ -28,13 +28,17 @@ namespace Tsunami.Gui.Wpf
             if (IntPtr.Size == 8)       // 64 bit - impostare il vs. path
                 myPlayer.Initialize(@"C:\Program Files\VideoLAN\VLC", "--ignore-config");
             else if (IntPtr.Size == 4)  // 32 bit - impostare il vs. path
-                myPlayer.Initialize(@"C:\DHT\TsunamiLocal\GUI_WPF\LibVlcx86", "--ignore-config");
+                myPlayer.Initialize(@"..\..\..\LibVlc", "--ignore-config");
+
+            myPlayer.Background = Brushes.Black;
+
+            Grid.SetRow(myPlayer, 0);
+            Grid.SetColumn(myPlayer, 0);
+            Grid.SetRowSpan(myPlayer, 1);
+
             InitializeComponent();
-           //Grid.SetRow(myPlayer, 0);
-           // Grid.SetColumn(myPlayer, 0);
-    
             myGrid.Children.Add(myPlayer);
-            
+
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
@@ -44,6 +48,8 @@ namespace Tsunami.Gui.Wpf
         {
             myPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
             myPlayer.Play();
+            myPlayer.Stretch = Stretch.Fill;
+            myPlayer.StretchDirection = StretchDirection.Both;
             Play.IsEnabled = false;
             Pause.IsEnabled = true;
             Stop.IsEnabled = true;
@@ -58,7 +64,6 @@ namespace Tsunami.Gui.Wpf
         private void stopButton_Click(object sender, EventArgs e)
         {
             myPlayer.Stop();
-           // myPlayer.Dispose(); 
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;
