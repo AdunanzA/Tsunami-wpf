@@ -311,11 +311,6 @@ namespace Tsunami
 			// comes from an RSS feed.
 			std::string source_feed_url;
 
-			// to support the deprecated use case of reading the resume data into
-			// resume_data field and getting a reject alert, any parse failure is
-			// communicated forward into libtorrent via this field. If this is set, a
-			// fastresume_rejected_alert will be posted.
-			error_code internal_resume_data_error;
 			*/
 
 		internal:

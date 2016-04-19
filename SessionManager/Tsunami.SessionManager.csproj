@@ -266,17 +266,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)"=="Debug" (
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\libtorrent.dll" "$(ProjectDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\boost_random-vc140-mt-gd-1_60.dll" "$(ProjectDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Debug\boost_system-vc140-mt-gd-1_60.dll" "$(ProjectDir)"
-)
-if "$(ConfigurationName)"=="Release" (
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Release\libtorrent.dll" "$(ProjectDir)"
-echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.9\lib\$(PlatformName)\Release\boost_system-vc140-mt-1_60.dll" "$(ProjectDir)"
-)
-
-</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Fody.1.28.3\build\Fody.targets" Condition="Exists('..\packages\Fody.1.28.3\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

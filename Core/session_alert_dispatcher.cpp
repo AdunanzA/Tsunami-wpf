@@ -1,6 +1,6 @@
 #include "session_alert_dispatcher.h"
 
-
+#include "alert.h"
 
 
 
@@ -16,3 +16,4 @@ void SessionAlertDispatcher::set_callback(gcroot<System::Action<Alert^>^> callba
 {
 	callback_ = callback;
 }
+

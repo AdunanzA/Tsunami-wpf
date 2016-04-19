@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include <libtorrent/session.hpp>
 #include <libtorrent/aux_/session_impl.hpp>
 #include <libtorrent/session_status.hpp>
@@ -11,6 +9,7 @@ namespace Tsunami
 {
 	namespace Core
 	{
+
 		ref class Alert;
 		ref class AddTorrentParams;
 		ref class DhtSettings;
@@ -134,7 +133,8 @@ namespace Tsunami
 			void start_natpmp();
 
 		private:
-			SessionAlertDispatcher* dispatcher_;
+			SessionAlertDispatcher * dispatcher_;
+
 			libtorrent::session* session_;
 		};
 	}
