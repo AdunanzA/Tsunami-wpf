@@ -10,6 +10,7 @@ namespace Tsunami
 	{
 		ref class TorrentInfo;
 		ref class Sha1Hash;
+		ref class ErrorCode;
 		
 		public ref class AddTorrentParams
 		{
@@ -234,6 +235,32 @@ namespace Tsunami
 				cli::array<System::String ^> ^ get();
 				void set(cli::array<System::String ^> ^ value);
 			}
+
+			/// <summary>
+			/// The optional parameter, ``resume_data`` can be given if up to date
+			/// fast-resume data is available. The fast-resume data can be acquired
+			/// from a running torrent by calling save_resume_data() on
+			/// torrent_handle. See fast-resume_. The ``vector`` that is passed in
+			/// will be swapped into the running torrent instance with
+			/// ``std::vector::swap()``.
+			/// </summary>
+
+			property cli::array<char> ^ resume_data
+			{
+				cli::array<char> ^ get();
+				void set(cli::array<char> ^ value);
+			}
+
+			/// <summary>
+			/// to support the deprecated use case of reading the resume data into
+			/// resume_data field and getting a reject alert, any parse failure is
+			/// communicated forward into libtorrent via this field. If this is set, a
+			/// fastresume_rejected_alert will be posted.
+			property ErrorCode ^ internal_resume_data_error
+			{
+				ErrorCode ^ get();
+			}
+
 			/*
 
 			// peers to add to the torrent, to be tried to be connected to as
@@ -283,14 +310,6 @@ namespace Tsunami
 			// should point to the URL of the RSS feed this torrent comes from, if it
 			// comes from an RSS feed.
 			std::string source_feed_url;
-
-			// The optional parameter, ``resume_data`` can be given if up to date
-			// fast-resume data is available. The fast-resume data can be acquired
-			// from a running torrent by calling save_resume_data() on
-			// torrent_handle. See fast-resume_. The ``vector`` that is passed in
-			// will be swapped into the running torrent instance with
-			// ``std::vector::swap()``.
-			std::vector<char> resume_data;
 
 			// to support the deprecated use case of reading the resume data into
 			// resume_data field and getting a reject alert, any parse failure is
