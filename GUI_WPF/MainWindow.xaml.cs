@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
 using Microsoft.Win32;
+using System.Configuration;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -16,6 +17,7 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
+            Initialize_CrashReporting();
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
@@ -121,7 +123,42 @@ namespace Tsunami.Gui.Wpf
             PageContainer.Content = new Sharing();
         }
 
+        private void Initialize_CrashReporting()
+        {
+            // TODO: Probabilmente dobbiamo rendere l'inizializzazione async
+            // Uncomment the following after testing to see that NBug is working as configured
+            //NBug.Settings.ReleaseMode = true;
 
+            // NBug configuration (you can also choose to create xml configuration file)
+            //NBug.Settings.StoragePath = NBug.Enums.StoragePath.IsolatedStorage;
+            NBug.Settings.StoragePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            NBug.Settings.UIMode = NBug.Enums.UIMode.Full;
+            var _smtpUser = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpUser"];
+            var _smtpPass = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpPass"];
+            var _smtpServer = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"];
+            var _smtpPort = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpPort"];
+
+
+            // Only one line connection-string no space & no SSL :(
+            NBug.Settings.AddDestinationFromConnectionString(
+                "Type=Mail;"
+                + "From=tsunami-bugs@adunanza.net;"
+                + "Port=" + _smtpPort + ";"
+                + "SmtpServer=" + _smtpServer + ";"
+                + "To=devteam@adunanza.net;"
+                + "UseAttachment=True;"
+                + "UseAuthentication=True;"
+                + "UseSsl=False;"
+                + "Username=" + _smtpUser + ";"
+                + "Password=" + _smtpPass + ";"
+                );
+            // es.: NBug.Settings.AddDestinationFromConnectionString("Type=Mail;From=bugs@xxx.com;Port=465;SmtpServer=smtp.gmail.com;To=support@xxx.com;UseAttachment=True;UseAuthentication=True;UseSsl=True;Username=bugs@xxx.com;Password=xxx;");
+
+            // Hook-up to all possible unhandled exception sources for WPF app, after NBug is configured
+            AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
+            Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
+
+        }
     }
 
 }
