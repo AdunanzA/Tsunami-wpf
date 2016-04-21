@@ -33,7 +33,7 @@
                 <TextBlock Name="lblProgressStatus">00:00:00</TextBlock>
             </StatusBarItem>
             <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                <Slider x:Name="movieProgress" Height="Auto"/>
+                <Slider x:Name="movieProgress" Height="Auto" Thumb.DragStarted="movieProgress_DragStarted" Thumb.DragCompleted="movieProgrss_DragCompleted" ValueChanged="sliProgress_ValueChanged" />
             </StatusBarItem>
             <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
                 <Slider Grid.Column="2" x:Name="volumeControl" ValueChanged="manageVolume" Width="100" Maximum="100" />
