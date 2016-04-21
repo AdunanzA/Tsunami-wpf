@@ -111,6 +111,10 @@ namespace Tsunami.Gui.Wpf
             lblProgressStatus.Text = TimeSpan.FromSeconds(movieProgress.Value).ToString(@"hh\:mm\:ss");
         }
 
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            volumeControl.Value = myPlayer.Volume += (e.Delta > 0) ? 1 : -1;
+        }
 
     }
 }
