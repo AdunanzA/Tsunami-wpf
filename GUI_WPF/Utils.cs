@@ -1,14 +1,19 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tsunami.Utils
+namespace Tsunami
 {
-    class Utils
+    /// <summary>
+    /// The pourpouse of this Class is to Create a dll full with general porpouse functions 
+    /// to use ad includes in vaious projects.
+    /// </summary>
+    public static class Utils
     {
-        public bool IsWindowsOs()
+        public static bool IsWindowsOs()
         {
             if (Environment.OSVersion.Platform == PlatformID.MacOSX && Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -17,7 +22,7 @@ namespace Tsunami.Utils
             else return true;
         }
 
-        public bool Is64BitOs()
+        public static bool Is64BitOs()
         {
             //if (IntPtr.Size == 8)       // 64 bit - impostare il vs. path
             //    return true;
@@ -28,6 +33,17 @@ namespace Tsunami.Utils
                 return true;
             }
             else return false;
+        }
+
+        public static string GetWinVlcPath()
+        {
+            RegistryKey localMachine = Registry.LocalMachine;
+            string InstallPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
+            if (InstallPath != null)
+            {
+                return InstallPath; ;
+            }
+            else throw new Exception("VLC non trovato nel registro"+InstallPath);
         }
     }
 }

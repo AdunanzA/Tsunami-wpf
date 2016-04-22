@@ -1,21 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using xZune.Vlc.Interop.MediaPlayer;
 using xZune.Vlc.Wpf;
 using System.Windows.Controls.Primitives;
+using System.IO;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -25,16 +17,43 @@ namespace Tsunami.Gui.Wpf
     public partial class Player : Page
     {
         DispatcherTimer timer;
-
+        
         bool isDragging = false;
         VlcPlayer myPlayer = new VlcPlayer();
         public Player()
         {
-            
-            if (IntPtr.Size == 8)       // 64 bit - impostare il vs. path
-                myPlayer.Initialize(@"C:\Program Files\VideoLAN\VLC", "--ignore-config");
+            var vlcPath = Utils.GetWinVlcPath();
+            var fileName = "libgcc_s_seh-1.dll";
+
+            if (Utils.IsWindowsOs())   // 64 bit - impostare il vs. path
+            {
+                try
+                {
+                    // Will not overwrite if the destination file already exists.
+                    File.Copy(System.IO.Path.Combine(vlcPath, fileName), System.IO.Path.Combine(vlcPath,fileName),false);
+                }
+
+                // Catch exception if the file was already copied.
+                catch (IOException e)
+                {
+                    Console.WriteLine("Error reading from {0}. Message = {1}", vlcPath, e.Message);
+                }
+          
+                myPlayer.Initialize(vlcPath, "--ignore-config");
+            }
+            //myPlayer.Initialize(@"C:\Program Files\VideoLAN\VLC", "--ignore-config");
             else if (IntPtr.Size == 4)  // 32 bit - impostare il vs. path
-                myPlayer.Initialize(@"..\..\..\LibVlc", "--ignore-config");
+                try
+                {
+                    // Will not overwrite if the destination file already exists.
+                    File.Copy(System.IO.Path.Combine(vlcPath, fileName), System.IO.Path.Combine(vlcPath, fileName), false);
+                }
+
+                // Catch exception if the file was already copied.
+                catch (IOException e)
+                {
+                    Console.WriteLine("Error reading from {0}. Message = {1}", vlcPath, e.Message);
+                }
 
             myPlayer.Background = Brushes.Black;
             Grid.SetRow(myPlayer, 0);

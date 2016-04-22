@@ -134,6 +134,7 @@
     <Compile Include="Sharing.xaml.cs">
       <DependentUpon>Sharing.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils.cs" />
     <Page Include="Downloads.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
