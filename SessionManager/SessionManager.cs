@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Timers;
 using NLog;
 using Microsoft.Owin.Hosting;
+using System.IO;
+//using Tsunami.Core;
 //using Microsoft.Owin;
 
 //[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
@@ -17,51 +19,46 @@ namespace Tsunami
     {
         private static Logger log = LogManager.GetLogger("SessionManager");
         private static Core.Session _torrentSession = new Core.Session();
+
         private static Timer _dispatcherTimer = new Timer();
+        private static Timer _sessionStatusDispatcherTimer = new Timer();
+
+        private static IDisposable webServer;
 
         public static EventHandler<OnTorrentUpdatedEventArgs> TorrentUpdated;
         public static EventHandler<OnTorrentAddedEventArgs> TorrentAdded;
         public static EventHandler<OnTorrentRemovedEventArgs> TorrentRemoved;
         public static EventHandler<OnSessionStatisticsEventArgs> SessionStatisticsUpdate;
+        public static EventHandler<Models.ErrorCode> TorrentError;
 
         private static ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
         private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
 
-        private static Core.Session TorrentSession
-        {
-            get
-            {
-                return _torrentSession;
-            }
-
-            set
-            {
-                _torrentSession = value;
-            }
-        }
+        //private static Core.Session TorrentSession { get; set; }
 
         public static void Initialize()
         {
             Settings.Logger.Inizialize();
 
-            Uri baseAddress = new Uri(string.Format("http://{0}:{1}", Settings.User.WebAddress, Settings.User.WebPort));
-
             // web server
-            //var props = new Dictionary<string, object>();
-            //var address = Microsoft.Owin.BuilderProperties.Address.Create();
-            //address.Host = baseAddress.Host;
-            //address.Port = baseAddress.Port.ToString();
-            //address.Scheme = baseAddress.Scheme;
-            //address.Path = baseAddress.AbsolutePath;
+            if (Settings.User.StartWebOnAppLoad)
+            {
+                startWeb();
+            }
 
-            //props["host.Addresses"] = new List<IDictionary<string, object>> { address.Dictionary };
-            //Microsoft.Owin.Host.HttpListener.OwinServerFactory.Initialize(props);
-            //Microsoft.Owin.Host.HttpListener.OwinServerFactory.Create(new Func<IDictionary<string, object>, Task>, props);
-            WebApp.Start<www.Startup>(baseAddress.ToString());
+            if (File.Exists(".session_state"))
+            {
+                var data = File.ReadAllBytes(".session_state");
+                using (var entry = Core.Util.lazy_bdecode(data))
+                {
+                    _torrentSession.load_state(entry);
+                }
+            }
 
-            // http://www.libtorrent.org/reference-Alerts.html
-            _torrentSession.set_alert_mask(Core.AlertMask.all_categories);
-            _torrentSession.set_alert_dispatch(HandleAlertCallback);
+            _torrentSession.start_dht();
+            _torrentSession.start_lsd();
+            _torrentSession.start_natpmp();
+            _torrentSession.start_upnp();
 
             Alert2Func[typeof(Core.torrent_added_alert)] = a => OnTorrentAddAlert((Core.torrent_added_alert)a);
             Alert2Func[typeof(Core.state_update_alert)] = a => OnTorrentUpdateAlert((Core.state_update_alert)a);
@@ -69,22 +66,61 @@ namespace Tsunami
             //Alert2Func[typeof(Core.torrent_resumed_alert)] = a => OnTorrentResumedAlert((Core.torrent_resumed_alert)a);
             //Alert2Func[typeof(Core.torrent_removed_alert)] = a => OnTorrentRemovedAlert((Core.torrent_removed_alert)a); // torrent removed from torrentSession, always ok
             //Alert2Func[typeof(Core.torrent_deleted_alert)] = a => OnTorrentDeletedAlert((Core.torrent_deleted_alert)a); // finished deleting file for removed torrent
+            Alert2Func[typeof(Core.torrent_error_alert)] = a => OnTorrentErrorAlert((Core.torrent_error_alert)a);
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
-            _dispatcherTimer.Interval = 100;//Settings.Application.DISPATCHER_INTERVAL;
+            _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
             _dispatcherTimer.Start();
-            
+
+            _sessionStatusDispatcherTimer.Elapsed += new ElapsedEventHandler(sessionStatusDispatcher_Tick);
+            _sessionStatusDispatcherTimer.Interval = 1000;
+            _sessionStatusDispatcherTimer.Start();
+
+            // http://www.libtorrent.org/reference-Alerts.html
+            _torrentSession.set_alert_mask(Core.AlertMask.all_categories);
+            _torrentSession.set_alert_dispatch(HandleAlertCallback);
+
+        }
+
+        public static void startWeb()
+        {
+            Uri baseAddress = new Uri(string.Format("http://{0}:{1}", Settings.User.WebAddress, Settings.User.WebPort));
+            webServer = WebApp.Start<www.Startup>(baseAddress.ToString());
+        }
+
+        public static void stopWeb()
+        {
+            webServer?.Dispose();
+            webServer = null;
         }
 
         public static void Terminate()
         {
             _dispatcherTimer.Stop();
+            _sessionStatusDispatcherTimer.Stop();
             _torrentSession.clear_alert_dispatch();
-            //foreach (KeyValuePair<string, Core.TorrentHandle> item in TorrentHandles)
-            //{
-            //    item.Value.Dispose();
-            //}
+            _torrentSession.pause();
+
+            /* http://libtorrent.org/reference-Core.html#save_resume_data() */
+            foreach (Core.TorrentHandle item in _torrentSession.get_torrents())
+            {
+                if (item.is_valid())
+                {
+                    Core.TorrentStatus ts = item.status();
+                    if (ts.has_metadata && ts.need_save_resume)
+                    {
+                        /* http://libtorrent.org/reference-Core.html#save_resume_flags_t */
+                        item.save_resume_data(1 | 2 | 4);
+                    }
+                }
+            }
+            using (var entry = _torrentSession.save_state(0xfffffff))
+            {
+                var data = Core.Util.bencode(entry);
+                File.WriteAllBytes(".session_state", data);
+            }
             _torrentSession.Dispose();
+            stopWeb();
         }
 
         private static Core.TorrentHandle getTorrentHandle(string hash)
@@ -119,14 +155,38 @@ namespace Tsunami
             }
         }
 
+        public static List<Models.FileEntry> getTorrentFiles(string hash)
+        {
+            List<Models.FileEntry> feList = new List<Models.FileEntry>();
+            Models.FileEntry fe;
+
+            Core.TorrentHandle th = getTorrentHandle(hash);
+            Core.TorrentInfo ti = th.torrent_file();
+            for (int i = 0; i <= ti.num_files()-1; i++)
+            {
+                fe = new Models.FileEntry(ti.files().at(i));
+                fe.FileName = ti.files().file_name(i);
+                fe.IsValid = ti.files().is_valid();
+                fe.PieceSize = ti.piece_size(i);
+                //ti.files().name(); ???
+                //ti.trackers();
+                feList.Add(fe);
+            }
+            return feList;
+        }
+
         public static List<Models.TorrentStatus> getTorrentStatusList()
         {
+            _dispatcherTimer.Stop();
+            _sessionStatusDispatcherTimer.Stop();
             List<Models.TorrentStatus> thl = new List<Models.TorrentStatus>();
             foreach (KeyValuePair<string, Core.TorrentHandle> item in TorrentHandles)
             {
                 Core.TorrentHandle th = item.Value;
                 thl.Add(new Models.TorrentStatus(th.status()));// Models.TorrentHandle(item.Value));
             }
+            _dispatcherTimer.Start();
+            _sessionStatusDispatcherTimer.Start();
             return thl;
         }
 
@@ -139,7 +199,21 @@ namespace Tsunami
                 atp.ti = ti;
                 atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
                 atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
-                TorrentSession.async_add_torrent(atp);
+                atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
+                _torrentSession.async_add_torrent(atp);
+            }
+        }
+
+        public static void addTorrent(byte[] buffer)
+        {
+            using (var atp = new Core.AddTorrentParams())
+            using (var ti = new Core.TorrentInfo(buffer))
+            {
+                atp.save_path = Settings.User.PathDownload;
+                atp.ti = ti;
+                atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                _torrentSession.async_add_torrent(atp);
             }
         }
 
@@ -147,7 +221,7 @@ namespace Tsunami
         {
             log.Trace("requested delete({0}, deleteFile:{1})", hash, deleteFileToo);
             Core.TorrentHandle th = getTorrentHandle(hash);
-            TorrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
+            _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
             TorrentHandles.TryRemove(hash, out th);
         }
 
@@ -170,13 +244,12 @@ namespace Tsunami
         private static void dispatcherTimer_Tick(object sender, ElapsedEventArgs e)
         {
             _torrentSession.post_torrent_updates();
-            Core.SessionStatus ss = TorrentSession.status();
-            var evnt = new OnSessionStatisticsEventArgs()
-            {
-                DownloadRate = ss.download_rate,
-                UploadRate = ss.upload_rate
-            };
+        }
 
+        private static void sessionStatusDispatcher_Tick(object sender, ElapsedEventArgs e)
+        {
+            var evnt = new OnSessionStatisticsEventArgs(_torrentSession.status());
+            
             // notify web
             var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
             context.Clients.All.notifySessionStatistics(evnt);
@@ -185,7 +258,9 @@ namespace Tsunami
             SessionStatisticsUpdate?.Invoke(null, evnt);
         }
 
-        public static string GiveMeStateFromEnum(System.Enum stateFromCore)
+
+
+        public static string GiveMeStateFromEnum(Enum stateFromCore)
         {
             string res = "";
             switch (stateFromCore.ToString())
@@ -221,7 +296,7 @@ namespace Tsunami
             return res;
         }
 
-        public static string GiveMeStorageModeFromEnum(System.Enum smFromCore)
+        public static string GiveMeStorageModeFromEnum(Enum smFromCore)
         {
             string sRes = "";
             switch (smFromCore.ToString())
@@ -238,7 +313,7 @@ namespace Tsunami
             }
             return sRes;
         }
- 
+
 
         private static void HandleAlertCallback(Core.Alert a)
         {
@@ -250,46 +325,6 @@ namespace Tsunami
                     run(a);
                 }
             }
-
-            //using (a)
-            //{
-            //    // UPDATED
-            //    if (a.GetType() == typeof(Core.state_update_alert))
-            //    {
-            //        OnTorrentUpdateAlert((Core.state_update_alert)a);
-            //    }
-            //    // ADDED
-            //    else if (a.GetType() == typeof(Core.torrent_added_alert))
-            //    {
-            //        Core.torrent_added_alert taa = (Core.torrent_added_alert)a;
-            //        log.Debug("torrent added: name {0}; status {1}; hash {2}", taa.handle.status().name, taa.handle.status().state.ToString(), taa.handle.status().info_hash.ToString());
-            //        OnTorrentAddAlert((Core.torrent_added_alert)a);
-            //    }
-            //    // PAUSED
-            //    else if (a.GetType() == typeof(Core.torrent_paused_alert)) {
-            //        Core.torrent_paused_alert tpa = (Core.torrent_paused_alert)a;
-            //        log.Debug("torrent " + tpa.handle.status().name + " paused");
-            //    }
-            //    // RESUMED
-            //    else if (a.GetType() == typeof(Core.torrent_resumed_alert))
-            //    {
-            //        Core.torrent_resumed_alert tra = (Core.torrent_resumed_alert)a;
-            //        log.Debug("torrent " + tra.handle.status().name + " resumed");
-            //    }
-            //    // REMOVED 
-            //    else if (a.GetType() == typeof(Core.torrent_removed_alert))
-            //    {
-            //        Core.torrent_removed_alert tra = (Core.torrent_removed_alert)a;
-            //        TorrentRemoved?.Invoke(null, new OnTorrentRemovedEventArgs() { Hash = tra.handle.info_hash().ToString() });
-            //        log.Debug("torrent " + tra.handle.status().name + " removed");
-            //    }
-            //    // DELETED 
-            //    else if (a.GetType() == typeof(Core.torrent_deleted_alert))
-            //    {
-            //        Core.torrent_deleted_alert tra = (Core.torrent_deleted_alert)a;
-            //        log.Debug("files for torrent " + tra.handle.status().name + " deleted");
-            //    }
-            //}
         }
 
         private static void OnTorrentUpdateAlert(Core.state_update_alert a)
@@ -341,6 +376,17 @@ namespace Tsunami
                     TorrentAdded?.Invoke(null, evnt);
                 }
             }
+        }
+
+        private static void OnTorrentErrorAlert(Core.torrent_error_alert a)
+        {
+            var evnt = new Models.ErrorCode(a.error);
+
+            //notify web
+            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+            context.Clients.All.notifyTorrentAdded(evnt);
+
+            TorrentError?.Invoke(null, evnt);
         }
 
         public class OnTorrentAddedEventArgs : EventArgs
@@ -512,49 +558,94 @@ namespace Tsunami
             public string Hash { get; set; }
         }
 
-        public class OnSessionStatisticsEventArgs
+        public class OnSessionStatisticsEventArgs : EventArgs
         {
-            //public int allowed_upload_slots { get; set; }
-            //public int dht_download_rate { get; set; }
-            //public long dht_global_nodes { get; set; }
-            //public int dht_nodes { get; set; }
-            //public int dht_node_cache { get; set; }
-            //public int dht_torrents { get; set; }
-            //public int dht_total_allocations { get; set; }
-            //public int dht_upload_rate { get; set; }
-            //public int disk_read_queue { get; set; }
-            //public int disk_write_queue { get; set; }
+            public int AllowedUploadSlots { get; set; }
+            public int DhtDownloadRate { get; set; }
+            public long DhtGlobalNodes { get; set; }
+            public int DhtNodes { get; set; }
+            public int DhtNodeCache { get; set; }
+            public int DhtTorrents { get; set; }
+            public int DhtTotalAllocations { get; set; }
+            public int DhtUploadRate { get; set; }
+            public int DiskReadQueue { get; set; }
+            public int DiskWriteQueue { get; set; }
             public int DownloadRate { get; set; }
-            //public int down_bandwidth_bytes_queue { get; set; }
-            //public int down_bandwidth_queue { get; set; }
-            //public bool has_incoming_connections { get; set; }
-            //public int ip_overhead_download_rate { get; set; }
-            //public int ip_overhead_upload_rate { get; set; }
-            //public int num_peers { get; set; }
-            //public int num_unchoked { get; set; }
-            //public int optimistic_unchoke_counter { get; set; }
-            //public int payload_download_rate { get; set; }
-            //public int payload_upload_rate { get; set; }
-            //public int peerlist_size { get; set; }
-            //public long total_dht_download { get; set; }
-            //public long total_dht_upload { get; set; }
-            //public long total_download { get; set; }
-            //public long total_failed_bytes { get; set; }
-            //public long total_ip_overhead_download { get; set; }
-            //public long total_ip_overhead_upload { get; set; }
-            //public long total_payload_download { get; set; }
-            //public long total_payload_upload { get; set; }
-            //public long total_redundant_bytes { get; set; }
-            //public long total_tracker_download { get; set; }
-            //public long total_tracker_upload { get; set; }
-            //public long total_upload { get; set; }
-            //public int tracker_download_rate { get; set; }
-            //public int tracker_upload_rate { get; set; }
-            //public int unchoke_counter { get; set; }
+            public int DownBandwidthBytesQueue { get; set; }
+            public int DownBandwidthQueue { get; set; }
+            public bool HasIncomingConnections { get; set; }
+            public int IpOverheadDownloadRate { get; set; }
+            public int IpOverheadUploadRate { get; set; }
+            public int NumPeers { get; set; }
+            public int NumUnchoked { get; set; }
+            public int OptimisticUnchokeCounter { get; set; }
+            public int PayloadDownloadRate { get; set; }
+            public int PayloadUploadRate { get; set; }
+            public int PeerlistSize { get; set; }
+            public long TotalDhtDownload { get; set; }
+            public long TotalDhtUpload { get; set; }
+            public long TotalDownload { get; set; }
+            public long TotalFailedBytes { get; set; }
+            public long TotalIpOverheadDownload { get; set; }
+            public long TotalIpOverheadUpload { get; set; }
+            public long TotalPayloadDownload { get; set; }
+            public long TotalPayloadUpload { get; set; }
+            public long TotalRedundantBytes { get; set; }
+            public long TotalTrackerDownload { get; set; }
+            public long TotalTrackerUpload { get; set; }
+            public long TotalUpload { get; set; }
+            public int TrackerDownloadRate { get; set; }
+            public int TrackerUploadRate { get; set; }
+            public int UnchokeCounter { get; set; }
             public int UploadRate { get; set; }
-            //public int up_bandwidth_bytes_queue { get; set; }
-            //public int up_bandwidth_queue { get; set; }
+            public int UpBandwidthBytesQueue { get; set; }
+            public int UpBandwidthQueue { get; set; }
 
+            public OnSessionStatisticsEventArgs() { /* nothing to do. just for serializator */ }
+
+            public OnSessionStatisticsEventArgs(Core.SessionStatus ss)
+            {
+                AllowedUploadSlots = ss.allowed_upload_slots;
+                DhtDownloadRate = ss.dht_download_rate;
+                DhtGlobalNodes = ss.dht_global_nodes;
+                DhtNodes = ss.dht_nodes;
+                DhtNodeCache = ss.dht_node_cache;
+                DhtTorrents = ss.dht_torrents;
+                DhtTotalAllocations = ss.dht_total_allocations;
+                DhtUploadRate = ss.dht_upload_rate;
+                DiskReadQueue = ss.disk_read_queue;
+                DiskWriteQueue = ss.disk_write_queue;
+                DownloadRate = ss.download_rate;
+                DownBandwidthBytesQueue = ss.down_bandwidth_bytes_queue;
+                DownBandwidthQueue = ss.down_bandwidth_queue;
+                HasIncomingConnections = ss.has_incoming_connections;
+                IpOverheadDownloadRate = ss.ip_overhead_download_rate;
+                IpOverheadUploadRate = ss.ip_overhead_upload_rate;
+                NumPeers = ss.num_peers;
+                NumUnchoked = ss.num_unchoked;
+                OptimisticUnchokeCounter = ss.optimistic_unchoke_counter;
+                PayloadDownloadRate = ss.payload_download_rate;
+                PayloadUploadRate = ss.payload_upload_rate;
+                PeerlistSize = ss.peerlist_size;
+                TotalDhtDownload = ss.total_dht_download;
+                TotalDhtUpload = ss.total_dht_upload;
+                TotalDownload = ss.total_download;
+                TotalFailedBytes = ss.total_failed_bytes;
+                TotalIpOverheadDownload = ss.total_ip_overhead_download;
+                TotalIpOverheadUpload = ss.total_ip_overhead_upload;
+                TotalPayloadDownload = ss.total_payload_download;
+                TotalPayloadUpload = ss.total_payload_upload;
+                TotalRedundantBytes = ss.total_redundant_bytes;
+                TotalTrackerDownload = ss.total_tracker_download;
+                TotalTrackerUpload = ss.total_tracker_upload;
+                TotalUpload = ss.total_upload;
+                TrackerDownloadRate = ss.tracker_download_rate;
+                TrackerUploadRate = ss.tracker_upload_rate;
+                UnchokeCounter = ss.unchoke_counter;
+                UploadRate = ss.upload_rate;
+                UpBandwidthBytesQueue = ss.up_bandwidth_bytes_queue;
+                UpBandwidthQueue = ss.up_bandwidth_queue;
+            }
         }
     }
 }

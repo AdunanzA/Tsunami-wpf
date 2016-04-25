@@ -125,5 +125,24 @@ namespace Tsunami.Controllers
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
         }
+
+        [Route("api/torrents/filelist")]
+        [HttpPost]
+        public List<Models.FileEntry> TorrentFileList([FromBody]string sha1)
+        {
+            try
+            {
+                log.Trace("requested TorrentFileList({0})", sha1);
+                return SessionManager.getTorrentFiles(sha1);
+            }
+            catch (Exception ex)
+            {
+                if (log.IsDebugEnabled)
+                {
+                    log.Warn(ex);
+                }
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+        }
     }
 }

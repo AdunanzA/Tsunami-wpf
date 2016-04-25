@@ -24,7 +24,12 @@ namespace Tsunami.www
             Clients.All.refreshList();
         }
 
-        public void notifySessionStatistics(SessionManager.OnSessionStatisticsEventArgs ss)
+        public void NotifyError(Models.ErrorCode ec)
+        {
+            Clients.All.notifyError(ec);
+        }
+
+        public void NotifySessionStatistics(SessionManager.OnSessionStatisticsEventArgs ss)
         {
             Clients.All.notifySessionStatistics(ss);
         }

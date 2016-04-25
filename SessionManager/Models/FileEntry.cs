@@ -20,6 +20,10 @@ namespace Tsunami.Models
         public bool SymlinkAttribute { get; set; }
         public string SymlinkPath { get; set; }
 
+        public string FileName { get; set; }
+        public bool IsValid { get; set; }
+        public int PieceSize { get; set; }
+
         public FileEntry() { /* nothing to do. just for serializator */ }
 
         public FileEntry(Core.FileEntry fe)

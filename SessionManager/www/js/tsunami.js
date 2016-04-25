@@ -6,7 +6,7 @@
 /// <reference path="knockstrap.min.js" />
 /// <reference path="toastr.min.js" />
 /// <reference path="Chart.js" />
-
+/// <reference path="fileinput.js" />
 
 var uri = 'api/torrents';
 var twm = new TorrentViewModel;
@@ -72,19 +72,122 @@ function Torrent(data) {
 
 }
 
+function FileEntry (data) {
+    if (!data) {
+        data = { };
+    }
+    this.executableAttribute = data.ExecutableAttribute;
+    this.filehash = data.Filehash;
+    this.fileBase = data.FileBase;
+    this.hiddenAttribute = data.HiddenAttribute;
+    this.mtime = data.Mtime;
+    this.offset = data.Offset;
+    this.padFile = data.PadFile;
+    this.path = data.Path;
+    this.size = data.Size;
+    this.symlinkAttribute = data.SymlinkAttribute;
+    this.symlinkPath = data.SymlinkPath;
+    this.fileName = data.FileName;
+    this.isValid = data.IsValid;
+    this.pieceSize = data.PieceSize;
+}
+
 function TorrentViewModel() {
     var self = this;
     self.Torrents = ko.observableArray([]);
+    self.Files = ko.observableArray([]);
     self.Busy = ko.observable(false);
     self.Connected = ko.observable(false);
+    self.Debug = ko.observable(false);
     
+    self.AllowedUploadSlots = ko.observable(0);
+    self.DhtDownloadRate = ko.observable(0);
+    self.DhtGlobalNodes = ko.observable(0);
+    self.DhtNodes = ko.observable(0);
+    self.DhtNodeCache = ko.observable(0);
+    self.DhtTorrents = ko.observable(0);
+    self.DhtTotalAllocations = ko.observable(0);
+    self.DhtUploadRate = ko.observable(0);
+    self.DiskReadQueue = ko.observable(0);
+    self.DiskWriteQueue = ko.observable(0);
     self.DownloadRate = ko.observable(0);
+    self.DownBandwidthBytesQueue = ko.observable(0);
+    self.DownBandwidthQueue = ko.observable(0);
+    self.HasIncomingConnections = ko.observable(0);
+    self.IpOverheadDownloadRate = ko.observable(0);
+    self.IpOverheadUploadRate = ko.observable(0);
+    self.NumPeers = ko.observable(0);
+    self.NumUnchoked = ko.observable(0);
+    self.OptimisticUnchokeCounter = ko.observable(0);
+    self.PayloadDownloadRate = ko.observable(0);
+    self.PayloadUploadRate = ko.observable(0);
+    self.PeerlistSize = ko.observable(0);
+    self.TotalDhtDownload = ko.observable(0);
+    self.TotalDhtUpload = ko.observable(0);
+    self.TotalDownload = ko.observable(0);
+    self.TotalFailedBytes = ko.observable(0);
+    self.TotalIpOverheadDownload = ko.observable(0);
+    self.TotalIpOverheadUpload = ko.observable(0);
+    self.TotalPayloadDownload = ko.observable(0);
+    self.TotalPayloadUpload = ko.observable(0);
+    self.TotalRedundantBytes = ko.observable(0);
+    self.TotalTrackerDownload = ko.observable(0);
+    self.TotalTrackerUpload = ko.observable(0);
+    self.TotalUpload = ko.observable(0);
+    self.TrackerDownloadRate = ko.observable(0);
+    self.TrackerUploadRate = ko.observable(0);
+    self.UnchokeCounter = ko.observable(0);
     self.UploadRate = ko.observable(0);
+    self.UpBandwidthBytesQueue = ko.observable(0);
+    self.UpBandwidthQueue = ko.observable(0);
+
+    self.updateSessionStatistics = function (data) {
+        self.AllowedUploadSlots(data.AllowedUploadSlots);
+        self.DhtDownloadRate(data.DhtDownloadRate);
+        self.DhtGlobalNodes(data.DhtGlobalNodes);
+        self.DhtNodes(data.DhtNodes);
+        self.DhtNodeCache(data.DhtNodeCache);
+        self.DhtTorrents(data.DhtTorrents);
+        self.DhtTotalAllocations(data.DhtTotalAllocations);
+        self.DhtUploadRate(data.DhtUploadRate);
+        self.DiskReadQueue(data.DiskReadQueue);
+        self.DiskWriteQueue(data.DiskWriteQueue);
+        self.DownloadRate(data.DownloadRate);
+        self.DownBandwidthBytesQueue(data.DownBandwidthBytesQueue);
+        self.DownBandwidthQueue(data.DownBandwidthQueue);
+        self.HasIncomingConnections(data.HasIncomingConnections);
+        self.IpOverheadDownloadRate(data.IpOverheadDownloadRate);
+        self.IpOverheadUploadRate(data.IpOverheadUploadRate);
+        self.NumPeers(data.NumPeers);
+        self.NumUnchoked(data.NumUnchoked);
+        self.OptimisticUnchokeCounter(data.OptimisticUnchokeCounter);
+        self.PayloadDownloadRate(data.PayloadDownloadRate);
+        self.PayloadUploadRate(data.PayloadUploadRate);
+        self.PeerlistSize(data.PeerlistSize);
+        self.TotalDhtDownload(data.TotalDhtDownload);
+        self.TotalDhtUpload(data.TotalDhtUpload);
+        self.TotalDownload(data.TotalDownload);
+        self.TotalFailedBytes(data.TotalFailedBytes);
+        self.TotalIpOverheadDownload(data.TotalIpOverheadDownload);
+        self.TotalIpOverheadUpload(data.TotalIpOverheadUpload);
+        self.TotalPayloadDownload(data.TotalPayloadDownload);
+        self.TotalPayloadUpload(data.TotalPayloadUpload);
+        self.TotalRedundantBytes(data.TotalRedundantBytes);
+        self.TotalTrackerDownload(data.TotalTrackerDownload);
+        self.TotalTrackerUpload(data.TotalTrackerUpload);
+        self.TotalUpload(data.TotalUpload);
+        self.TrackerDownloadRate(data.TrackerDownloadRate);
+        self.TrackerUploadRate(data.TrackerUploadRate);
+        self.UnchokeCounter(data.UnchokeCounter);
+        self.UploadRate(data.UploadRate);
+        self.UpBandwidthBytesQueue(data.UpBandwidthBytesQueue);
+        self.UpBandwidthQueue(data.UpBandwidthQueue);
+    }
 
     self.AddTorrent = function (trdata) {
         self.Torrents.push(trdata);
         self.Torrents().sort(function (left, right) { return left.queue_position == right.queue_position ? 0 : (left.queue_position < right.queue_position ? -1 : 1) });
-    };
+    }
 
     self.PauseTorrent = function (torrentItem) {
         self.Busy(true);
@@ -188,62 +291,40 @@ function TorrentViewModel() {
 
         $('#addTorrentModal').modal('show');
     }
+
+    self.ShowFiles = function (torrentItem) {
+        self.Busy(true);
+
+        $('#showFileModalClose').off('click').on('click', function () {
+            self.Busy(false);
+            $('#showFileModal').modal('hide');
+        });
+
+        self.Files.removeAll();
+        $.post('/api/torrents/filelist', { '': torrentItem.Hash() })
+            .done(function (results) {
+                $.each(results, function (k, i) {
+                    self.Files.push(new FileEntry(i));
+                    //fe = new FileEntry(i);
+                    //console.debug(fe.fileName);
+                });
+                //twm.Busy(false);
+            })
+            .fail(function (xhr, textStatus, errorThrown) {
+                $('#showFileModal').modal('hide');
+                toastr.error("Cannot retrieve filelist!", "Error: " + xhr.responseText);
+                console.error("error retrieving " + uri + '/' + hash);
+                console.error(xhr.statusText);
+                console.error(textStatus);
+                console.error(error);
+                twm.Busy(false);
+            });
+
+        $('#showFileModal').modal('show');
+    }
 };
 
 $(document).ready(function () {
-    // set up signalR connection to receive message from SessionManager
-    $.connection.hub.url = location.origin + "/signalr";
-    var sr = $.connection.signalRHub;
-
-    // create knockout binding for our TorrentViewModel
-    ko.applyBindings(twm);
-
-    // retrieve torrent from WebApi
-    //retrieveTorrentList();
-
-    // http://nnnick.github.io/Chart.js/docs-v2/
-    Chart.defaults.global.legend.display = false;
-    Chart.defaults.global.responsive = true;
-    Chart.defaults.global.maintainAspectRatio = false;
-    Chart.defaults.global.defaultFontFamily = "monospace";
-    Chart.defaults.global.tooltips.enabled = false;
-    //Chart.defaults.global.elements.line.tension = 0;
-    Chart.defaults.global.elements.point.radius = 0;
-    Chart.defaults.global.elements.point.borderWidth = 0;
-    Chart.defaults.global.elements.point.hoverRadius = 0;
-    Chart.defaults.global.elements.point.hoverBorderWidth = 0;
-
-
-
-    var ctx = $("#torrentChart");
-    torrentChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: '',
-                data: [0]
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }],
-                xAxes: [{
-                    display: false,
-                    ticks: {
-                        min: 0,
-                        max: 20000,
-                        autoSkip: true
-                    }
-                }]
-            }
-        }
-    });
-
     // setting up toastr notification (http://codeseven.github.io/toastr/demo.html)
     toastr.options = {
         "closeButton": false,
@@ -262,6 +343,101 @@ $(document).ready(function () {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
+
+    // set up signalR connection to receive message from SessionManager
+    $.connection.hub.url = location.origin + "/signalr";
+    var sr = $.connection.signalRHub;
+
+    // create knockout binding for our TorrentViewModel
+    ko.applyBindings(twm);
+
+    // http://www.bootstraptoggle.com/
+    // debug check box
+    $('#checkDebug').change(function () {
+        var isAdvanced = $(this).prop('checked');
+        twm.Debug(isAdvanced);
+        $.connection.hub.logging = isAdvanced;
+    })
+
+    // retrieve torrent from WebApi
+    //retrieveTorrentList();
+
+    // set default chart elements
+    // http://nnnick.github.io/Chart.js/docs-v2/
+    Chart.defaults.global.legend.display = false;
+    Chart.defaults.global.responsive = true;
+    Chart.defaults.global.maintainAspectRatio = true;
+    Chart.defaults.global.defaultFontFamily = "monospace";
+    Chart.defaults.global.tooltips.enabled = false;
+    //Chart.defaults.global.elements.line.tension = 0;
+    Chart.defaults.global.elements.point.radius = 0;
+    Chart.defaults.global.elements.point.borderWidth = 0;
+    Chart.defaults.global.elements.point.hoverRadius = 0;
+    Chart.defaults.global.elements.point.hoverBorderWidth = 0;
+
+    // create chart element
+    //var ctxD = $("#torrentChartD");
+    torrentChartD = new Chart($("#torrentChartD"), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: '',
+                    backgroundColor: "rgba(0,220,0,0.2)",
+                    tension: 0.1,
+                    data: [0]
+                }
+            ]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 1,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    display: false,
+                    ticks: {
+                        autoSkip: true
+                    }
+                }]
+            }
+        }
+    });
+    //var ctxU = $("#torrentChartU");
+    torrentChartU = new Chart($("#torrentChartU"), {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: '',
+                    backgroundColor: "rgba(220,50,50,0.2)",
+                    data: [0]
+                }
+            ]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 1,
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    display: false,
+                    ticks: {
+                        autoSkip: true
+                    }
+                }]
+            }
+        }
+    });
+
 
     // on notification from SessionManager update progress
     sr.client.notifyUpdateProgress = function (torrentStatus) {
@@ -282,18 +458,29 @@ $(document).ready(function () {
         }
     }
 
+    // on sessionstatistics update from SessionManager, update TorrentViewModel
     sr.client.notifySessionStatistics = function (sessionStatistics) {
-        if (!twm.Busy() && twm.Torrents().length > 0) {
+        if ( !twm.Busy() ) {//&& twm.Torrents().length > 0) {
             twm.Busy(true);
-            twm.DownloadRate(sessionStatistics.DownloadRate);
-            twm.UploadRate(sessionStatistics.UploadRate);
-            if (torrentChart.data.datasets[0].data.length == 100) {
-                torrentChart.data.datasets[0].data.shift();
-                torrentChart.data.labels.shift();
+            twm.updateSessionStatistics(sessionStatistics);
+
+            // updating download chart
+            if (torrentChartD.data.datasets[0].data.length == 30) {
+                torrentChartD.data.datasets[0].data.shift();
+                torrentChartD.data.labels.shift();
             }
-            torrentChart.data.datasets[0].data.push(sessionStatistics.DownloadRate/1000);
-            torrentChart.data.labels.push(torrentChart.data.datasets[0].data.length);
-            torrentChart.update();
+            torrentChartD.data.datasets[0].data.push(sessionStatistics.DownloadRate/1000);
+            torrentChartD.data.labels.push(torrentChartD.data.datasets[0].data.length);
+            torrentChartD.update();
+
+            // updating upload chart
+            if (torrentChartU.data.datasets[0].data.length == 30) {
+                torrentChartU.data.datasets[0].data.shift();
+                torrentChartU.data.labels.shift();
+            }
+            torrentChartU.data.datasets[0].data.push(sessionStatistics.UploadRate / 1000);
+            torrentChartU.data.labels.push(torrentChartU.data.datasets[0].data.length);
+            torrentChartU.update();
             twm.Busy(false);
         }
     }
@@ -304,18 +491,48 @@ $(document).ready(function () {
         retrieveTorrent(hash);
     }
 
+    sr.client.notifyError = function (errorCode) {
+        toastr.error("Error from Tsunami: " + errorCode.Message);
+    }
+
     // on torrent deleted SessionManager request to refresh torrent list
     sr.client.refreshList = function () {
         toastr.info("Receiving refresh list from <b>Tsunami</b>");
         retrieveTorrentList();
     }
 
-    // start listening from SessionManager
-    $.connection.hub.start().done(function () {
-        twm.Connected(true);
-        toastr.success("Successfully connected to <b>Tsunami</b>!");
+    // wire up hub events
+    $.connection.hub.error(function (error) {
+        toastr.error("Error received from <b>Tsunami</b>: " + error);
+    });
+    $.connection.hub.connectionSlow(function () {
+        toastr.warning("Slow connection with <b>Tsunami</b>");
+    });
+    $.connection.hub.reconnecting(function () {
+        twm.Connected(false);
+        toastr.warning("Reconnecting to <b>Tsunami</b>");
     });
 
+    $.connection.hub.reconnected(function () {
+        twm.Connected(true);
+        toastr.success("Connected to <b>Tsunami</b>");
+    });
+
+    $.connection.hub.disconnected(function () {
+        twm.Connected(false);
+        toastr.error("Disconnected from <b>Tsunami</b>");
+    });
+
+    // start listening from SessionManager
+    $.connection.hub.start()
+        .done(function () {
+            twm.Connected(true);
+            toastr.success("Successfully connected to <b>Tsunami</b>!");
+        })
+        .fail(function () {
+            twm.Connected(false);
+            toastr.error("Cannot connect to <b>Tsunami</b>!");
+        });
 });
 
 function retrieveTorrent(hash) {
@@ -329,9 +546,8 @@ function retrieveTorrent(hash) {
     .fail(function (xhr, textStatus, errorThrown) {
         toastr.error("Cannot retrieve torrent!", "Error: " + xhr.responseText);
         console.error("error retrieving " + uri + '/' + hash);
-        console.error(xhr.statusText);
-        console.error(textStatus);
-        console.error(error);
+        console.error(xhr.responseText);
+        console.error(errorThrown);
         twm.Busy(false);
     });
 }
@@ -349,10 +565,9 @@ function retrieveTorrentList() {
     })
     .fail(function (xhr, textStatus, errorThrown) {
         toastr.error("Cannot retrieve torrent!", "Error: " + xhr.responseText);
-        console.error("error retrieving " + uri + '/' + hash);
-        console.error(xhr.statusText);
-        console.error(textStatus);
-        console.error(error);
+        console.error("error retrieving " + uri);
+        console.error(xhr.responseText);
+        console.error(errorThrown);
         twm.Busy(false);
     });
 }

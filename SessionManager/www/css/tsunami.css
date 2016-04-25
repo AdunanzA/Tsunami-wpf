@@ -60,12 +60,19 @@
     -moz-transition-property: all;
     -o-transition-property: all;
     transition-property: all;
+    /*cursor: pointer;*/
 }
-
+/*.rowGeneric:hover {
+    background-color: #e5e5e5;
+}*/
 .rowPaused {
     font-style:italic;
     color:#ccc;
+    /*cursor: pointer;*/
 }
+/*.rowPaused:hover {
+    background-color: #e5e5e5;
+}*/
 
 .pbPaused {
     background-color:#ddd !important;
@@ -113,17 +120,117 @@
     display: block;
 }
 
+/* waiting spinner */
 .glyphicon-refresh-animate {
     -animation: spin .7s infinite linear;
     -webkit-animation: spin2 .7s infinite linear;
 }
-
 @-webkit-keyframes spin2 {
     from { -webkit-transform: rotate(0deg);}
     to { -webkit-transform: rotate(360deg);}
 }
-
 @keyframes spin {
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
+}
+
+/* led status 
+    http://codepen.io/fskirschbaum/pen/MYJNaj
+*/
+.led-red {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #F00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 12px;
+  -webkit-animation: blinkRed 0.5s infinite;
+  -moz-animation: blinkRed 0.5s infinite;
+  -ms-animation: blinkRed 0.5s infinite;
+  -o-animation: blinkRed 0.5s infinite;
+  animation: blinkRed 0.5s infinite;
+}
+
+@-webkit-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-moz-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-ms-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-o-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+
+.led-yellow {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #FF0;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 12px;
+  -webkit-animation: blinkYellow 1s infinite;
+  -moz-animation: blinkYellow 1s infinite;
+  -ms-animation: blinkYellow 1s infinite;
+  -o-animation: blinkYellow 1s infinite;
+  animation: blinkYellow 1s infinite;
+}
+
+@-webkit-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-moz-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-ms-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-o-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+
+.led-green {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #ABFF00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+}
+
+.led-blue {
+  margin: 0 auto;
+  width: 16px;
+  height: 16px;
+  background-color: #24E0FF;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #006 0 -1px 9px, #3F8CFF 0 2px 14px;
 }

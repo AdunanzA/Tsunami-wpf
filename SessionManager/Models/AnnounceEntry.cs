@@ -56,21 +56,5 @@ namespace Tsunami.Models
             MinAnnounceIn = ae.min_announce_in();
             NextAnnounceIn = ae.next_announce_in();
         }
-
-        //public void Reset()
-        //{
-        //    _ae.reset();
-        //}
-
-        //public void Trim()
-        //{
-        //    _ae.trim();
-        //}
-
-        //public bool CanAnnounce(DateTime now, bool is_seed)
-        //{
-        //    return _ae.can_announce(now, is_seed);
-        //}
-
     }
 }

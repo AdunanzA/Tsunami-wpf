@@ -13,7 +13,7 @@ namespace Tsunami.Settings
     public static class User
     {
         private static string _pathDownload = @"c:\download";
-        private static bool _startWebOnAppLoad = false;
+        private static bool _startWebOnAppLoad = true;
         private static string _webAddress = "localhost";
         private static string _webPort = "4242";
         private static bool _webUseAuth = false;
