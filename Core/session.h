@@ -131,6 +131,8 @@ namespace Tsunami
 			// TODO add port mapping
 			void stop_natpmp();
 			void start_natpmp();
+			void post_dht_stats();
+			void post_session_stats();
 
 		private:
 			SessionAlertDispatcher * dispatcher_;

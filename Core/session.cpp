@@ -298,3 +298,13 @@ void Session::start_natpmp()
 {
     session_->start_natpmp();
 }
+
+void Session::post_dht_stats()
+{
+	session_->post_dht_stats();
+}
+
+void Session::post_session_stats()
+{
+	session_->post_session_stats();
+}

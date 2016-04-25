@@ -243,10 +243,10 @@ void AddTorrentParams::resume_data::set(cli::array<char> ^ value)
 {
 	params_->resume_data.clear();
 	params_->resume_data.reserve(value->Length);
-	for each (char c in value)
-	{
-		params_->resume_data.push_back(c);
-	}
+	pin_ptr<char> pin(&value[0]);
+	std::copy(	static_cast<char*>(pin),
+				static_cast<char*>(pin + value->Length), 
+				params_->resume_data.begin());
 }
 
 ErrorCode ^ AddTorrentParams::internal_resume_data_error::get()
