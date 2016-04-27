@@ -105,6 +105,12 @@
     <ClInclude Include="file_slice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dht_lookup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dht_routing_bucket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="session.cpp">
@@ -192,6 +198,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="file_slice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dht_lookup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dht_routing_bucket.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -174,6 +174,8 @@ namespace Tsunami
 		ref class PeerRequest;
 		ref class FeedHandle;
 		ref class FeedItem;
+		ref class DhtLookup;
+		ref class DhtRoutingBucket;
 		
 		/// <summary>
 		/// This is a base class for alerts that are associated with a specific
@@ -1308,6 +1310,26 @@ namespace Tsunami
 			property long long seq {long long get(); }
 		private:
 			libtorrent::dht_put_alert * alert_;
+		};
+
+		/// <summary>
+		/// contains current DHT state. Posted in response to session::post_dht_stats().
+		/// </summary>
+
+		public ref class dht_stats_alert : Alert
+		{
+		public:
+			dht_stats_alert(libtorrent::dht_stats_alert * alert);
+		/// <summary> a vector of the currently running DHT lookups. </summary>
+			property cli::array<DhtLookup ^> ^ active_requests { cli::array<DhtLookup ^> ^ get(); }
+
+		/// <summary>
+		/// contains information about every bucket in the DHT routing
+		/// table.
+		/// </summary>
+			property cli::array<DhtRoutingBucket ^> ^ routing_table { cli::array<DhtRoutingBucket ^> ^ get(); }
+		private:
+			libtorrent::dht_stats_alert * alert_;
 		};
 
 		/// <summary>

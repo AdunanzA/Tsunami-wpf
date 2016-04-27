@@ -11,6 +11,8 @@
 #include "peer_request.h"
 #include "feed_handle.h"
 #include "feed_item.h"
+#include "dht_lookup.h"
+#include "dht_routing_bucket.h"
 
 
 using namespace Tsunami::Core;
@@ -995,3 +997,47 @@ ErrorCode ^ i2p_alert::error::get()
 {
 	return gcnew ErrorCode(alert_->error);
 }
+
+dht_stats_alert::dht_stats_alert(libtorrent::dht_stats_alert * a)
+	: Alert(a),
+	alert_(a)
+{
+	
+}
+
+cli::array<DhtLookup ^> ^ dht_stats_alert::active_requests::get()
+{
+	size_t size = alert_->active_requests.size();
+	cli::array<DhtLookup ^> ^ dht_lookup = gcnew cli::array<DhtLookup ^>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		dht_lookup[i] = gcnew DhtLookup(alert_->active_requests[i]);
+	}
+	return dht_lookup;
+}
+
+cli::array<DhtRoutingBucket ^> ^ dht_stats_alert::routing_table::get()
+{
+	size_t size = alert_->routing_table.size();
+	cli::array<DhtRoutingBucket ^> ^ routing_table = gcnew cli::array<DhtRoutingBucket ^>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		routing_table[i] = gcnew DhtRoutingBucket(alert_->routing_table[i]);
+	}
+	return routing_table;
+}
+
+
+
+/*
+public ref class dht_stats_alert : Alert
+{
+/// <summary> a vector of the currently running DHT lookups. </summary>
+property cli::array<DhtLookup ^> ^ active_requests { cli::array<DhtLookup ^> ^ get(); }
+
+/// <summary>
+/// contains information about every bucket in the DHT routing
+/// table.
+/// </summary>
+property cli::array<DhtRoutingBucket ^> ^ routing_table { cli::array<DhtRoutingBucket ^> ^ get(); }
+};*/

@@ -158,6 +158,8 @@
     <ClInclude Include="add_torrent_params.h" />
     <ClInclude Include="alert.h" />
     <ClInclude Include="bitfield.h" />
+    <ClInclude Include="dht_lookup.h" />
+    <ClInclude Include="dht_routing_bucket.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="alert_types.h" />
     <ClInclude Include="announce_entry.h" />
@@ -193,6 +195,8 @@
     <ClCompile Include="announce_entry.cpp" />
     <ClCompile Include="bitfield.cpp" />
     <ClCompile Include="create_torrent.cpp" />
+    <ClCompile Include="dht_lookup.cpp" />
+    <ClCompile Include="dht_routing_bucket.cpp" />
     <ClCompile Include="dht_settings.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="error_code.cpp" />
