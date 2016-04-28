@@ -131,9 +131,6 @@
     <Compile Include="Search.xaml.cs">
       <DependentUpon>Search.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Sharing.xaml.cs">
-      <DependentUpon>Sharing.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Utils.cs" />
     <Page Include="Downloads.xaml">
       <SubType>Designer</SubType>
@@ -164,10 +161,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Search.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Sharing.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

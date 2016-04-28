@@ -13,6 +13,9 @@ namespace Tsunami.Gui.Wpf
     public partial class MainWindow : Window
     {
         public ObservableCollection<int, string, double> Torrentlist { get; private set; }
+        private object aduDownload = new Downloads();
+        private object aduSearch = new Search();
+        private object aduPlayer = new Player();
 
         public MainWindow()
         {
@@ -21,7 +24,7 @@ namespace Tsunami.Gui.Wpf
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
-
+            
             SessionManager.Initialize();
             SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
@@ -105,24 +108,19 @@ namespace Tsunami.Gui.Wpf
         //page navigation methods
         private void downloadsButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = new Downloads();
+            PageContainer.Content = aduDownload; 
         }
 
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = new Search();
+            PageContainer.Content = aduSearch; 
         }
 
         private void playerButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = new Player();
+            PageContainer.Content = aduPlayer; 
         }
-
-        private void sharingButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageContainer.Content = new Sharing();
-        }
-
+        
         private void Initialize_CrashReporting()
         {
             // TODO: Probabilmente dobbiamo rendere l'inizializzazione async
