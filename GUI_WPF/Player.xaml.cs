@@ -19,7 +19,7 @@ namespace Tsunami.Gui.Wpf
         DispatcherTimer timer;
         
         bool isDragging = false;
-        Meta.Vlc.Wpf.VlcPlayer myPlayer = new VlcPlayer();
+        VlcPlayer myPlayer = new VlcPlayer();
         public Player()
         {
             var vlcPath = Utils.GetWinVlcPath();
@@ -29,12 +29,14 @@ namespace Tsunami.Gui.Wpf
                 Directory.SetCurrentDirectory(vlcPath);
             }
 
-            myPlayer.Background = Brushes.Black;
-            Grid.SetRow(myPlayer, 0);
-            Grid.SetColumn(myPlayer, 0);
-            Grid.SetRowSpan(myPlayer, 1);
-
             InitializeComponent();
+
+            //Player Settings
+            myPlayer.Background = Brushes.Black;
+            myPlayer.MouseDoubleClick += setFullScreen;
+            myPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
+            myPlayer.MaxWidth = SystemParameters.PrimaryScreenWidth;
+            myPlayer.MaxHeight = SystemParameters.PrimaryScreenHeight;
             myGrid.Children.Add(myPlayer);
 
             timer = new DispatcherTimer();
@@ -47,6 +49,10 @@ namespace Tsunami.Gui.Wpf
             Pause.IsEnabled = false;
         }
 
+        private void setFullScreen(object sender, MouseButtonEventArgs e)
+        {
+
+        }
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
             myPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
