@@ -15,9 +15,9 @@ namespace Tsunami.Gui.Wpf
     {
         public ObservableCollection<int, string, double> Torrentlist { get; private set; }
         string startupPath = System.IO.Directory.GetCurrentDirectory();
-        private object aduDownload = new Downloads();
-        private object aduSearch = new Search();
-        private object aduPlayer = new Player();
+        public object pageDownload = new Downloads();
+        public object pageSearch = new Search();
+        public object pagePlayer = new Player();
 
         public MainWindow()
         {
@@ -111,17 +111,17 @@ namespace Tsunami.Gui.Wpf
         //page navigation methods
         private void downloadsButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = aduDownload; 
+            PageContainer.Content = pageDownload; 
         }
 
         private void searchButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = aduSearch; 
+            PageContainer.Content = pageSearch; 
         }
 
         private void playerButton_Click(object sender, RoutedEventArgs e)
         {
-            PageContainer.Content = aduPlayer; 
+            PageContainer.Content = pagePlayer; 
         }
         
         private void Initialize_CrashReporting()
