@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using Microsoft.Win32;
 using System.Configuration;
+using System.IO;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -13,6 +14,7 @@ namespace Tsunami.Gui.Wpf
     public partial class MainWindow : Window
     {
         public ObservableCollection<int, string, double> Torrentlist { get; private set; }
+        string startupPath = System.IO.Directory.GetCurrentDirectory();
         private object aduDownload = new Downloads();
         private object aduSearch = new Search();
         private object aduPlayer = new Player();
@@ -21,6 +23,7 @@ namespace Tsunami.Gui.Wpf
         {
             InitializeComponent();
             Initialize_CrashReporting();
+            Directory.SetCurrentDirectory(startupPath);
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
