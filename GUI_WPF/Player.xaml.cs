@@ -17,7 +17,8 @@ namespace Tsunami.Gui.Wpf
     public partial class Player : Page
     {
         DispatcherTimer timer;
-        
+
+        bool isFullScreen = false;
         bool isDragging = false;
         VlcPlayer myPlayer = new VlcPlayer();
         public Player()
@@ -35,8 +36,8 @@ namespace Tsunami.Gui.Wpf
             myPlayer.Background = Brushes.Black;
             myPlayer.MouseDoubleClick += setFullScreen;
             myPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
-            myPlayer.MaxWidth = SystemParameters.PrimaryScreenWidth;
-            myPlayer.MaxHeight = SystemParameters.PrimaryScreenHeight;
+            myPlayer.MouseMove += showProgressBar;           
+            myPlayer.SetValue(Canvas.ZIndexProperty, -1);
             myGrid.Children.Add(myPlayer);
 
             timer = new DispatcherTimer();
@@ -49,9 +50,39 @@ namespace Tsunami.Gui.Wpf
             Pause.IsEnabled = false;
         }
 
+        private void showProgressBar(object sender, MouseEventArgs e)
+        {
+            if (isFullScreen)
+            {
+                playerStatus.Visibility = Visibility.Visible;
+            }
+        }
+        
+        private void hideProgressBar(object sender, MouseEventArgs e)
+        {
+            if (isFullScreen)
+            {
+                playerStatus.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void setFullScreen(object sender, MouseButtonEventArgs e)
         {
+            if (!isFullScreen)
+            {
+                Application.Current.MainWindow.WindowStyle = WindowStyle.None;
+                Application.Current.MainWindow.WindowState = WindowState.Maximized;
+                playerStatus.Visibility = Visibility.Collapsed;
+                isFullScreen = true;
+            }
+            else
+            {
+                Application.Current.MainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
+                Application.Current.MainWindow.WindowState = WindowState.Normal;
+                playerStatus.Visibility = Visibility.Visible;
 
+                isFullScreen = false;
+            }
         }
         private void playButton_Click(object sender, RoutedEventArgs e)
         {

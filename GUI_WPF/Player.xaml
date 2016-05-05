@@ -14,7 +14,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
        
-        <StatusBar Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <StatusBar x:Name="playerStatus" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
