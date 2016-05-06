@@ -22,9 +22,13 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
-            
-            // Uncomment this line below if you have configured crashreporting section in App.config
-            //Initialize_CrashReporting();
+
+            // If Nbug CrashReporting is Not Configured don't Inizialize it 
+            if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
+            {
+                //Don't enable Nbug
+            }
+            else Initialize_CrashReporting();
 
             Directory.SetCurrentDirectory(startupPath);
             Torrentlist = new ObservableCollection<int,string,double>();
