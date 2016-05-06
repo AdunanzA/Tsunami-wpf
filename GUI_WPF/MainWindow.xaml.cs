@@ -22,7 +22,10 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
-            Initialize_CrashReporting();
+            
+            // Uncomment this line below if you have configured crashreporting section in App.config
+            //Initialize_CrashReporting();
+
             Directory.SetCurrentDirectory(startupPath);
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
