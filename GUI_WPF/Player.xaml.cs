@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using Meta.Vlc.Wpf;
 using System.Windows.Controls.Primitives;
 using System.IO;
@@ -47,7 +46,7 @@ namespace Tsunami.Gui.Wpf
             timer.Start();
 
             hideBarTimer = new DispatcherTimer();
-            hideBarTimer.Interval = TimeSpan.FromSeconds(3);
+            hideBarTimer.Interval = TimeSpan.FromSeconds(5);
             hideBarTimer.Tick += new EventHandler(hideBar_Tick);
             hideBarTimer.Start();
 
@@ -70,6 +69,7 @@ namespace Tsunami.Gui.Wpf
             if (isFullScreen)
             {
                 playerStatus.Visibility = Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
             }
         }
 
@@ -78,6 +78,7 @@ namespace Tsunami.Gui.Wpf
             if (isFullScreen)
             {
                 playerStatus.Visibility = Visibility.Visible;
+                Mouse.OverrideCursor = Cursors.Arrow;
             }
         }
         
