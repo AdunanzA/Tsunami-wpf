@@ -15,9 +15,9 @@ namespace Tsunami.Gui.Wpf
     {
         public ObservableCollection<int, string, double> Torrentlist { get; private set; }
         string startupPath = System.IO.Directory.GetCurrentDirectory();
-        public object pageDownload = new Downloads();
-        public object pageSearch = new Search();
-        public object pagePlayer = new Player();
+        public Downloads pageDownload = new Downloads();
+        public Search pageSearch = new Search();
+        public Player pagePlayer = new Player();
 
         public MainWindow()
         {
@@ -78,6 +78,7 @@ namespace Tsunami.Gui.Wpf
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            pagePlayer.onClosing();
             string str = "something to put in File";
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";
