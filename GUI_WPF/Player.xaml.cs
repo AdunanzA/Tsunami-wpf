@@ -17,6 +17,7 @@ namespace Tsunami.Gui.Wpf
     public partial class Player : Page
     {
         DispatcherTimer timer;
+        DispatcherTimer hideBarTimer;
 
         bool isFullScreen = false;
         bool isDragging = false;
@@ -45,9 +46,22 @@ namespace Tsunami.Gui.Wpf
             timer.Tick += new EventHandler(timer_Tick);
             timer.Start();
 
+            hideBarTimer = new DispatcherTimer();
+            hideBarTimer.Interval = TimeSpan.FromSeconds(3);
+            hideBarTimer.Tick += new EventHandler(hideBar_Tick);
+            hideBarTimer.Start();
+
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
+        }
+
+        private void hideBar_Tick(object sender, EventArgs e)
+        {
+            if (isFullScreen)
+            {
+                playerStatus.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void showProgressBar(object sender, MouseEventArgs e)
