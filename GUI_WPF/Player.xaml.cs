@@ -16,8 +16,8 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page
     {
-        DispatcherTimer timer;
-        DispatcherTimer hideBarTimer;
+        DispatcherTimer timer = null;
+        DispatcherTimer hideBarTimer = null;
 
         bool isFullScreen = false;
         bool isDragging = false;
@@ -54,6 +54,15 @@ namespace Tsunami.Gui.Wpf
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
+            
+        }
+
+        public void onClosing()
+        {
+            myPlayer.Stop();
+            timer = null;
+            hideBarTimer = null;
+            myPlayer = null;
         }
 
         private void hideBar_Tick(object sender, EventArgs e)
