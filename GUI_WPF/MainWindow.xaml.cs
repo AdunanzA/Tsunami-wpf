@@ -78,7 +78,6 @@ namespace Tsunami.Gui.Wpf
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            pagePlayer.onClosing();
             string str = "something to put in File";
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";

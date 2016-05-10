@@ -13,7 +13,7 @@ namespace Tsunami.Gui.Wpf
     /// <summary>
     /// Logica di interazione per Player.xaml
     /// </summary>
-    public partial class Player : Page
+    public partial class Player : Page, IDisposable
     {
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
@@ -54,14 +54,6 @@ namespace Tsunami.Gui.Wpf
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             
-        }
-
-        public void onClosing()
-        {
-            myPlayer.Stop();
-            timer = null;
-            hideBarTimer = null;
-            myPlayer = null;
         }
 
         private void hideBar_Tick(object sender, EventArgs e)
@@ -169,6 +161,42 @@ namespace Tsunami.Gui.Wpf
         {
             volumeControl.Value = myPlayer.Volume += (e.Delta > 0) ? 1 : -1;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; 
+
+        protected void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {                    
+                       timer.Stop();
+                       hideBarTimer.Stop();
+                       myPlayer.Stop();
+                       timer = null;
+                       hideBarTimer = null;
+                       myPlayer = null;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: eseguire l'override di un finalizzatore solo se Dispose(bool disposing) include il codice per liberare risorse non gestite.
+        // ~Player() {
+        //   // Non modificare questo codice. Inserire il codice di pulizia in Dispose(bool disposing) sopra.
+        //   Dispose(false);
+        // }
+
+        void IDisposable.Dispose()
+        {
+            // Non modificare questo codice. Inserire il codice di pulizia in Dispose(bool disposing) sopra.
+            Dispose(true);
+            // TODO: rimuovere il commento dalla riga seguente se è stato eseguito l'override del finalizzatore.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
 
     }
 }
