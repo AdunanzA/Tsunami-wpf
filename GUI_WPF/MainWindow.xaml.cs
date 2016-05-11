@@ -41,7 +41,9 @@ namespace Tsunami.Gui.Wpf
             SessionManager.TorrentRemoved += new EventHandler<SessionManager.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
             SessionManager.SessionStatisticsUpdate += new EventHandler<SessionManager.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
 
-
+            this.AddLogicalChild(pagePlayer);
+            this.AddLogicalChild(pageDownload);
+            this.AddLogicalChild(pageSearch);
             //dataGridx.ItemsSource = Torrentlist;
         }
 
@@ -166,6 +168,23 @@ namespace Tsunami.Gui.Wpf
             AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
             Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
 
+        }
+
+        public void HideStack(bool hide)
+        {
+            if (hide)
+            {
+                navigationStack.Visibility = Visibility.Collapsed;
+                PageContainer.Margin = new Thickness(0, 0, 0, 0);
+
+            }
+
+            else
+            {
+                PageContainer.Margin = new Thickness(0, 20, 0, 0);
+                navigationStack.Visibility = Visibility.Visible;
+            }
+                            
         }
     }
 
