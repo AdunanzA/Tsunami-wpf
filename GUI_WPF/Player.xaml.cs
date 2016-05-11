@@ -20,7 +20,6 @@ namespace Tsunami.Gui.Wpf
         MainWindow m = null;
 
         bool isFullScreen = false;
-        bool isPlaying = false;
         bool isDragging = false;
         VlcPlayer myPlayer = new VlcPlayer();
         public Player()
@@ -45,13 +44,14 @@ namespace Tsunami.Gui.Wpf
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += new EventHandler(timer_Tick);
-            timer.Start();
 
             hideBarTimer = new DispatcherTimer();
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);
             hideBarTimer.Tick += new EventHandler(hideBar_Tick);
+
+            timer.Start();
             hideBarTimer.Start();
-            
+
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
@@ -86,8 +86,6 @@ namespace Tsunami.Gui.Wpf
 
         private void setFullScreen(object sender, MouseButtonEventArgs e)
         {
-            if (isPlaying)
-            {
                 m = (MainWindow)this.Parent;
 
                 if (!isFullScreen)
@@ -110,17 +108,16 @@ namespace Tsunami.Gui.Wpf
 
                     isFullScreen = false;
                 }
-            }
+            
         }
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
             myPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
             
             myPlayer.Play();
-            
+
             myPlayer.Stretch = Stretch.Fill;
             myPlayer.StretchDirection = StretchDirection.Both;
-            isPlaying = true;
             Play.IsEnabled = false;
             Pause.IsEnabled = true;
             Stop.IsEnabled = true;
@@ -134,7 +131,7 @@ namespace Tsunami.Gui.Wpf
         private void stopButton_Click(object sender, EventArgs e)
         {
             myPlayer.Stop();
-            isPlaying = false;
+
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;
@@ -185,11 +182,13 @@ namespace Tsunami.Gui.Wpf
             {
                 if (disposing)
                 {
-                       timer.Stop();
-                       hideBarTimer.Stop();
-                       myPlayer.Dispose();
-                       timer = null;
-                       hideBarTimer = null;                       
+                    myPlayer.Stop();
+                    timer.Stop();
+                    hideBarTimer.Stop();
+                    myPlayer = null;
+                    timer = null;
+                    hideBarTimer = null;
+                    m = null;
                 }
 
                 disposedValue = true;
