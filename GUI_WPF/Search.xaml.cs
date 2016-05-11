@@ -28,7 +28,7 @@ namespace Tsunami.Gui.Wpf
         #region IDisposable Support
         private bool disposedValue = false; // Per rilevare chiamate ridondanti
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
