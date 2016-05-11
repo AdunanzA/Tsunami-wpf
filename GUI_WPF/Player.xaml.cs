@@ -17,8 +17,10 @@ namespace Tsunami.Gui.Wpf
     {
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
+        MainWindow m = null;
 
         bool isFullScreen = false;
+        bool isPlaying = false;
         bool isDragging = false;
         VlcPlayer myPlayer = new VlcPlayer();
         public Player()
@@ -49,11 +51,11 @@ namespace Tsunami.Gui.Wpf
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);
             hideBarTimer.Tick += new EventHandler(hideBar_Tick);
             hideBarTimer.Start();
-
+            
             volumeControl.Value = myPlayer.Volume;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
-            
+
         }
 
         private void hideBar_Tick(object sender, EventArgs e)
@@ -84,20 +86,30 @@ namespace Tsunami.Gui.Wpf
 
         private void setFullScreen(object sender, MouseButtonEventArgs e)
         {
-            if (!isFullScreen)
+            if (isPlaying)
             {
-                Application.Current.MainWindow.WindowStyle = WindowStyle.None;
-                Application.Current.MainWindow.WindowState = WindowState.Maximized;
-                playerStatus.Visibility = Visibility.Collapsed;
-                isFullScreen = true;
-            }
-            else
-            {
-                Application.Current.MainWindow.WindowStyle = WindowStyle.SingleBorderWindow;
-                Application.Current.MainWindow.WindowState = WindowState.Normal;
-                playerStatus.Visibility = Visibility.Visible;
+                m = (MainWindow)this.Parent;
 
-                isFullScreen = false;
+                if (!isFullScreen)
+                {
+                    m.WindowStyle = WindowStyle.None;
+                    m.WindowState = WindowState.Maximized;
+                    m.HideStack(true);
+                    m = null;
+                    playerStatus.Visibility = Visibility.Collapsed;
+                    isFullScreen = true;
+                }
+                else
+                {
+                    m.WindowStyle = WindowStyle.SingleBorderWindow;
+                    m.WindowState = WindowState.Normal;
+                    m.HideStack(false);
+                    m = null;
+                    playerStatus.Visibility = Visibility.Visible;
+                    Mouse.OverrideCursor = Cursors.Arrow;
+
+                    isFullScreen = false;
+                }
             }
         }
         private void playButton_Click(object sender, RoutedEventArgs e)
@@ -108,6 +120,7 @@ namespace Tsunami.Gui.Wpf
             
             myPlayer.Stretch = Stretch.Fill;
             myPlayer.StretchDirection = StretchDirection.Both;
+            isPlaying = true;
             Play.IsEnabled = false;
             Pause.IsEnabled = true;
             Stop.IsEnabled = true;
@@ -121,6 +134,7 @@ namespace Tsunami.Gui.Wpf
         private void stopButton_Click(object sender, EventArgs e)
         {
             myPlayer.Stop();
+            isPlaying = false;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;
@@ -170,13 +184,12 @@ namespace Tsunami.Gui.Wpf
             if (!disposedValue)
             {
                 if (disposing)
-                {                    
+                {
                        timer.Stop();
                        hideBarTimer.Stop();
-                       myPlayer.Stop();
+                       myPlayer.Dispose();
                        timer = null;
-                       hideBarTimer = null;
-                       myPlayer = null;
+                       hideBarTimer = null;                       
                 }
 
                 disposedValue = true;
