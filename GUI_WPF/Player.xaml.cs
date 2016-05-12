@@ -15,13 +15,14 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page, IDisposable
     {
+        Dispatcher vlcDisp = null;
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
         MainWindow m = null;
 
         bool isFullScreen = false;
         bool isDragging = false;
-        VlcPlayer myPlayer = new VlcPlayer();
+        VlcPlayer myPlayer = null;
         public Player()
         {
             var vlcPath = Utils.GetWinVlcPath();
@@ -33,7 +34,10 @@ namespace Tsunami.Gui.Wpf
 
             InitializeComponent();
 
+           // vlcDisp = new Dispatcher();
+
             //Player Settings
+            myPlayer = new VlcPlayer();
             myPlayer.Background = Brushes.Black;
             myPlayer.MouseDoubleClick += setFullScreen;
             myPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
@@ -93,7 +97,6 @@ namespace Tsunami.Gui.Wpf
                     m.WindowStyle = WindowStyle.None;
                     m.WindowState = WindowState.Maximized;
                     m.HideStack(true);
-                    m = null;
                     playerStatus.Visibility = Visibility.Collapsed;
                     isFullScreen = true;
                 }
@@ -102,13 +105,13 @@ namespace Tsunami.Gui.Wpf
                     m.WindowStyle = WindowStyle.SingleBorderWindow;
                     m.WindowState = WindowState.Normal;
                     m.HideStack(false);
-                    m = null;
                     playerStatus.Visibility = Visibility.Visible;
                     Mouse.OverrideCursor = Cursors.Arrow;
 
                     isFullScreen = false;
-                }
-            
+                    m = null;
+            }
+
         }
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
@@ -173,6 +176,18 @@ namespace Tsunami.Gui.Wpf
             volumeControl.Value = myPlayer.Volume += (e.Delta > 0) ? 1 : -1;
         }
 
+        private void CleanUp()
+        {
+            myPlayer.Stop();
+            timer.Stop();
+            hideBarTimer.Stop();
+            myPlayer._videoSource = null;
+            myPlayer = null;
+            timer = null;
+            hideBarTimer = null;
+            m = null;
+        }
+
         #region IDisposable Support
         private bool disposedValue = false; 
 
@@ -182,13 +197,7 @@ namespace Tsunami.Gui.Wpf
             {
                 if (disposing)
                 {
-                    myPlayer.Stop();
-                    timer.Stop();
-                    hideBarTimer.Stop();
-                    myPlayer = null;
-                    timer = null;
-                    hideBarTimer = null;
-                    m = null;
+                    CleanUp();
                 }
 
                 disposedValue = true;
@@ -196,9 +205,10 @@ namespace Tsunami.Gui.Wpf
         }
 
         // TODO: eseguire l'override di un finalizzatore solo se Dispose(bool disposing) include il codice per liberare risorse non gestite.
-        // ~Player() {
-        //   // Non modificare questo codice. Inserire il codice di pulizia in Dispose(bool disposing) sopra.
-        //   Dispose(false);
+        //~Player() {
+        //  Non modificare questo codice. Inserire il codice di pulizia in Dispose(bool disposing) sopra.
+        //  Dispose(false);
+        //  CleanUp();
         // }
 
         void IDisposable.Dispose()
