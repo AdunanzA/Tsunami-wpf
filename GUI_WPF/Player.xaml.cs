@@ -15,7 +15,7 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class Player : Page, IDisposable
     {
-        Dispatcher vlcDisp = null;
+
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
         MainWindow m = null;
@@ -34,8 +34,6 @@ namespace Tsunami.Gui.Wpf
 
             InitializeComponent();
 
-           // vlcDisp = new Dispatcher();
-
             //Player Settings
             myPlayer = new VlcPlayer();
             myPlayer.Background = Brushes.Black;
@@ -51,7 +49,7 @@ namespace Tsunami.Gui.Wpf
 
             hideBarTimer = new DispatcherTimer();
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);
-            hideBarTimer.Tick += new EventHandler(hideBar_Tick);
+            hideBarTimer.Tick += new EventHandler(HideBar_Tick);
 
             timer.Start();
             hideBarTimer.Start();
@@ -62,7 +60,7 @@ namespace Tsunami.Gui.Wpf
 
         }
 
-        private void hideBar_Tick(object sender, EventArgs e)
+        private void HideBar_Tick(object sender, EventArgs e)
         {
             if (isFullScreen)
             {
@@ -80,39 +78,28 @@ namespace Tsunami.Gui.Wpf
             }
         }
         
-        private void hideProgressBar(object sender, MouseEventArgs e)
-        {
-            if (isFullScreen)
-            {
-                playerStatus.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private void setFullScreen(object sender, MouseButtonEventArgs e)
         {
-                m = (MainWindow)this.Parent;
-
-                if (!isFullScreen)
-                {
-                    m.WindowStyle = WindowStyle.None;
-                    m.WindowState = WindowState.Maximized;
-                    m.HideStack(true);
-                    playerStatus.Visibility = Visibility.Collapsed;
-                    isFullScreen = true;
-                }
-                else
-                {
-                    m.WindowStyle = WindowStyle.SingleBorderWindow;
-                    m.WindowState = WindowState.Normal;
-                    m.HideStack(false);
-                    playerStatus.Visibility = Visibility.Visible;
-                    Mouse.OverrideCursor = Cursors.Arrow;
-
-                    isFullScreen = false;
-                    m = null;
-            }
-
-        }
+            m = (MainWindow)this.Parent;
+            if (!isFullScreen)
+               {
+                   m.WindowStyle = WindowStyle.None;
+                   m.WindowState = WindowState.Maximized;
+                   m.HideStack(true);
+                   playerStatus.Visibility = Visibility.Collapsed;
+                   isFullScreen = true;
+               }
+            else
+               {
+                   m.WindowStyle = WindowStyle.SingleBorderWindow;
+                   m.WindowState = WindowState.Normal;
+                   m.HideStack(false);
+                   playerStatus.Visibility = Visibility.Visible;
+                   Mouse.OverrideCursor = Cursors.Arrow;
+                   isFullScreen = false;                   
+               }
+            m = null;
+         }
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
             myPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
