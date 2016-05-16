@@ -6,6 +6,7 @@
 #include "interop.h"
 #include "sha1_hash.h"
 #include "file_storage.h"
+#include "peer_request.h"
 
 using namespace Tsunami::Core;
 
@@ -117,6 +118,11 @@ cli::array<System::String^>^ TorrentInfo::collections()
 		collections[i] = interop::from_std_string(collect[i]);
 	}
 	return collections;
+}
+
+PeerRequest ^ Tsunami::Core::TorrentInfo::map_file(int file, long long offset, int size)
+{
+	return gcnew PeerRequest(info_->map_file(file, offset, size));
 }
 
 int TorrentInfo::num_pieces()

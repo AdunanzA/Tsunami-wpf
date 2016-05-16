@@ -11,6 +11,7 @@ namespace Tsunami
 		ref class AnnounceEntry;
 		ref class Sha1Hash;
 		ref class FileStorage;
+		ref class PeerRequest;
 
 		public ref class TorrentInfo
 		{
@@ -34,6 +35,7 @@ namespace Tsunami
 			// TODO add url seed
 			// TODO web seeds
 			// TODO add http seed
+			PeerRequest ^ map_file(int file, long long offset, int size);
 			int num_pieces();
 			long long total_size();
 			int piece_length();
