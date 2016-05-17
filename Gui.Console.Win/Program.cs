@@ -52,6 +52,7 @@ namespace System
     {
         static void Main(string[] args)
         {
+
             Console.WriteLine(@"
 ████████╗███████╗██╗   ██╗███╗   ██╗ █████╗ ███╗   ███╗██╗ 
 ╚══██╔══╝██╔════╝██║   ██║████╗  ██║██╔══██╗████╗ ████║██║
@@ -66,31 +67,27 @@ namespace System
                  ██║     ███████╗██║
                  ╚═╝     ╚══════╝╚═╝                                    
 ");
-            if (args != null)
+            if (Console.BackgroundColor == ConsoleColor.Black)
             {
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("################################################################");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                Console.WriteLine("*** Starting Webserver on " + Tsunami.Settings.User.WebAddress
+                + " port: " +  Tsunami.Settings.User.WebPort + " ***");
+                if (args != null)
+                {
+                }
+                else Args.InvokeAction<TsunamiConsoleWin>(args);
+
+
+
+                // Stating webserver
+
+                Tsunami.SessionManager.Initialize();
+                // Leave the console window open
+                Console.ReadKey();
             }
-            else Args.InvokeAction<TsunamiConsoleWin>(args);
-
-            Tsunami.SessionManager.Initialize();
-            //Tsunami.Settings.Logger.Inizialize();
-            // web server
-            //if (Tsunami.Settings.User.StartWebOnAppLoad)
-            //{
-            // Stating webserver
-            PowerArgs.PowerLogger.LogLine("***Stating Webserver  " + Tsunami.Settings.User.WebAddress
-                + "on port " + Tsunami.Settings.User.WebPort);
-            Tsunami.SessionManager.startWeb();
-            //}
-
-            //if (File.Exists(".session_state"))
-            //{
-            //    var data = File.ReadAllBytes(".session_state");
-            //    using (var entry = Core.Util.lazy_bdecode(data))
-            //    {
-            //        _torrentSession.load_state(entry);
-            //    }
-            //}
-            Console.ReadKey();
         }
     }
 }
