@@ -11,7 +11,7 @@
         Left="{Binding WindowLeft, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         mc:Ignorable="d"
-        Title="MainWindow"
+        Title="Tsunami Pre-Alpha"
         Closing="Window_Closing">
 
         <Grid >
