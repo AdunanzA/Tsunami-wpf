@@ -5,6 +5,7 @@ using System.Windows;
 using Microsoft.Win32;
 using System.Configuration;
 using System.IO;
+using Squirrel;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -19,6 +20,7 @@ namespace Tsunami.Gui.Wpf
         public Search pageSearch = new Search();
         public Player pagePlayer = new Player();
 
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -34,19 +36,30 @@ namespace Tsunami.Gui.Wpf
             Torrentlist = new ObservableCollection<int,string,double>();
             this.DataContext = Torrentlist;
             this.SetLanguageDictionary();
-            
+            var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
+            var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
+            var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Revision;
+            var title = this.Title + " " +  + verMajor +  "." + verMin + verRev;
+            this.Title = title;
             SessionManager.Initialize();
             SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
             SessionManager.TorrentRemoved += new EventHandler<SessionManager.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
             SessionManager.SessionStatisticsUpdate += new EventHandler<SessionManager.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
 
+            
             this.AddLogicalChild(pagePlayer);
             this.AddLogicalChild(pageDownload);
             this.AddLogicalChild(pageSearch);
             //dataGridx.ItemsSource = Torrentlist;
         }
-
+        async static void SquirrellUpdate()
+        {
+            using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
+            {
+                await mgr.UpdateApp();
+            }
+        }
         private void UpdateFromSessionStatistics(object sender, SessionManager.OnSessionStatisticsEventArgs e)
         {
             // notify web of new session statistics

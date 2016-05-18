@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using Squirrel;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -15,3 +16,4 @@ namespace Tsunami.Gui.Wpf
     {
     }
 }
+
