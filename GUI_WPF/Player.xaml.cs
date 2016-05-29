@@ -168,7 +168,6 @@ namespace Tsunami.Gui.Wpf
             myPlayer.Stop();
             timer.Stop();
             hideBarTimer.Stop();
-            myPlayer._videoSource = null;
             myPlayer = null;
             timer = null;
             hideBarTimer = null;
@@ -201,6 +200,7 @@ namespace Tsunami.Gui.Wpf
         void IDisposable.Dispose()
         {
             // Non modificare questo codice. Inserire il codice di pulizia in Dispose(bool disposing) sopra.
+            myPlayer.Dispose();
             Dispose(true);
             // TODO: rimuovere il commento dalla riga seguente se è stato eseguito l'override del finalizzatore.
             // GC.SuppressFinalize(this);

@@ -16,8 +16,8 @@
 
         <Grid >
         <StackPanel x:Name="navigationStack" Orientation="Horizontal" Height="20" VerticalAlignment="Top">
-            <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
             <Button Content="Search" MinWidth="100" Margin="10,0,0,0" Click="searchButton_Click"/>
+            <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
             <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>            
         </StackPanel>
         <Frame x:Name="PageContainer" Height="Auto" Width="Auto" Margin="0,20,0,0" NavigationUIVisibility="Hidden"/>
