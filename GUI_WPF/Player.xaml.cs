@@ -85,7 +85,7 @@ namespace Tsunami.Gui.Wpf
                {
                    m.WindowStyle = WindowStyle.None;
                    m.WindowState = WindowState.Maximized;
-                   m.HideStack(true);
+                   //m.HideStack(true);
                    playerStatus.Visibility = Visibility.Collapsed;
                    isFullScreen = true;
                }
@@ -93,7 +93,7 @@ namespace Tsunami.Gui.Wpf
                {
                    m.WindowStyle = WindowStyle.SingleBorderWindow;
                    m.WindowState = WindowState.Normal;
-                   m.HideStack(false);
+                   //m.HideStack(false);
                    playerStatus.Visibility = Visibility.Visible;
                    Mouse.OverrideCursor = Cursors.Arrow;
                    isFullScreen = false;                   

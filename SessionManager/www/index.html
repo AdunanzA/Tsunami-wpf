@@ -46,6 +46,8 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <div class="nav navbar-nav navbar-right">
+                    <input id="inputFile2" name="inputFile[]" multiple="multiple" type="file" />
+                    &nbsp;&nbsp;
                     <button type="button" class="btn btn-default navbar-btn" data-bind="click: twm.AddNewTorrent, disable: twm.Busy()">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
@@ -99,7 +101,7 @@
                         <th width="45px"></th>
                         <th>#</th>
                         <th>Name</th>
-                        <th width="95px">Length</th>
+                        <th width="95px">Size</th>
                         <th width="95px">Downloaded</th>
                         <th width="170px">Status</th>
                         <th>Progress</th>
@@ -416,18 +418,17 @@
     </div>
 
     <!-- add torrent modal -->
-    <div id="addTorrentModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="sml">
+    <div id="addTorrentModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="sml">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Add Torrent</h4>
                 </div>
                 <div class="modal-body">
-                    <input id="inputFile" multiple type="file" class="file loading" data-allowed-file-extensions="['torrent']" data-allowed-preview-types="false" />
+                    <input id="inputFile" name="inputFile[]" multiple="multiple" type="file"/>
                 </div>
                 <div class="modal-footer">
-                    <button id="confirmCancel" type="button" class="btn btn-default">CANCEL</button>
-                    <button id="confirmAdd" type="button" class="btn btn-primary">ADD</button>
+                    <button id="addTorrentModalClose" type="button" class="btn btn-primary">CLOSE</button>
                 </div>
             </div>
         </div>
@@ -440,7 +441,7 @@
 
         http://www.html.it/pag/52042/loggetto-filereader/
          -->
-    <script>
+    <!--<script>
         function handleFiles(files) {
             preview = document.getElementById("preview");
 
@@ -462,7 +463,7 @@
                 reader.readAsDataURL(file);
             }
         }
-    </script>
+    </script>-->
 
     <div class="well well-sm" style="position:fixed;bottom:-14px;right:5px;height:45px;width: 105px;z-index:100000">
         <ul class="list-inline">
@@ -470,7 +471,7 @@
                 <button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>
             </li>
             <li>
-                <abbr title="Connected to Tsunami">
+                <abbr title="Tsunami">
                     <div data-bind="css: { 'led-green': twm.Connected(), 'led-red': !twm.Connected() }">
                     </div>
                 </abbr>

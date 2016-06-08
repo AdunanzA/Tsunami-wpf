@@ -1,8 +1,10 @@
-﻿using NLog;
+﻿using Newtonsoft.Json.Linq;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -143,6 +145,41 @@ namespace Tsunami.Controllers
                 }
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+        }
+
+        [Route("api/torrents/add")]
+        [HttpPost]
+        public async Task<JObject> UploadFile(HttpRequestMessage request)
+        {
+            if (!request.Content.IsMimeMultipartContent())
+            {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+            
+            var data = await Request.Content.ParseMultipartAsync();
+
+            if (data.Files.ContainsKey("inputFile[]"))
+            {
+                var file = data.Files["inputFile[]"].File;
+                var fileName = data.Files["inputFile[]"].Filename;
+                SessionManager.addTorrent(file);
+            }
+            JObject jret = new JObject("Torrent added");
+            //jret.Add("result", "ok");
+            return jret;
+            //if (data.Fields.ContainsKey("description"))
+            //{
+            //    var description = data.Fields["description"].Value;
+            //}
+
+            //HttpResponseMessage rm = new HttpResponseMessage(HttpStatusCode.OK);
+            //rm.Content = new StringContent("Torrent added");
+            //return rm;
+
+            //return new HttpResponseMessage(HttpStatusCode.OK)
+            //{
+            //    Content = new StringContent("Torrent added")
+            //};
         }
     }
 }

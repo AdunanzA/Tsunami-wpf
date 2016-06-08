@@ -9,7 +9,7 @@ namespace Tsunami.www
 {
     public class SignalRHub : Hub
     {
-        public void NotifyUpdateProgress(SessionManager.OnTorrentUpdatedEventArgs e)
+        public void NotifyUpdateProgress(EventsArgs.OnTorrentUpdatedEventArgs e)
         {
             Clients.All.notifyUpdateProgress(e);
         }
@@ -29,7 +29,7 @@ namespace Tsunami.www
             Clients.All.notifyError(ec);
         }
 
-        public void NotifySessionStatistics(SessionManager.OnSessionStatisticsEventArgs ss)
+        public void NotifySessionStatistics(EventsArgs.OnSessionStatisticsEventArgs ss)
         {
             Clients.All.notifySessionStatistics(ss);
         }

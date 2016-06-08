@@ -60,19 +60,11 @@
     -moz-transition-property: all;
     -o-transition-property: all;
     transition-property: all;
-    /*cursor: pointer;*/
 }
-/*.rowGeneric:hover {
-    background-color: #e5e5e5;
-}*/
 .rowPaused {
     font-style:italic;
     color:#ccc;
-    /*cursor: pointer;*/
 }
-/*.rowPaused:hover {
-    background-color: #e5e5e5;
-}*/
 
 .pbPaused {
     background-color:#ddd !important;
@@ -233,4 +225,9 @@
   background-color: #24E0FF;
   border-radius: 50%;
   box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #006 0 -1px 9px, #3F8CFF 0 2px 14px;
+}
+
+.file-preview-frame {
+    height:80px !important;
+    width:100% !important;
 }

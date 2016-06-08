@@ -8,7 +8,7 @@ using System.Timers;
 using NLog;
 using Microsoft.Owin.Hosting;
 using System.IO;
-//using Tsunami.Core;
+using System.Collections.ObjectModel;
 //using Microsoft.Owin;
 
 //[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
@@ -25,16 +25,14 @@ namespace Tsunami
 
         private static IDisposable webServer;
 
-        public static EventHandler<OnTorrentUpdatedEventArgs> TorrentUpdated;
-        public static EventHandler<OnTorrentAddedEventArgs> TorrentAdded;
-        public static EventHandler<OnTorrentRemovedEventArgs> TorrentRemoved;
-        public static EventHandler<OnSessionStatisticsEventArgs> SessionStatisticsUpdate;
+        public static EventHandler<EventsArgs.OnTorrentUpdatedEventArgs> TorrentUpdated;
+        public static EventHandler<EventsArgs.OnTorrentAddedEventArgs> TorrentAdded;
+        public static EventHandler<EventsArgs.OnTorrentRemovedEventArgs> TorrentRemoved;
+        public static EventHandler<EventsArgs.OnSessionStatisticsEventArgs> SessionStatisticsUpdate;
         public static EventHandler<Models.ErrorCode> TorrentError;
 
         private static ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
         private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
-
-        //private static Core.Session TorrentSession { get; set; }
 
         public static void Initialize()
         {
@@ -45,7 +43,7 @@ namespace Tsunami
             {
                 startWeb();
             }
-
+            
             if (File.Exists(".session_state"))
             {
                 var data = File.ReadAllBytes(".session_state");
@@ -56,7 +54,7 @@ namespace Tsunami
             }
 
             _torrentSession.start_dht();
-            _torrentSession.start_lsd();
+            //_torrentSession.start_lsd();
             _torrentSession.start_natpmp();
             _torrentSession.start_upnp();
 
@@ -67,6 +65,9 @@ namespace Tsunami
             //Alert2Func[typeof(Core.torrent_removed_alert)] = a => OnTorrentRemovedAlert((Core.torrent_removed_alert)a); // torrent removed from torrentSession, always ok
             //Alert2Func[typeof(Core.torrent_deleted_alert)] = a => OnTorrentDeletedAlert((Core.torrent_deleted_alert)a); // finished deleting file for removed torrent
             Alert2Func[typeof(Core.torrent_error_alert)] = a => OnTorrentErrorAlert((Core.torrent_error_alert)a);
+            //Alert2Func[typeof(Core.stats_alert)] = a => OnStatsAlert((Core.stats_alert)a);
+            Alert2Func[typeof(Core.dht_stats_alert)] = a => OnDhtStatsAlert((Core.dht_stats_alert)a);
+
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
@@ -80,6 +81,12 @@ namespace Tsunami
             _torrentSession.set_alert_mask(Core.AlertMask.all_categories);
             _torrentSession.set_alert_dispatch(HandleAlertCallback);
 
+        }
+
+        private static void OnDhtStatsAlert(Core.dht_stats_alert a)
+        {
+            var aaa = a.active_requests;
+            
         }
 
         public static void startWeb()
@@ -100,6 +107,7 @@ namespace Tsunami
             _sessionStatusDispatcherTimer.Stop();
             _torrentSession.clear_alert_dispatch();
             _torrentSession.pause();
+            stopWeb();
 
             /* http://libtorrent.org/reference-Core.html#save_resume_data() */
             foreach (Core.TorrentHandle item in _torrentSession.get_torrents())
@@ -119,8 +127,8 @@ namespace Tsunami
                 var data = Core.Util.bencode(entry);
                 File.WriteAllBytes(".session_state", data);
             }
-            _torrentSession.Dispose();
-            stopWeb();
+            _torrentSession?.Dispose();
+            _torrentSession = null;
         }
 
         private static Core.TorrentHandle getTorrentHandle(string hash)
@@ -244,76 +252,24 @@ namespace Tsunami
         private static void dispatcherTimer_Tick(object sender, ElapsedEventArgs e)
         {
             _torrentSession.post_torrent_updates();
+            _torrentSession.post_dht_stats();
+            //_torrentSession.post_session_stats();
         }
 
         private static void sessionStatusDispatcher_Tick(object sender, ElapsedEventArgs e)
         {
-            var evnt = new OnSessionStatisticsEventArgs(_torrentSession.status());
-            
+            var evnt = new EventsArgs.OnSessionStatisticsEventArgs(_torrentSession.status());
+
             // notify web
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifySessionStatistics(evnt);
+            if (webServer != null)
+            {
+                var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                context.Clients.All.notifySessionStatistics(evnt);
+            }
 
             // invoke event
             SessionStatisticsUpdate?.Invoke(null, evnt);
         }
-
-
-
-        public static string GiveMeStateFromEnum(Enum stateFromCore)
-        {
-            string res = "";
-            switch (stateFromCore.ToString())
-            {
-                case "queued_for_checking":
-                    res = "Queued For Checking";
-                    break;
-                case "checking_files":
-                    res = "Checking Files";
-                    break;
-                case "downloading_metadata":
-                    res = "Downloading Metadata";
-                    break;
-                case "downloading":
-                    res = "Downloading";
-                    break;
-                case "finished":
-                    res = "Finished";
-                    break;
-                case "seeding":
-                    res = "Seeding";
-                    break;
-                case "allocating":
-                    res = "Allocating";
-                    break;
-                case "checking_resume_data":
-                    res = "Checking Resume Data";
-                    break;
-                default:
-                    res = "Error";
-                    break;
-            }
-            return res;
-        }
-
-        public static string GiveMeStorageModeFromEnum(Enum smFromCore)
-        {
-            string sRes = "";
-            switch (smFromCore.ToString())
-            {
-                case "storage_mode_allocate":
-                    sRes = "Allocate";
-                    break;
-                case "storage_mode_sparse":
-                    sRes = "Sparse";
-                    break;
-                default:
-                    sRes = "Sparse";
-                    break;
-            }
-            return sRes;
-        }
-
 
         private static void HandleAlertCallback(Core.Alert a)
         {
@@ -334,14 +290,17 @@ namespace Tsunami
                 var stat = "Paused";
                 if (!ts.paused)
                 {
-                    stat = GiveMeStateFromEnum(ts.state);
+                    stat = Utils.GiveMeStateFromEnum(ts.state);
                 }
-                var evnt = new OnTorrentUpdatedEventArgs(ts);
+                var evnt = new EventsArgs.OnTorrentUpdatedEventArgs(ts);
                 evnt.State = stat;
                 //log.Trace("torrent: name {0}; status {1}; progress {2}", ts.name, ts.state.ToString(), ts.progress);
 
-                var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-                context.Clients.All.notifyUpdateProgress(evnt);
+                if (webServer != null)
+                {
+                    var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                    context.Clients.All.notifyUpdateProgress(evnt);
+                }
 
                 TorrentUpdated?.Invoke(null, evnt);
             }
@@ -357,9 +316,9 @@ namespace Tsunami
                     var stat = "Paused";
                     if (!ts.paused)
                     {
-                        stat = GiveMeStateFromEnum(ts.state);
+                        stat = Utils.GiveMeStateFromEnum(ts.state);
                     }
-                    var evnt = new OnTorrentAddedEventArgs
+                    var evnt = new EventsArgs.OnTorrentAddedEventArgs
                     {
                         Hash = th.info_hash().ToString(),
                         Name = ts.name,
@@ -370,8 +329,11 @@ namespace Tsunami
                     //log.Debug("torrent added: name {0}; status {1}; hash {2}", ts.name, ts.state.ToString(), ts.info_hash.ToString());
 
                     // notify web that a new id must be requested via webapi
-                    var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-                    context.Clients.All.notifyTorrentAdded(evnt.Hash);
+                    if (webServer != null)
+                    {
+                        var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                        context.Clients.All.notifyTorrentAdded(evnt.Hash);
+                    }
 
                     TorrentAdded?.Invoke(null, evnt);
                 }
@@ -383,269 +345,30 @@ namespace Tsunami
             var evnt = new Models.ErrorCode(a.error);
 
             //notify web
-            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            context.Clients.All.notifyTorrentAdded(evnt);
+            if (webServer != null)
+            {
+                var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                context.Clients.All.notifyTorrentAdded(evnt);
+            }
 
             TorrentError?.Invoke(null, evnt);
         }
 
-        public class OnTorrentAddedEventArgs : EventArgs
+        private static void OnStatsAlert(Core.stats_alert a)
         {
-            public string Hash { get;set; }
-            public int QueuePosition { get; set; }
-            public string Name { get; set; }
-            public float Progress { get; set; }
-            public string Status { get; set; }
+            
+            int upload_payload = a.transferred[0];
+            int upload_protocol = a.transferred[1];
+            int download_payload = a.transferred[2];
+            int download_protocol = a.transferred[3];
+            int upload_ip_protocol = a.transferred[4];
+            //int deprecated1 = a.transferred[5];
+            //int deprecated2 = a.transferred[6];
+            int download_ip_protocol = a.transferred[7];
+            //int deprecated3 = a.transferred[8];
+            //int deprecated4 = a.transferred[9];
+            int num_channels = a.transferred[10];
         }
 
-        public class OnTorrentUpdatedEventArgs : EventArgs
-        {
-            public int ActiveTime { get; set; }
-            public DateTime AddedTime { get; set; }
-            public long AllTimeDownload { get; set; }
-            public long AllTimeUpload { get; set; }
-            public TimeSpan AnnounceInterval { get; set; }
-            public bool AutoManaged { get; set; }
-            public int BlockSize { get; set; }
-            public DateTime CompletedTime { get; set; }
-            public int ConnectionsLimit { get; set; }
-            public int ConnectCandidates { get; set; }
-            public string CurrentTracker { get; set; }
-            public float DistributedCopies { get; set; }
-            public int DistributedFraction { get; set; }
-            public int DistributedFullCopies { get; set; }
-            public int DownloadPayloadRate { get; set; }
-            public int DownloadRate { get; set; }
-            public int DownBandwidthQueue { get; set; }
-            public string Error { get; set; }
-            public int FinishedTime { get; set; }
-            public bool HasIncoming { get; set; }
-            public bool HasMetadata { get; set; }
-            public string InfoHash { get; set; }
-            public bool IpFilterApplies { get; set; }
-            public bool IsFinished { get; set; }
-            public bool IsSeeding { get; set; }
-            public int LastScrape { get; set; }
-            public DateTime LastSeenComplete { get; set; }
-            public int ListPeers { get; set; }
-            public int ListSeeds { get; set; }
-            public bool MovingStorage { get; set; }
-            public string Name { get; set; }
-            public bool NeedSaveResume { get; set; }
-            public TimeSpan NextAnnounce { get; set; }
-            public int NumComplete { get; set; }
-            public int NumConnections { get; set; }
-            public int NumIncomplete { get; set; }
-            public int NumPeers { get; set; }
-            public int NumPieces { get; set; }
-            public int NumSeeds { get; set; }
-            public int NumUploads { get; set; }
-            public bool Paused { get; set; }
-            public Models.BitField Pieces { get; set; }
-            public int Priority { get; set; }
-            public float Progress { get; set; }
-            public int ProgressPpm { get; set; }
-            public int QueuePosition { get; set; }
-            public string SavePath { get; set; }
-            public int SeedingTime { get; set; }
-            public bool SeedMode { get; set; }
-            public int SeedRank { get; set; }
-            public bool SequentialDownload { get; set; }
-            public bool ShareMode { get; set; }
-            public string State { get; set; }
-            public string StorageMode { get; set; }
-            public bool SuperSeeding { get; set; }
-            public int TimeSinceDownload { get; set; }
-            public int TimeSinceUpload { get; set; }
-            public long TotalDone { get; set; }
-            public long TotalDownload { get; set; }
-            public long TotalFailedBytes { get; set; }
-            public long TotalPayloadDownload { get; set; }
-            public long TotalPayloadUpload { get; set; }
-            public long TotalReduntantBytes { get; set; }
-            public long TotalUpload { get; set; }
-            public long TotalWanted { get; set; }
-            public long TotalWantedDone { get; set; }
-            public int UploadsLimit { get; set; }
-            public bool UploadMode { get; set; }
-            public int UploadPayloadRate { get; set; }
-            public int UploadRate { get; set; }
-            public int UpBandwidthQueue { get; set; }
-            public Models.BitField VerifiedPieces { get; set; }
-
-            public OnTorrentUpdatedEventArgs() { /* nothing to do. just for serializator */ }
-
-            public OnTorrentUpdatedEventArgs(Core.TorrentStatus ts)
-            {
-                ActiveTime = ts.active_time;
-                AddedTime = ts.added_time;
-                AllTimeDownload = ts.all_time_download;
-                AllTimeUpload = ts.all_time_upload;
-                AnnounceInterval = ts.announce_interval;
-                AutoManaged = ts.auto_managed;
-                BlockSize = ts.block_size;
-                CompletedTime = ts.completed_time;
-                ConnectionsLimit = ts.connections_limit;
-                ConnectCandidates = ts.connect_candidates;
-                CurrentTracker = ts.current_tracker;
-                DistributedCopies = ts.distributed_copies;
-                DistributedFraction = ts.distributed_fraction;
-                DistributedFullCopies = ts.distributed_full_copies;
-                DownloadPayloadRate = ts.download_payload_rate;
-                DownloadRate = ts.download_rate;
-                DownBandwidthQueue = ts.down_bandwidth_queue;
-                Error = ts.error;
-                FinishedTime = ts.finished_time;
-                HasIncoming = ts.has_incoming;
-                HasMetadata = ts.has_metadata;
-                InfoHash = ts.info_hash.ToString();
-                IpFilterApplies = ts.ip_filter_applies;
-                IsFinished = ts.is_finished;
-                IsSeeding = ts.is_seeding;
-                LastScrape = ts.last_scrape;
-                LastSeenComplete = ts.last_seen_complete;
-                ListPeers = ts.list_peers;
-                ListSeeds = ts.list_seeds;
-                MovingStorage = ts.moving_storage;
-                Name = ts.name;
-                NeedSaveResume = ts.need_save_resume;
-                NextAnnounce = ts.next_announce;
-                NumComplete = ts.num_complete;
-                NumConnections = ts.num_connections;
-                NumIncomplete = ts.num_incomplete;
-                NumPeers = ts.num_peers;
-                NumPieces = ts.num_pieces;
-                NumSeeds = ts.num_seeds;
-                NumUploads = ts.num_uploads;
-                Paused = ts.paused;
-                Pieces = new Models.BitField(ts.pieces);
-                Priority = ts.priority;
-                Progress = ts.progress;
-                ProgressPpm = ts.progress_ppm;
-                QueuePosition = ts.queue_position;
-                SavePath = ts.save_path;
-                SeedingTime = ts.seeding_time;
-                SeedMode = ts.seed_mode;
-                SeedRank = ts.seed_rank;
-                SequentialDownload = ts.sequential_download;
-                ShareMode = ts.share_mode;
-                State = GiveMeStateFromEnum(ts.state);
-                StorageMode = GiveMeStorageModeFromEnum(ts.storage_mode);
-                SuperSeeding = ts.super_seeding;
-                TimeSinceDownload = ts.time_since_download;
-                TimeSinceUpload = ts.time_since_upload;
-                TotalDone = ts.total_done;
-                TotalDownload = ts.total_download;
-                TotalFailedBytes = ts.total_failed_bytes;
-                TotalPayloadDownload = ts.total_payload_download;
-                TotalPayloadUpload = ts.total_payload_upload;
-                TotalReduntantBytes = ts.total_reduntant_bytes;
-                TotalUpload = ts.total_upload;
-                TotalWanted = ts.total_wanted;
-                TotalWantedDone = ts.total_wanted_done;
-                UploadsLimit = ts.uploads_limit;
-                UploadMode = ts.upload_mode;
-                UploadPayloadRate = ts.upload_payload_rate;
-                UploadRate = ts.upload_rate;
-                UpBandwidthQueue = ts.up_bandwidth_queue;
-                VerifiedPieces = new Models.BitField(ts.verified_pieces);
-            }
-
-        }
-
-        public class OnTorrentRemovedEventArgs : EventArgs
-        {
-            public string Hash { get; set; }
-        }
-
-        public class OnSessionStatisticsEventArgs : EventArgs
-        {
-            public int AllowedUploadSlots { get; set; }
-            public int DhtDownloadRate { get; set; }
-            public long DhtGlobalNodes { get; set; }
-            public int DhtNodes { get; set; }
-            public int DhtNodeCache { get; set; }
-            public int DhtTorrents { get; set; }
-            public int DhtTotalAllocations { get; set; }
-            public int DhtUploadRate { get; set; }
-            public int DiskReadQueue { get; set; }
-            public int DiskWriteQueue { get; set; }
-            public int DownloadRate { get; set; }
-            public int DownBandwidthBytesQueue { get; set; }
-            public int DownBandwidthQueue { get; set; }
-            public bool HasIncomingConnections { get; set; }
-            public int IpOverheadDownloadRate { get; set; }
-            public int IpOverheadUploadRate { get; set; }
-            public int NumPeers { get; set; }
-            public int NumUnchoked { get; set; }
-            public int OptimisticUnchokeCounter { get; set; }
-            public int PayloadDownloadRate { get; set; }
-            public int PayloadUploadRate { get; set; }
-            public int PeerlistSize { get; set; }
-            public long TotalDhtDownload { get; set; }
-            public long TotalDhtUpload { get; set; }
-            public long TotalDownload { get; set; }
-            public long TotalFailedBytes { get; set; }
-            public long TotalIpOverheadDownload { get; set; }
-            public long TotalIpOverheadUpload { get; set; }
-            public long TotalPayloadDownload { get; set; }
-            public long TotalPayloadUpload { get; set; }
-            public long TotalRedundantBytes { get; set; }
-            public long TotalTrackerDownload { get; set; }
-            public long TotalTrackerUpload { get; set; }
-            public long TotalUpload { get; set; }
-            public int TrackerDownloadRate { get; set; }
-            public int TrackerUploadRate { get; set; }
-            public int UnchokeCounter { get; set; }
-            public int UploadRate { get; set; }
-            public int UpBandwidthBytesQueue { get; set; }
-            public int UpBandwidthQueue { get; set; }
-
-            public OnSessionStatisticsEventArgs() { /* nothing to do. just for serializator */ }
-
-            public OnSessionStatisticsEventArgs(Core.SessionStatus ss)
-            {
-                AllowedUploadSlots = ss.allowed_upload_slots;
-                DhtDownloadRate = ss.dht_download_rate;
-                DhtGlobalNodes = ss.dht_global_nodes;
-                DhtNodes = ss.dht_nodes;
-                DhtNodeCache = ss.dht_node_cache;
-                DhtTorrents = ss.dht_torrents;
-                DhtTotalAllocations = ss.dht_total_allocations;
-                DhtUploadRate = ss.dht_upload_rate;
-                DiskReadQueue = ss.disk_read_queue;
-                DiskWriteQueue = ss.disk_write_queue;
-                DownloadRate = ss.download_rate;
-                DownBandwidthBytesQueue = ss.down_bandwidth_bytes_queue;
-                DownBandwidthQueue = ss.down_bandwidth_queue;
-                HasIncomingConnections = ss.has_incoming_connections;
-                IpOverheadDownloadRate = ss.ip_overhead_download_rate;
-                IpOverheadUploadRate = ss.ip_overhead_upload_rate;
-                NumPeers = ss.num_peers;
-                NumUnchoked = ss.num_unchoked;
-                OptimisticUnchokeCounter = ss.optimistic_unchoke_counter;
-                PayloadDownloadRate = ss.payload_download_rate;
-                PayloadUploadRate = ss.payload_upload_rate;
-                PeerlistSize = ss.peerlist_size;
-                TotalDhtDownload = ss.total_dht_download;
-                TotalDhtUpload = ss.total_dht_upload;
-                TotalDownload = ss.total_download;
-                TotalFailedBytes = ss.total_failed_bytes;
-                TotalIpOverheadDownload = ss.total_ip_overhead_download;
-                TotalIpOverheadUpload = ss.total_ip_overhead_upload;
-                TotalPayloadDownload = ss.total_payload_download;
-                TotalPayloadUpload = ss.total_payload_upload;
-                TotalRedundantBytes = ss.total_redundant_bytes;
-                TotalTrackerDownload = ss.total_tracker_download;
-                TotalTrackerUpload = ss.total_tracker_upload;
-                TotalUpload = ss.total_upload;
-                TrackerDownloadRate = ss.tracker_download_rate;
-                TrackerUploadRate = ss.tracker_upload_rate;
-                UnchokeCounter = ss.unchoke_counter;
-                UploadRate = ss.upload_rate;
-                UpBandwidthBytesQueue = ss.up_bandwidth_bytes_queue;
-                UpBandwidthQueue = ss.up_bandwidth_queue;
-            }
-        }
     }
 }
