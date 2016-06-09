@@ -1028,16 +1028,18 @@ cli::array<DhtRoutingBucket ^> ^ dht_stats_alert::routing_table::get()
 }
 
 
-
-/*
-public ref class dht_stats_alert : Alert
+session_stats_alert::session_stats_alert(libtorrent::session_stats_alert * a)
+	: Alert(a),
+	alert_(a)
 {
-/// <summary> a vector of the currently running DHT lookups. </summary>
-property cli::array<DhtLookup ^> ^ active_requests { cli::array<DhtLookup ^> ^ get(); }
+}
 
-/// <summary>
-/// contains information about every bucket in the DHT routing
-/// table.
-/// </summary>
-property cli::array<DhtRoutingBucket ^> ^ routing_table { cli::array<DhtRoutingBucket ^> ^ get(); }
-};*/
+cli::array<unsigned long long> ^ session_stats_alert::values::get()
+{
+	cli::array<unsigned long long> ^ metrics = gcnew cli::array<unsigned long long>((int)stats_counter_t::num_stats_counters);
+
+	pin_ptr<unsigned long long> data_array_start = &metrics[0];
+	memcpy(data_array_start, alert_->values, (int)stats_counter_t::num_stats_counters);
+
+	return metrics;
+}
