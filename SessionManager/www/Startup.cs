@@ -5,8 +5,6 @@ using Owin;
 using Microsoft.Owin.FileSystems;
 using Microsoft.Owin.StaticFiles;
 using System.Web.Http;
-using System.Collections.Generic;
-using Microsoft.Owin.StaticFiles.ContentTypes;
 
 //[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
 
@@ -19,7 +17,6 @@ namespace Tsunami.www
 #if DEBUG
             app.UseErrorPage();
 #endif
-
             // Remap '/' to '.\www\'.
             // Turns on static files and default files.
             app.UseFileServer(new FileServerOptions()
@@ -34,6 +31,7 @@ namespace Tsunami.www
             app.UseStaticFiles("/www");
 
             HttpConfiguration config = new HttpConfiguration();
+            config.Formatters.Add(new System.Net.Http.Formatting.JsonMediaTypeFormatter());
 
             //  Enable attribute based routing
             //  http://www.asp.net/web-api/overview/web-api-routing-and-actions/attribute-routing-in-web-api-2

@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.ComponentModel;
 
-namespace Tsunami.Models
+namespace Tsunami.EventsArgs
 {
-    public class TorrentStatus// : INotifyPropertyChanged
+    public class OnTorrentUpdatedEventArgs : EventArgs
     {
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //[JsonIgnore]
         public int ActiveTime { get; set; }
         public DateTime AddedTime { get; set; }
         public long AllTimeDownload { get; set; }
@@ -28,7 +23,6 @@ namespace Tsunami.Models
         public int DistributedFraction { get; set; }
         public int DistributedFullCopies { get; set; }
         public int DownloadPayloadRate { get; set; }
-        //public int DownloadRate { get { return DownloadRate; } set { if (DownloadRate != value) { DownloadRate = value; CallPropertyChanged("DownloadRate"); } } }
         public int DownloadRate { get; set; }
         public int DownBandwidthQueue { get; set; }
         public string Error { get; set; }
@@ -55,13 +49,10 @@ namespace Tsunami.Models
         public int NumSeeds { get; set; }
         public int NumUploads { get; set; }
         public bool Paused { get; set; }
-        public BitField Pieces { get; set; }
-        //public int Priority { get { return Priority; } set { if (Priority != value) { Priority = value; CallPropertyChanged("Priority"); } } }
+        public Models.BitField Pieces { get; set; }
         public int Priority { get; set; }
-        //public float Progress { get { return Progress; } set { if (Progress != value) { Progress = value; CallPropertyChanged("Progress"); } } }
         public float Progress { get; set; }
         public int ProgressPpm { get; set; }
-        //public int QueuePosition { get { return QueuePosition; } set { if (QueuePosition != value) { QueuePosition = value; CallPropertyChanged("QueuePosition"); } } }
         public int QueuePosition { get; set; }
         public string SavePath { get; set; }
         public int SeedingTime { get; set; }
@@ -69,13 +60,11 @@ namespace Tsunami.Models
         public int SeedRank { get; set; }
         public bool SequentialDownload { get; set; }
         public bool ShareMode { get; set; }
-        //public string State { get { return State; } set { if (State != value) { State = value; CallPropertyChanged("State"); } } }
         public string State { get; set; }
         public string StorageMode { get; set; }
         public bool SuperSeeding { get; set; }
         public int TimeSinceDownload { get; set; }
         public int TimeSinceUpload { get; set; }
-        //public long TotalDone { get { return TotalDone; } set { if (TotalDone != value) { TotalDone = value; CallPropertyChanged("TotalDone"); } } }
         public long TotalDone { get; set; }
         public long TotalDownload { get; set; }
         public long TotalFailedBytes { get; set; }
@@ -88,14 +77,13 @@ namespace Tsunami.Models
         public int UploadsLimit { get; set; }
         public bool UploadMode { get; set; }
         public int UploadPayloadRate { get; set; }
-        //public int UploadRate { get { return UploadRate; } set { if (UploadRate != value) { UploadRate = value; CallPropertyChanged("UploadRate"); } } }
         public int UploadRate { get; set; }
         public int UpBandwidthQueue { get; set; }
-        public BitField VerifiedPieces { get; set; }
+        public Models.BitField VerifiedPieces { get; set; }
 
-        public TorrentStatus() { /* nothing to do. just for serializator */ }
+        public OnTorrentUpdatedEventArgs() { /* nothing to do. just for serializator */ }
 
-        public TorrentStatus(Core.TorrentStatus ts)
+        public OnTorrentUpdatedEventArgs(Core.TorrentStatus ts)
         {
             ActiveTime = ts.active_time;
             AddedTime = ts.added_time;
@@ -138,7 +126,7 @@ namespace Tsunami.Models
             NumSeeds = ts.num_seeds;
             NumUploads = ts.num_uploads;
             Paused = ts.paused;
-            Pieces = new BitField(ts.pieces);
+            Pieces = new Models.BitField(ts.pieces);
             Priority = ts.priority;
             Progress = ts.progress;
             ProgressPpm = ts.progress_ppm;
@@ -168,14 +156,8 @@ namespace Tsunami.Models
             UploadPayloadRate = ts.upload_payload_rate;
             UploadRate = ts.upload_rate;
             UpBandwidthQueue = ts.up_bandwidth_queue;
-            VerifiedPieces = new BitField(ts.verified_pieces);
-            //this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("InfoHash"));
+            VerifiedPieces = new Models.BitField(ts.verified_pieces);
         }
-
-        //private void CallPropertyChanged(string prop)
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        //}
 
     }
 }

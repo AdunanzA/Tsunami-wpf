@@ -234,12 +234,10 @@ function TorrentViewModel() {
         });
     }
     self.DeleteTorrent = function (torrentItem) {
-        self.Busy(true);
 
         $('#confirmDeleteModalBody').html('Do you really want to delete<br /><b>' + torrentItem.Name() + '</b> ?');
 
         $('#confirmNo').off('click').on('click', function () {
-            self.Busy(false);
             $('#confirmDeleteModal').modal('hide');
         });
 
@@ -248,7 +246,6 @@ function TorrentViewModel() {
             $.post('/api/torrents/delete/' + deleteFile, { '': torrentItem.Hash() })
             .done(function () {
                 self.Torrents.remove(torrentItem);
-                self.Busy(false);
             })
             .fail(function (xhr, textStatus, error) {
                 toastr.error("Cannot delete torrent!", "Error: " + xhr.statusText);
@@ -256,7 +253,6 @@ function TorrentViewModel() {
                 console.error(xhr.responseText);
                 console.error(textStatus);
                 console.error(error.responseJSON);
-                self.Busy(false);
             });
             $('#confirmDeleteModal').modal('hide');
         });
@@ -265,38 +261,33 @@ function TorrentViewModel() {
     }
 
     self.AddNewTorrent = function () {
-        self.Busy(true);
+        $('#inputFile').fileinput('clear');
 
-        $('#confirmCancel').off('click').on('click', function () {
-            self.Busy(false);
+        $('#addTorrentModalClose').off('click').on('click', function () {
             $('#addTorrentModal').modal('hide');
         });
 
-        $('#confirmAdd').off('click').on('click', function () {
-            /*$.post('/api/torrents/delete', { '': torrentItem.Hash() })
-            .done(function () {
-                self.Torrents.remove(torrentItem);
-                self.Busy(false);
-            })
-            .fail(function (xhr, textStatus, error) {
-                toastr.error("Cannot delete torrent!", "Error: " + xhr.statusText);
-                console.error("error deleting " + torrentItem.Hash());
-                console.error(xhr.responseText);
-                console.error(textStatus);
-                console.error(error.responseJSON);
-                self.Busy(false);
-            });*/
-            $('#addTorrentModal').modal('hide');
-        });
+        //$('#confirmAdd').off('click').on('click', function () {
+        //    $.post('/api/torrents/delete', { '': torrentItem.Hash() })
+        //    .done(function () {
+        //        self.Torrents.remove(torrentItem);
+        //    })
+        //    .fail(function (xhr, textStatus, error) {
+        //        toastr.error("Cannot delete torrent!", "Error: " + xhr.statusText);
+        //        console.error("error deleting " + torrentItem.Hash());
+        //        console.error(xhr.responseText);
+        //        console.error(textStatus);
+        //        console.error(error.responseJSON);
+        //    });
+        //    $('#addTorrentModal').modal('hide');
+        //});
 
         $('#addTorrentModal').modal('show');
     }
 
     self.ShowFiles = function (torrentItem) {
-        self.Busy(true);
 
         $('#showFileModalClose').off('click').on('click', function () {
-            self.Busy(false);
             $('#showFileModal').modal('hide');
         });
 
@@ -362,8 +353,46 @@ $(document).ready(function () {
     // retrieve torrent from WebApi
     //retrieveTorrentList();
 
-    // set default chart elements
-    // http://nnnick.github.io/Chart.js/docs-v2/
+    // set modal event (to manage twm busy state)
+    $('.modal').on('shown.bs.modal', function (e) {
+        twm.Busy(true);
+    })
+
+    // initialize file input
+    $("#inputFile2").fileinput({
+        'allowedFileExtensions': ["torrent"],
+        'allowedPreviewTypes': false,
+        'showUpload': false,
+        'showPreview': false,
+        'showCaption': false,
+        'uploadAsynch': false,
+        'uploadUrl': uri + '/add'
+    });
+
+
+    // initialize file input
+    $("#inputFile").fileinput({
+        'allowedFileExtensions': ["torrent"],
+        'allowedPreviewTypes': false,
+        'showUpload': true,
+        'showPreview': true,
+        'showCaption': true,
+        'uploadUrl': uri + '/add',
+        'layoutTemplates': {
+            progress: '<div></div>',
+            actions: '<span></span>'
+        }
+    });
+    $('#inputFile').on('filebatchuploadcomplete', function (event, files, extra) {
+        console.log('File batch upload complete');
+        $('#inputFile').fileinput('clear');
+    });
+
+    $('.modal').on('hidden.bs.modal', function (e) {
+        twm.Busy(false);
+    })
+
+    // http://nnnick.github.io/Chart.js/docs-v2/ default chart
     Chart.defaults.global.legend.display = false;
     Chart.defaults.global.responsive = true;
     Chart.defaults.global.maintainAspectRatio = true;
@@ -376,7 +405,6 @@ $(document).ready(function () {
     Chart.defaults.global.elements.point.hoverBorderWidth = 0;
 
     // create chart element
-    //var ctxD = $("#torrentChartD");
     torrentChartD = new Chart($("#torrentChartD"), {
         type: 'line',
         data: {
@@ -407,7 +435,6 @@ $(document).ready(function () {
             }
         }
     });
-    //var ctxU = $("#torrentChartU");
     torrentChartU = new Chart($("#torrentChartU"), {
         type: 'line',
         data: {
@@ -437,7 +464,6 @@ $(document).ready(function () {
             }
         }
     });
-
 
     // on notification from SessionManager update progress
     sr.client.notifyUpdateProgress = function (torrentStatus) {
@@ -512,12 +538,10 @@ $(document).ready(function () {
         twm.Connected(false);
         toastr.warning("Reconnecting to <b>Tsunami</b>");
     });
-
     $.connection.hub.reconnected(function () {
         twm.Connected(true);
         toastr.success("Connected to <b>Tsunami</b>");
     });
-
     $.connection.hub.disconnected(function () {
         twm.Connected(false);
         toastr.error("Disconnected from <b>Tsunami</b>");

@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
+using System.Linq;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using System.Configuration;
 using System.IO;
@@ -12,15 +14,13 @@ namespace Tsunami.Gui.Wpf
     /// <summary>
     /// Logica di interazione per MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : MetroWindow
     {
-        public ObservableCollection<int, string, double> Torrentlist { get; private set; }
+        //private object aduDownload = new Downloads();
         string startupPath = System.IO.Directory.GetCurrentDirectory();
-        public Downloads pageDownload = new Downloads();
-        public Search pageSearch = new Search();
-        public Player pagePlayer = new Player();
+        //private object aduSearch = new Search();
+        //private object aduPlayer = new Player();
 
-        
         public MainWindow()
         {
             InitializeComponent();
@@ -33,26 +33,17 @@ namespace Tsunami.Gui.Wpf
             else Initialize_CrashReporting();
 
             Directory.SetCurrentDirectory(startupPath);
-            Torrentlist = new ObservableCollection<int,string,double>();
-            this.DataContext = Torrentlist;
+
             this.SetLanguageDictionary();
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Revision;
             var title = this.Title + " " +  + verMajor +  "." + verMin + verRev;
             this.Title = title;
-            SessionManager.Initialize();
-            SessionManager.TorrentUpdated += new EventHandler<SessionManager.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
-            SessionManager.TorrentAdded += new EventHandler<SessionManager.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
-            SessionManager.TorrentRemoved += new EventHandler<SessionManager.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
-            SessionManager.SessionStatisticsUpdate += new EventHandler<SessionManager.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
 
-            
-            this.AddLogicalChild(pagePlayer);
-            this.AddLogicalChild(pageDownload);
-            this.AddLogicalChild(pageSearch);
-            //dataGridx.ItemsSource = Torrentlist;
+            SessionManager.Initialize();
         }
+
         async static void SquirrellUpdate()
         {
             using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
@@ -60,39 +51,11 @@ namespace Tsunami.Gui.Wpf
                 await mgr.UpdateApp();
             }
         }
-        private void UpdateFromSessionStatistics(object sender, SessionManager.OnSessionStatisticsEventArgs e)
-        {
-            // notify web of new session statistics
-            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            //context.Clients.All.notifySessionStatistics(e);
-        }
-
-        private void RemovedFromTsunamiCore(object sender, SessionManager.OnTorrentRemovedEventArgs e)
-        {
-            
-        }
-
-        private void AddFromTsunamiCore(object sender, SessionManager.OnTorrentAddedEventArgs e)
-        {
-            // notify web that a new id must be requested via webapi
-            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            //context.Clients.All.notifyTorrentAdded(e.Hash);
-        }
-
-        private void UpdateFromTsunamiCore(object sender, SessionManager.OnTorrentUpdatedEventArgs e)
-        {
-            // update web
-            //var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-            //context.Clients.All.notifyUpdateProgress(e);
-        }
-
-
-        public class ObservableCollection<T1, T2, T3> : ObservableCollection<string>
-        {
-        }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            SessionManager.Terminate();
+
             string str = "something to put in File";
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";
@@ -103,7 +66,6 @@ namespace Tsunami.Gui.Wpf
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
 
-            SessionManager.Terminate();
         }
 
         private void SetLanguageDictionary()
@@ -131,20 +93,20 @@ namespace Tsunami.Gui.Wpf
         }
 
         //page navigation methods
-        private void downloadsButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageContainer.Content = pageDownload; 
-        }
+        //private void downloadsButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    PageContainer.Content = aduDownload; 
+        //}
 
-        private void searchButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageContainer.Content = pageSearch; 
-        }
+        //private void searchButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    PageContainer.Content = aduSearch; 
+        //}
 
-        private void playerButton_Click(object sender, RoutedEventArgs e)
-        {
-            PageContainer.Content = pagePlayer; 
-        }
+        //private void playerButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    PageContainer.Content = aduPlayer; 
+        //}
         
         private void Initialize_CrashReporting()
         {
@@ -154,13 +116,13 @@ namespace Tsunami.Gui.Wpf
 
             // NBug configuration (you can also choose to create xml configuration file)
             //NBug.Settings.StoragePath = NBug.Enums.StoragePath.IsolatedStorage;
+
             NBug.Settings.StoragePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             NBug.Settings.UIMode = NBug.Enums.UIMode.Full;
             var _smtpUser = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpUser"];
             var _smtpPass = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpPass"];
             var _smtpServer = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"];
             var _smtpPort = System.Configuration.ConfigurationManager.AppSettings["NbugSmtpPort"];
-
 
             // Only one line connection-string no space & no SSL :(
             NBug.Settings.AddDestinationFromConnectionString(
@@ -178,27 +140,40 @@ namespace Tsunami.Gui.Wpf
             // es.: NBug.Settings.AddDestinationFromConnectionString("Type=Mail;From=bugs@xxx.com;Port=465;SmtpServer=smtp.gmail.com;To=support@xxx.com;UseAttachment=True;UseAuthentication=True;UseSsl=True;Username=bugs@xxx.com;Password=xxx;");
 
             // Hook-up to all possible unhandled exception sources for WPF app, after NBug is configured
-            AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
-            Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
-
+            //AppDomain.CurrentDomain.UnhandledException += NBug.Handler.UnhandledException;
+            //Application.Current.DispatcherUnhandledException += NBug.Handler.DispatcherUnhandledException;
         }
 
-        public void HideStack(bool hide)
+        private void showSettingFlyOut_Click(object sender, RoutedEventArgs e)
         {
-            if (hide)
-            {
-                navigationStack.Visibility = Visibility.Collapsed;
-                PageContainer.Margin = new Thickness(0, 0, 0, 0);
-
-            }
-
-            else
-            {
-                PageContainer.Margin = new Thickness(0, 20, 0, 0);
-                navigationStack.Visibility = Visibility.Visible;
-            }
-                            
+            settingsFlyOut.IsOpen = true;
         }
-    }
 
+        private void AddTorrent_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.DefaultExt = ".torrent";
+            ofd.Filter = "Torrent|*.torrent";
+            ofd.Multiselect = true;
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.Title = "Select Torrent to Add";
+            ofd.ShowDialog();
+            foreach (string file in ofd.FileNames)
+            {
+                SessionManager.addTorrent(file);
+            }
+
+        }
+
+        //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
+        //{
+        //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
+        //    if (res != null)
+        //    {
+        //        ToggleSwitch ts = (ToggleSwitch)sender;
+        //        res.UserPreferences.ShowAdvancedInterface = ts.IsChecked.Value;
+        //    }
+        //}
+    }
 }

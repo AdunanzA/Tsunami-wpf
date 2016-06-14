@@ -3,6 +3,7 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/aux_/session_impl.hpp>
 #include <libtorrent/session_status.hpp>
+#include <libtorrent/session_stats.hpp>
 #include "enums.h"
 
 namespace Tsunami
@@ -21,6 +22,7 @@ namespace Tsunami
 		ref class TorrentHandle;
 		ref class FeedSettings;
 		ref class FeedHandle;
+		ref class StatsMetrics;
 
 		class SessionAlertDispatcher;
 
@@ -120,6 +122,8 @@ namespace Tsunami
 			// TODO pop alerts
 			// TODO pop alert
 			// TODO wait for alert
+
+			cli::array<StatsMetrics ^> ^ session_stats_metrics();
 			void set_alert_mask(AlertMask mask);
 			void set_alert_dispatch(System::Action<Alert^>^ dispatch);
 			void clear_alert_dispatch();

@@ -15,6 +15,8 @@
 #include "torrent_handle.h"
 #include "feed_handle.h"
 #include "feed_settings.h"
+#include "stats_metrics.h"
+
 
 using namespace Tsunami::Core;
 
@@ -304,7 +306,21 @@ void Session::post_dht_stats()
 	session_->post_dht_stats();
 }
 
+// see: http://www.libtorrent.org/manual-ref.html#session-statistics
+
 void Session::post_session_stats()
 {
 	session_->post_session_stats();
+}
+
+cli::array<StatsMetrics ^> ^ Session::session_stats_metrics()
+{
+	auto m = libtorrent::session_stats_metrics();
+	size_t size = m.size();
+	cli::array<StatsMetrics^> ^ metrics = gcnew cli::array<StatsMetrics^>(size);
+	for (size_t i = 0; i < size; i++)
+	{
+		metrics[i] = gcnew StatsMetrics(m[i]);
+	}
+	return metrics;
 }

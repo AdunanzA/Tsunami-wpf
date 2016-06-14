@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using MahApps.Metro.Controls;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -48,18 +50,8 @@ namespace Tsunami.Gui.Wpf
 
         private void StartATorrent_Click(object sender, RoutedEventArgs e)
         {
-            //TorSession.get_torrents();
-            //SessionManager.TorrentSession.get_torrents();
-        }
 
-        //Torrentlist = new ObservableCollection<int, string, double>();
-        //SessionManager.TorrentSession.add_torrent(atp);
-        //TorrentHandle[] th = SessionManager.TorrentSession.get_torrents();
-        //foreach (TorrentHandle t in th)
-        //{
-        //    Torrentlist.Add(t.torrent_file().name());
-        //}
-        //dataGridx.ItemsSource = Torrentlist;
+        }
 
         private void AddTorrent_Click(object sender, RoutedEventArgs e)
         {
@@ -87,18 +79,18 @@ namespace Tsunami.Gui.Wpf
 
         public void AddTorrent()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.DefaultExt = ".torrent";
-            ofd.Filter = "Torrent|*.torrent";
-            ofd.Multiselect = true;
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.Title = "Select Torrent to Add";
-            ofd.ShowDialog();
-            foreach (string file in ofd.FileNames)
-            {
-                SessionManager.addTorrent(file);
-            }
+            //OpenFileDialog ofd = new OpenFileDialog();
+            ////ofd.DefaultExt = ".torrent";
+            //ofd.Filter = "Torrent|*.torrent";
+            //ofd.Multiselect = true;
+            //ofd.CheckFileExists = true;
+            //ofd.CheckPathExists = true;
+            //ofd.Title = "Select Torrent to Add";
+            //ofd.ShowDialog();
+            //foreach (string file in ofd.FileNames)
+            //{
+            //    SessionManager.addTorrent(file);
+            //}
         }
 
         private void SetLanguageDictionary()

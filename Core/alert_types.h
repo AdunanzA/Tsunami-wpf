@@ -1343,5 +1343,33 @@ namespace Tsunami
 		private:
 			libtorrent::i2p_alert * alert_;
 		};
+
+		/// <summary>
+		/// The session_stats_alert is posted when the user requests session statistics by
+		/// calling post_session_stats() on the session object. Its category is
+		/// ``status_notification``, but it is not subject to filtering, since it's only
+		/// manually posted anyway.
+		/// </summary>
+		public ref class session_stats_alert : Alert
+		{
+		public:
+			session_stats_alert(libtorrent::session_stats_alert * alert);
+
+			/// <summary>
+			/// An array are a mix of *counters* and *gauges*, which meanings can be
+			/// queries via the session_stats_metrics() function on the session. The
+			/// mapping from a specific metric to an index into this array is constant
+			/// for a specific version of libtorrent, but may differ for other
+			/// versions. The intended usage is to request the mapping, i.e. call
+			/// session_stats_metrics(), once on startup, and then use that mapping to
+			/// interpret these values throughout the process' runtime.
+			///
+			/// For more information, see the session-statistics_ section.
+			/// </summary>
+			property cli::array<unsigned long long> ^ values { cli::array<unsigned long long> ^ get(); }
+
+		private:
+			libtorrent::session_stats_alert * alert_;
+		};
 	}
 }

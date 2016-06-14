@@ -1,26 +1,263 @@
-﻿<Window x:Class="Tsunami.Gui.Wpf.MainWindow"
+﻿<Controls:MetroWindow x:Class="Tsunami.Gui.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         xmlns:Properties="clr-namespace:Tsunami.Gui.Wpf.Properties"
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Left="{Binding WindowLeft, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
+        GlowBrush="{DynamicResource AccentColorBrush}"
+        Icon="logo_tsunami_big.ico"
+        BorderThickness="1"
+        ResizeMode="CanResizeWithGrip"
         mc:Ignorable="d"
-        Title="Tsunami Pre-Alpha"
-        Closing="Window_Closing">
+        Title="Tsunami 0.1"
+        Closing="Window_Closing"
+        RightWindowCommandsOverlayBehavior ="Never"
+        DataContext="{StaticResource TorrentStatusViewModel}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <BooleanToVisibilityConverter x:Key="boolConverter" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button ToolTip="Chat" Cursor="Hand">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_chat}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </StackPanel>
+            </Button>
+            <Button ToolTip="Settings" Cursor="Hand" Click="showSettingFlyOut_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_settings}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl>
+            <Controls:Flyout x:Name="settingsFlyOut" Header="Settings" Position="Right" Width="400">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0"
+                               Text="Something above the ScrollPanel" />
 
-        <Grid >
-        <StackPanel x:Name="navigationStack" Orientation="Horizontal" Height="20" VerticalAlignment="Top">
-            <Button Content="Search" MinWidth="100" Margin="10,0,0,0" Click="searchButton_Click"/>
-            <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
-            <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>            
-        </StackPanel>
-        <Frame x:Name="PageContainer" Height="Auto" Width="Auto" Margin="0,20,0,0" NavigationUIVisibility="Hidden"/>
-        </Grid>
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <Controls:ToggleSwitch x:Name="toggleAdvanced" Header="Choose Tsunami interface" OnLabel="Advanced" OffLabel="Simple" 
+                                   Width="150" HorizontalAlignment="Right">
+                            </Controls:ToggleSwitch>
+                            <Controls:ToggleSwitch Header="Start web interface on Tsunami start" OnLabel="Yes" OffLabel="No" 
+                                           Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"></Controls:ToggleSwitch>
+                            <TextBox Controls:TextBoxHelper.Watermark="TextBox 01" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 02" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 03" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 04" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 05" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 06" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 07" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 08" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 09" />
+                            <TextBox Margin="0,5,0,0"
+                                     Controls:TextBoxHelper.Watermark="TextBox 10" />
+                        </StackPanel>
+                    </ScrollViewer>
 
-</Window>
+                    <UniformGrid Columns="2"
+                                 Grid.Row="2"
+                                 Margin="10">
+                        <Button Style="{DynamicResource SquareButtonStyle}"
+                                Margin="10"
+                                Content="Create" />
+                        <Button Style="{DynamicResource SquareButtonStyle}"
+                                Margin="10"
+                                Content="Cancel" />
+                    </UniformGrid>
+
+                </Grid>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+    <Grid>
+        <Controls:MetroAnimatedSingleRowTabControl>
+            <TabItem Header="1 - Search or add torrent" IsSelected="True">
+                <StackPanel Orientation="Vertical">
+                    <Button Style="{DynamicResource SquareButtonStyle}" Content=" + " Width="150" Margin="15" Click="AddTorrent_Click"></Button>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="2 - Check your download">
+                <StackPanel Orientation="Vertical">
+                    <DataGrid Name="dataGridx" AutoGenerateColumns="False" Grid.Row="0" IsReadOnly="True" HorizontalAlignment="Stretch"
+                      CellStyle="{StaticResource Body_Content_DataGrid_Centering}" HorizontalContentAlignment="Left"
+                      ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}"
+                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding QueuePosition}" />
+                            <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" />
+                            <DataGridTextColumn Header="Size" IsReadOnly="True" Binding="{Binding TotalWanted_ByteSize}" />
+                            <DataGridTextColumn Header="Downloaded" IsReadOnly="True" Binding="{Binding TotalDone_ByteSize}" />
+                            <DataGridTextColumn Header="Status" IsReadOnly="True" Binding="{Binding State}" />
+                            <DataGridTemplateColumn Header="Progress">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ProgressBar Style="{StaticResource ProgressBarStyle}" Width="35" Height="35" Minimum="0"
+                                             Value="{Binding Progress_Number, Mode=OneWay}" Background="{Binding Progress_Color, Mode=OneWay}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Priority" IsReadOnly="True" Binding="{Binding Priority_String}" />
+                            <DataGridTextColumn Header="Download Speed" IsReadOnly="True" Binding="{Binding DownloadRate_ByteSize}" />
+                            <DataGridTextColumn Header="Upload Speed" IsReadOnly="True" Binding="{Binding UploadRate_ByteSize}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <ListBox Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}">
+                        <ListBox.Style>
+                            <Style TargetType="ListBox">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.Style>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" IsItemsHost="True"></WrapPanel>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical" Width="300" Margin="10">
+                                    <Label>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="270" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
+                                            <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </StackPanel>
+                                    </Label>
+                                    <Label>
+                                        <StackPanel Orientation="Horizontal" Height="50">
+                                            <StackPanel Orientation="Vertical">
+                                                <StackPanel Orientation="Horizontal" Width="200">
+                                                    <Label Content="{Binding State}" FontStyle="Italic"></Label>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
+                                                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                        <Rectangle.OpacityMask>
+                                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
+                                                        </Rectangle.OpacityMask>
+                                                    </Rectangle>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <ProgressBar Width="50" Height="50" Minimum="0" Style="{StaticResource ProgressBarStyle}"
+                                                Value="{Binding Progress_Number, Mode=OneWay}" Background="{Binding Progress_Color, Mode=OneWay}"/>
+                                        </StackPanel>
+                                    </Label>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="3 - Play and have fun!">
+
+            </TabItem>
+        </Controls:MetroAnimatedSingleRowTabControl>
+
+        <!--<StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Top">
+                <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
+                <Button Content="Search" MinWidth="100" Margin="10,0,0,0" Click="searchButton_Click"/>
+                <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>
+            </StackPanel>
+            <Frame x:Name="PageContainer" Height="30" Width="Auto" NavigationUIVisibility="Hidden" VerticalAlignment="Top"/>
+        </StackPanel>-->
+        <StatusBar Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+            <StatusBarItem HorizontalAlignment="Right">
+                <!--<StackPanel Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">-->
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Text="{Binding SessionStat.TotalDownload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                    <TextBlock Text="("></TextBlock>
+                    <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                    <TextBlock Text=")"></TextBlock>
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
+                        <TextBlock Text="/" Margin="15,0"></TextBlock>
+                        <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_up}" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Text="{Binding SessionStat.TotalUpload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                        <TextBlock Text="("></TextBlock>
+                        <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                        <TextBlock Text=")"></TextBlock>
+                    </StackPanel>
+                    <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
+                </StackPanel>
+                    <!--<StackPanel Orientation="Horizontal">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible"></Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
+                            <Rectangle.OpacityMask>
+                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}" />
+                            </Rectangle.OpacityMask>
+                        </Rectangle>
+                        <TextBlock Text="{Binding SessionStat.TotalDownload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                        <TextBlock Text="("></TextBlock>
+                        <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                        <TextBlock Text=")" Margin="0,0,20,0"></TextBlock>
+                    </StackPanel>
+                </StackPanel>-->
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+
+</Controls:MetroWindow>
