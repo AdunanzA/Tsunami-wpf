@@ -250,6 +250,9 @@ namespace Tsunami
 		{
 		public:
 			torrent_removed_alert(libtorrent::torrent_removed_alert* alert);
+			property Sha1Hash^ info_hash { Sha1Hash^ get(); }
+		private:
+			libtorrent::torrent_removed_alert* alert_;
 		};
 
 		///<summary>

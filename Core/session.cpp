@@ -18,12 +18,13 @@
 #include "stats_metrics.h"
 
 
+
 using namespace Tsunami::Core;
 
 Session::Session()
 {
     dispatcher_ = new SessionAlertDispatcher();
-    session_ = new libtorrent::session();
+	session_ = new libtorrent::session();
 }
 
 Session::~Session()
@@ -324,3 +325,4 @@ cli::array<StatsMetrics ^> ^ Session::session_stats_metrics()
 	}
 	return metrics;
 }
+
