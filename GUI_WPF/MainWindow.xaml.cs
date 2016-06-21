@@ -22,10 +22,7 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        //private object aduDownload = new Downloads();
         string startupPath = System.IO.Directory.GetCurrentDirectory();
-        //private object aduSearch = new Search();
-        //private object aduPlayer = new Player();
 
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
@@ -122,14 +119,14 @@ namespace Tsunami.Gui.Wpf
             switch (Thread.CurrentThread.CurrentCulture.ToString())
             {    
                 case "en-US":
-                    dict.Source = new Uri(Environment.CurrentDirectory+"../../../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
                 case "it-IT":
-                    dict.Source = new Uri(Environment.CurrentDirectory+"../../../../Resources/italian.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/italian.xaml", UriKind.RelativeOrAbsolute);
                     break;
 
                 default:
-                    dict.Source = new Uri(Environment.CurrentDirectory+"../../../../Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
             }
             this.Resources.MergedDictionaries.Add(dict);
@@ -311,6 +308,10 @@ namespace Tsunami.Gui.Wpf
             else
             {
                 playerTab.Content = myGrid;
+                //vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
+                myGrid.SetValue(Canvas.ZIndexProperty, 10);
+                vlcPlayer.SetValue(Canvas.ZIndexProperty, 11);
+
                 fscreen.Close();
                 fscreen = null;
                 this.Show();                
