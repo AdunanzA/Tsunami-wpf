@@ -55,7 +55,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -67,6 +69,10 @@
     <ProjectReference Include="..\Core\TsunamiCore.vcxproj">
       <Project>{9504e5fa-6818-452a-a2e8-3b34567a6cd2}</Project>
       <Name>Tsunami.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GUI_WPF\Tsunami.Gui.Wpf.csproj">
+      <Project>{20DF793B-B1D4-4119-9CA8-524AD06F3905}</Project>
+      <Name>Tsunami.Gui.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\SessionManager\Tsunami.SessionManager.csproj">
       <Project>{72a3592c-2b4e-45b1-a644-f0a9a4d8644a}</Project>

@@ -7,18 +7,44 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
+using Tsunami.Gui.Wpf;
+using System.Collections;
 
 namespace Tsunami.UnitTest
 {
    
  [TestClass()]
     public class SessionManagerTests
-
     {
         const string TORRENT_LIBRE_OFFICE = "LibreOffice_5.1.1_Win_x86.msi.torrent";
         const string TORRENT_FOLDER = @"Torrent\";
         Boolean bSessionManagerStarted = false;
         Boolean bStartWeb = false;
+        int listSize = 0;
+        List<TorrentItem> torrentList = null;
+        /// <summary>
+        ///Gets or sets the test context which provides
+        ///information about and functionality for the current test run.
+        ///</summary>
+        private TestContext testContextInstance;
+        public TestContext TestContext
+        {
+            get { return testContextInstance;}
+            set { testContextInstance = value; }
+        }
+        /*
+        Result Message:	Method Tsunami.UnitTest.SessionManagerTests.ClassInit 
+        has wrong signature. 
+        The method must be static, public, does not return a value 
+        and should take a single parameter of type TestContext.
+        */
+
+/*        [ClassInitialize]
+            static public void ClassInit(TestContext)
+            {
+                torrentList = new List<TorrentItem>();
+            }
+*/
         [TestMethod()]
         public void InitializeTest()
         {
@@ -27,6 +53,8 @@ namespace Tsunami.UnitTest
             {
                 SessionManager.Initialize();
                 bSessionManagerStarted = true;
+                torrentList = new List<TorrentItem>();
+                setListeners();
             }
 
             Assert.IsTrue(bResult) ;
@@ -136,6 +164,31 @@ namespace Tsunami.UnitTest
         [TestMethod()]
         public void GiveMeStorageModeFromEnumTest()
         {
+
+        }
+        private void setListeners()
+        {
+            SessionManager.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddTorrentListener);
+            SessionManager.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateTorrentListener);
+//            SessionManager.TorrentRemoved += new EventHandler<EventsArgs.OnTorrentRemovedEventArgs>(RemovedTorrentListener);
+//            SessionManager.SessionStatisticsUpdate += new EventHandler<EventsArgs.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
+        }
+        [TestMethod()]
+        public void AddTorrentListener(object sender, EventsArgs.OnTorrentAddedEventArgs e)
+        {
+            TorrentItem item = new TorrentItem(e.QueuePosition, e.Name, e.Hash, 0, 0, e.Status, e.Progress, 0, 0, 0);
+            torrentList.Add(item);
+            listSize++;
+            Assert.AreEqual(listSize, torrentList.Count);
+        }
+//        [TestMethod()]
+        private void UpdateTorrentListener(object sender, EventsArgs.OnTorrentUpdatedEventArgs e)
+        {
+            TorrentItem item = torrentList.FirstOrDefault(o => o.Hash == e.InfoHash);
+            item.DownloadRate = e.DownloadRate;
+// TO DO: refresh all attributes 
+            TorrentItem updatedItem = torrentList.FirstOrDefault(o => o.Hash == e.InfoHash);
+            Assert.AreEqual(item, updatedItem);
 
         }
     }
