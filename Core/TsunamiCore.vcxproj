@@ -76,29 +76,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Debug;..\packages\opendht4tsunami.0.1\lib\native\x86\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Debug;..\packages\opendht4tsunami.0.1\lib\native\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Release;..\packages\opendht4tsunami.0.1\lib\native\x86\Release;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Release;..\packages\opendht4tsunami.0.1\lib\native\x64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -113,6 +113,7 @@
       <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
       <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
+      <AdditionalOptions>/ignore:4099 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -129,6 +130,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -141,6 +143,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalOptions>/ignore:4099 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -156,10 +159,12 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib</AdditionalDependencies>
+      <AdditionalOptions>/ignore:4099 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="add_torrent_params.h" />
+    <ClInclude Include="adunanza_dht.h" />
     <ClInclude Include="alert.h" />
     <ClInclude Include="bitfield.h" />
     <ClInclude Include="dht_lookup.h" />
@@ -191,10 +196,12 @@
     <ClInclude Include="torrent_handle.h" />
     <ClInclude Include="torrent_info.h" />
     <ClInclude Include="torrent_status.h" />
+    <ClInclude Include="tsunami_dht.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="add_torrent_params.cpp" />
+    <ClCompile Include="adunanza_dht.cpp" />
     <ClCompile Include="alert.cpp" />
     <ClCompile Include="alert_types.cpp" />
     <ClCompile Include="announce_entry.cpp" />
@@ -225,10 +232,31 @@
     <ClCompile Include="torrent_handle.cpp" />
     <ClCompile Include="torrent_info.cpp" />
     <ClCompile Include="torrent_status.cpp" />
+    <ClCompile Include="tsunami_dht.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4267;4244;4804;4800;</DisableSpecificWarnings>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4267;4244;4804;4800;</DisableSpecificWarnings>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">_CRT_SECURE_NO_WARNINGS;WIN32_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">_CRT_SECURE_NO_WARNINGS;WIN32_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_CRT_SECURE_NO_WARNINGS;WIN32_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4267;4244;4804;4800;</DisableSpecificWarnings>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">_CRT_SECURE_NO_WARNINGS;WIN32_NATIVE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4267;4244;4804;4800;</DisableSpecificWarnings>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

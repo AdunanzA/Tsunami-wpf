@@ -6,6 +6,7 @@
 #include <libtorrent/session_stats.hpp>
 #include "enums.h"
 
+
 namespace Tsunami
 {
 	namespace Core
@@ -137,10 +138,9 @@ namespace Tsunami
 			void start_natpmp();
 			void post_dht_stats();
 			void post_session_stats();
-
+			
 		private:
 			SessionAlertDispatcher * dispatcher_;
-
 			libtorrent::session* session_;
 		};
 	}

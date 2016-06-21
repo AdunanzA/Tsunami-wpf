@@ -56,8 +56,14 @@ torrent_added_alert::torrent_added_alert(libtorrent::torrent_added_alert* a)
 }
 
 torrent_removed_alert::torrent_removed_alert(libtorrent::torrent_removed_alert* a)
-	: torrent_alert(a)
+	: torrent_alert(a),
+	alert_(a)
 {
+}
+
+Sha1Hash^ torrent_removed_alert::info_hash::get()
+{
+	return gcnew Sha1Hash(alert_->info_hash);
 }
 
 read_piece_alert::read_piece_alert(libtorrent::read_piece_alert* a)

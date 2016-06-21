@@ -114,6 +114,12 @@
     <ClInclude Include="stats_metrics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tsunami_dht.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adunanza_dht.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="session.cpp">
@@ -210,6 +216,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stats_metrics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tsunami_dht.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="adunanza_dht.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
