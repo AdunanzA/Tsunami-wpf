@@ -61,7 +61,8 @@ namespace Tsunami.UnitTest
         }
 
         [TestMethod()]
-        public void startWebTest() { 
+        public void startWebTest() {
+            InitializeTest();
 // Tests nothing because SessionManager.startWeb() is a void Method
             Boolean bResult = true;
             if (bStartWeb == false) { 
@@ -86,7 +87,8 @@ namespace Tsunami.UnitTest
         [TestMethod()]
         public void TerminateTest()
         {
-// Tests nothing because SessionManager.terminate() is a void Method
+            InitializeTest();
+            // Tests nothing because SessionManager.terminate() is a void Method
             Boolean bResult = true;
             if (bSessionManagerStarted == true)
             {
@@ -99,24 +101,25 @@ namespace Tsunami.UnitTest
         [TestMethod()]
         public void getTorrentStatusTest()
         {
-
+            InitializeTest();
         }
 
         [TestMethod()]
         public void getTorrentFilesTest()
         {
-
+            InitializeTest();
         }
 
         [TestMethod()]
         public void getTorrentStatusListTest()
         {
-
+            InitializeTest();
         }
 
         [TestMethod()]
         public void addTorrentTest()
         {
+            InitializeTest();
             string path = Path.GetDirectoryName(
                      Assembly.GetExecutingAssembly().Location);
             string path2 = Path.GetFullPath(path);
@@ -128,13 +131,12 @@ namespace Tsunami.UnitTest
             {
                 Assert.Fail("File " + path + " does not exists");
             }
-// qui bisogna istanziare un listener per TorrentAdded
         }
 
         [TestMethod()]
         public void addTorrentTest1()
         {
-
+            InitializeTest();
         }
 
         [TestMethod()]
@@ -158,13 +160,13 @@ namespace Tsunami.UnitTest
         [TestMethod()]
         public void GiveMeStateFromEnumTest()
         {
-
+            InitializeTest();
         }
 
         [TestMethod()]
         public void GiveMeStorageModeFromEnumTest()
         {
-
+            InitializeTest();
         }
         private void setListeners()
         {
