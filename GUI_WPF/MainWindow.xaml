@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         xmlns:Properties="clr-namespace:Tsunami.Gui.Wpf.Properties"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:wpf="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
+
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
@@ -105,7 +107,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Grid>
-        <Controls:MetroAnimatedSingleRowTabControl>
+        <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab">
             <TabItem Header="1 - Search or add torrent" IsSelected="True">
                 <StackPanel Orientation="Vertical">
                     <Button Style="{DynamicResource SquareButtonStyle}" Content=" + " Width="150" Margin="15" Click="AddTorrent_Click"></Button>
@@ -192,8 +194,51 @@
                     </ListBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="3 - Play and have fun!">
+            <TabItem Name="playerTab"  Header="3 - Play and have fun!">
+    <Grid Name="myGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
 
+                    <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+                    <Image x:Name="DisplayImage"/>
+
+                    <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <TextBlock Name="lblProgressStatus">00:00:00</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+                <Slider x:Name="movieProgress" Height="Auto" Thumb.DragStarted="movieProgress_DragStarted" Thumb.DragCompleted="movieProgrss_DragCompleted" ValueChanged="sliProgress_ValueChanged" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
+                <Slider Grid.Column="2" x:Name="volumeControl" ValueChanged="manageVolume" Width="100" Maximum="100" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Stop" Click="stopButton_Click" Content="Stop" Height="Auto"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Play" Click="playButton_Click" Content="Play" Height="Auto" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
+                <Button x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="Auto"/>
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
             </TabItem>
         </Controls:MetroAnimatedSingleRowTabControl>
 
@@ -205,7 +250,7 @@
             </StackPanel>
             <Frame x:Name="PageContainer" Height="30" Width="Auto" NavigationUIVisibility="Hidden" VerticalAlignment="Top"/>
         </StackPanel>-->
-        <StatusBar Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+        <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">
                 <!--<StackPanel Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">-->
                 <StackPanel Orientation="Horizontal">

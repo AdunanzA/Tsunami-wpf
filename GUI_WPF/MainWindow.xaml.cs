@@ -8,6 +8,12 @@ using Microsoft.Win32;
 using System.Configuration;
 using System.IO;
 using Squirrel;
+using System.Windows.Threading;
+using Meta.Vlc.Wpf;
+using System.Windows.Media;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Controls.Primitives;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -21,6 +27,14 @@ namespace Tsunami.Gui.Wpf
         //private object aduSearch = new Search();
         //private object aduPlayer = new Player();
 
+        DispatcherTimer timer = null;
+        DispatcherTimer hideBarTimer = null;
+
+        bool isFullScreen = false;
+        bool isDragging = false;
+        VlcPlayer vlcPlayer = null;
+        Window fscreen = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -32,6 +46,40 @@ namespace Tsunami.Gui.Wpf
             }
             else Initialize_CrashReporting();
 
+            //Player Settings
+            var vlcPath = Utils.GetWinVlcPath();
+
+            if (Utils.IsWindowsOs())
+            {
+                Directory.SetCurrentDirectory(vlcPath);
+            }
+                        
+
+            vlcPlayer = new VlcPlayer(DisplayImage.Dispatcher);
+            vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" });
+            vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
+            vlcPlayer.Background = Brushes.Black;
+
+            //vlcPlayer.MouseDoubleClick += setFullScreen;
+            DisplayImage.MouseDown += setFullScreen;
+            //vlcPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
+            DisplayImage.MouseMove += showProgressBar;
+           // vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += new EventHandler(timer_Tick);
+
+            hideBarTimer = new DispatcherTimer();
+            hideBarTimer.Interval = TimeSpan.FromSeconds(5);
+            hideBarTimer.Tick += new EventHandler(HideBar_Tick);
+
+            volumeControl.Value = vlcPlayer.Volume;
+            Stop.IsEnabled = false;
+            Pause.IsEnabled = false;
+            //End Player Settings
+
+            //Set default path after vlc initialization
             Directory.SetCurrentDirectory(startupPath);
 
             this.SetLanguageDictionary();
@@ -92,22 +140,7 @@ namespace Tsunami.Gui.Wpf
 
         }
 
-        //page navigation methods
-        //private void downloadsButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    PageContainer.Content = aduDownload; 
-        //}
 
-        //private void searchButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    PageContainer.Content = aduSearch; 
-        //}
-
-        //private void playerButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    PageContainer.Content = aduPlayer; 
-        //}
-        
         private void Initialize_CrashReporting()
         {
             // TODO: Probabilmente dobbiamo rendere l'inizializzazione async
@@ -164,6 +197,126 @@ namespace Tsunami.Gui.Wpf
                 SessionManager.addTorrent(file);
             }
 
+        }
+
+        private void showProgressBar(object sender, MouseEventArgs e)
+        {
+            if (isFullScreen)
+            {
+                playerStatus.Visibility = Visibility.Visible;
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (!isDragging && vlcPlayer.VideoSource != null)
+            {
+                movieProgress.Minimum = 0;
+                movieProgress.Maximum = vlcPlayer.Length.TotalSeconds;
+                movieProgress.Value = vlcPlayer.Time.TotalSeconds;
+            }
+        }
+
+        private void HideBar_Tick(object sender, EventArgs e)
+        {
+            if (isFullScreen)
+            {
+                playerStatus.Visibility = Visibility.Collapsed;
+                Mouse.OverrideCursor = Cursors.None;
+            }
+        }
+
+        private void PlayerOnVideoSourceChanged(object sender, VideoSourceChangedEventArgs videoSourceChangedEventArgs)
+        {
+            DisplayImage.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                DisplayImage.Source = videoSourceChangedEventArgs.NewVideoSource;
+            }));
+        }
+
+        private void playButton_Click(object sender, RoutedEventArgs e)
+        {
+            vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
+
+            vlcPlayer.Play();
+            timer.Start();
+            hideBarTimer.Start();
+
+            //DisplayImage.Stretch = Stretch.Fill;
+            //DisplayImage.StretchDirection = StretchDirection.Both;
+            Play.IsEnabled = false;
+            Pause.IsEnabled = true;
+            Stop.IsEnabled = true;
+        }
+
+        private void pauseButton_Click(object sender, EventArgs e)
+        {
+            vlcPlayer.PauseOrResume();
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            vlcPlayer.Stop();
+
+            timer.Stop();
+            hideBarTimer.Stop();
+
+            Stop.IsEnabled = false;
+            Pause.IsEnabled = false;
+            Play.IsEnabled = true;
+        }
+
+        private void manageVolume(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            vlcPlayer.Volume = (int)volumeControl.Value;
+        }
+
+        private void sliProgress_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            lblProgressStatus.Text = TimeSpan.FromSeconds(movieProgress.Value).ToString(@"hh\:mm\:ss");
+        }
+
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            volumeControl.Value = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
+        }
+
+        private void movieProgress_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            isDragging = true;
+        }
+
+        private void movieProgrss_DragCompleted(object sender, DragCompletedEventArgs e)
+        {
+            isDragging = false;
+            vlcPlayer.Time = TimeSpan.FromSeconds(movieProgress.Value);
+        }
+
+        private void setFullScreen(object sender, MouseButtonEventArgs e)
+        {
+
+            if (!isFullScreen)
+            {
+                this.Hide();
+                fscreen = new Window();
+                fscreen.Content = myGrid; 
+                fscreen.WindowState = WindowState.Maximized;
+                fscreen.WindowStyle = WindowStyle.None;
+                fscreen.Show();
+
+                isFullScreen = true;
+            }
+
+            else
+            {
+                playerTab.Content = myGrid;
+                fscreen.Close();
+                fscreen = null;
+                this.Show();                
+                Mouse.OverrideCursor = Cursors.Arrow;
+                isFullScreen = false;
+            }
         }
 
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
