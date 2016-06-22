@@ -61,7 +61,7 @@ namespace Tsunami.Gui.Wpf
             DisplayImage.MouseDown += setFullScreen;
             //vlcPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
             DisplayImage.MouseMove += showProgressBar;
-           // vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
+            //vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -119,14 +119,14 @@ namespace Tsunami.Gui.Wpf
             switch (Thread.CurrentThread.CurrentCulture.ToString())
             {    
                 case "en-US":
-                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
                 case "it-IT":
-                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/italian.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/italian.xaml", UriKind.RelativeOrAbsolute);
                     break;
 
                 default:
-                    dict.Source = new Uri(Environment.CurrentDirectory+"/Dictionaries/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
             }
             this.Resources.MergedDictionaries.Add(dict);
