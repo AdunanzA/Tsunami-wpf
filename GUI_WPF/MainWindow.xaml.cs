@@ -31,7 +31,7 @@ namespace Tsunami.Gui.Wpf
         bool isDragging = false;
         VlcPlayer vlcPlayer = null;
         Window fscreen = null;
-
+        Grid fscreenGrid = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -297,7 +297,12 @@ namespace Tsunami.Gui.Wpf
             {
                 this.Hide();
                 fscreen = new Window();
-                fscreen.Content = myGrid; 
+                fscreenGrid = new Grid();
+                myGrid.Children.Remove(DisplayImage);
+                myGrid.Children.Remove(playerStatus);
+                fscreenGrid.Children.Add(DisplayImage);
+                fscreenGrid.Children.Add(playerStatus);
+                fscreen.Content = fscreenGrid; 
                 fscreen.WindowState = WindowState.Maximized;
                 fscreen.WindowStyle = WindowStyle.None;
                 fscreen.Show();
@@ -307,12 +312,15 @@ namespace Tsunami.Gui.Wpf
 
             else
             {
-                playerTab.Content = myGrid;
-                //vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
+                fscreenGrid.Children.Clear();
+                myGrid.Children.Add(DisplayImage);
+                myGrid.Children.Add(playerStatus);
+
                 myGrid.SetValue(Canvas.ZIndexProperty, 10);
                 vlcPlayer.SetValue(Canvas.ZIndexProperty, 11);
-
+                fscreenGrid = null;
                 fscreen.Close();
+
                 fscreen = null;
                 this.Show();                
                 Mouse.OverrideCursor = Cursors.Arrow;
