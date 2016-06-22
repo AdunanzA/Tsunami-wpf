@@ -58,7 +58,7 @@ namespace Tsunami.Gui.Wpf
             vlcPlayer.Background = Brushes.Black;
 
             //vlcPlayer.MouseDoubleClick += setFullScreen;
-            DisplayImage.MouseDown += setFullScreen;
+            //DisplayImage.MouseDown += setFullScreen;
             //vlcPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
             DisplayImage.MouseMove += showProgressBar;
             //vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
@@ -290,7 +290,7 @@ namespace Tsunami.Gui.Wpf
             vlcPlayer.Time = TimeSpan.FromSeconds(movieProgress.Value);
         }
 
-        private void setFullScreen(object sender, MouseButtonEventArgs e)
+        private void SetFullScreen(object sender, EventArgs e)
         {
 
             if (!isFullScreen)
@@ -315,12 +315,10 @@ namespace Tsunami.Gui.Wpf
                 fscreenGrid.Children.Clear();
                 myGrid.Children.Add(DisplayImage);
                 myGrid.Children.Add(playerStatus);
-
                 myGrid.SetValue(Canvas.ZIndexProperty, 10);
                 vlcPlayer.SetValue(Canvas.ZIndexProperty, 11);
                 fscreenGrid = null;
                 fscreen.Close();
-
                 fscreen = null;
                 this.Show();                
                 Mouse.OverrideCursor = Cursors.Arrow;

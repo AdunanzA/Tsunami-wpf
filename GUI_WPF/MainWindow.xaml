@@ -214,7 +214,8 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
@@ -236,7 +237,10 @@
             <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
                 <Button x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="Auto"/>
             </StatusBarItem>
-        </StatusBar>
+            <StatusBarItem Grid.Column="6">
+                <Button x:Name="FullScreen" Click="SetFullScreen" Content="FullScreen" Height="Auto" />
+           </StatusBarItem>
+                    </StatusBar>
 
     </Grid>
             </TabItem>
