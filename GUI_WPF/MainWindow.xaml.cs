@@ -49,19 +49,14 @@ namespace Tsunami.Gui.Wpf
             if (Utils.IsWindowsOs())
             {
                 Directory.SetCurrentDirectory(vlcPath);
-            }
-                        
+            }                        
 
             vlcPlayer = new VlcPlayer(DisplayImage.Dispatcher);
             vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" });
             vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
             vlcPlayer.Background = Brushes.Black;
 
-            //vlcPlayer.MouseDoubleClick += setFullScreen;
-            //DisplayImage.MouseDown += setFullScreen;
-            //vlcPlayer.CreateMode = PlayerCreateMode.NewVlcInstance;
             DisplayImage.MouseMove += showProgressBar;
-            //vlcPlayer.SetValue(Canvas.ZIndexProperty, -1);
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -76,7 +71,7 @@ namespace Tsunami.Gui.Wpf
             Pause.IsEnabled = false;
             //End Player Settings
 
-            //Set default path after vlc initialization
+            //Restore default path after vlc initialization
             Directory.SetCurrentDirectory(startupPath);
 
             this.SetLanguageDictionary();
@@ -105,6 +100,7 @@ namespace Tsunami.Gui.Wpf
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";
             System.IO.FileStream file = System.IO.File.Create(path);
+            
             writer.Serialize(file, str);
             file.Close();
 
@@ -136,8 +132,7 @@ namespace Tsunami.Gui.Wpf
         {
 
         }
-
-
+        
         private void Initialize_CrashReporting()
         {
             // TODO: Probabilmente dobbiamo rendere l'inizializzazione async
@@ -240,8 +235,6 @@ namespace Tsunami.Gui.Wpf
             timer.Start();
             hideBarTimer.Start();
 
-            //DisplayImage.Stretch = Stretch.Fill;
-            //DisplayImage.StretchDirection = StretchDirection.Both;
             Play.IsEnabled = false;
             Pause.IsEnabled = true;
             Stop.IsEnabled = true;

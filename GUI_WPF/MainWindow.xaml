@@ -197,13 +197,12 @@
             <TabItem Name="playerTab"  Header="3 - Play and have fun!">
     <Grid Name="myGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
 
-                    <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-                    <Image x:Name="DisplayImage"/>
-
-                    <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
+        <Image x:Name="DisplayImage"/>
+        <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -215,7 +214,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                        </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
             </StatusBar.ItemsPanel>
