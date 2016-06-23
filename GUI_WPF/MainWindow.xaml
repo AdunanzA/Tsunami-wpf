@@ -237,7 +237,7 @@
                 <Button x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="Auto"/>
             </StatusBarItem>
             <StatusBarItem Grid.Column="6">
-                <Button x:Name="FullScreen" Click="SetFullScreen" Content="FullScreen" Height="Auto" />
+                <Button x:Name="FullScreen" Click="SetFullScreen" Content="FullScreen" Height="Auto" IsEnabled="False" />
            </StatusBarItem>
                     </StatusBar>
 

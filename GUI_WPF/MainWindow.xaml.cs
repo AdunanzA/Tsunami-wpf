@@ -100,7 +100,7 @@ namespace Tsunami.Gui.Wpf
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";
             System.IO.FileStream file = System.IO.File.Create(path);
-            
+
             writer.Serialize(file, str);
             file.Close();
 
@@ -221,37 +221,55 @@ namespace Tsunami.Gui.Wpf
 
         private void PlayerOnVideoSourceChanged(object sender, VideoSourceChangedEventArgs videoSourceChangedEventArgs)
         {
+
             DisplayImage.Dispatcher.BeginInvoke(new Action(() =>
             {
-                DisplayImage.Source = videoSourceChangedEventArgs.NewVideoSource;
+                    DisplayImage.Source = videoSourceChangedEventArgs.NewVideoSource;             
             }));
         }
 
         private void playButton_Click(object sender, RoutedEventArgs e)
         {
+            vlcPlayer.Stop();
             vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
 
             vlcPlayer.Play();
             timer.Start();
             hideBarTimer.Start();
 
+            FullScreen.IsEnabled = true;
             Play.IsEnabled = false;
             Pause.IsEnabled = true;
             Stop.IsEnabled = true;
         }
 
-        private void pauseButton_Click(object sender, EventArgs e)
+        private void pauseButton_Click(object sender, RoutedEventArgs e)
         {
             vlcPlayer.PauseOrResume();
         }
 
-        private void stopButton_Click(object sender, EventArgs e)
+        private void stopButton_Click(object sender, RoutedEventArgs e)
         {
-            vlcPlayer.Stop();
-
             timer.Stop();
             hideBarTimer.Stop();
 
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                vlcPlayer.Stop();
+            });
+
+            if (isFullScreen)
+            {
+                fscreenGrid.Children.Clear();                
+                myGrid.Children.Add(DisplayImage);
+                myGrid.Children.Add(playerStatus);
+                fscreen.Close();
+                fscreenGrid = null;
+                isFullScreen = false;
+                this.Show();
+
+            }
+            FullScreen.IsEnabled = false;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
             Play.IsEnabled = true;
