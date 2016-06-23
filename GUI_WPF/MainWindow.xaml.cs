@@ -267,8 +267,8 @@ namespace Tsunami.Gui.Wpf
                 fscreenGrid = null;
                 isFullScreen = false;
                 this.Show();
-
             }
+
             FullScreen.IsEnabled = false;
             Stop.IsEnabled = false;
             Pause.IsEnabled = false;
