@@ -24,6 +24,12 @@ TorrentInfo::TorrentInfo(System::String^ fileName)
 }
 
 
+TorrentInfo::TorrentInfo(Sha1Hash ^ info_hash)
+{
+	info_ = new libtorrent::torrent_info(info_hash->ptr());
+}
+
+
 TorrentInfo::TorrentInfo(const libtorrent::torrent_info& info)
 {
     info_ = new libtorrent::torrent_info(info);

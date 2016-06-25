@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         xmlns:Properties="clr-namespace:Tsunami.Gui.Wpf.Properties"
@@ -195,67 +196,65 @@
                 </StackPanel>
             </TabItem>
             <TabItem Name="playerTab"  Header="3 - Play and have fun!">
-    <Grid Name="myGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Image x:Name="DisplayImage"/>
-        <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
-            <StatusBar.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </ItemsPanelTemplate>
-            </StatusBar.ItemsPanel>
-            <StatusBarItem>
-                <TextBlock Name="lblProgressStatus">00:00:00</TextBlock>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                <Slider x:Name="movieProgress" Height="Auto" Thumb.DragStarted="movieProgress_DragStarted" Thumb.DragCompleted="movieProgrss_DragCompleted" ValueChanged="sliProgress_ValueChanged" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
-                <Slider Grid.Column="2" x:Name="volumeControl" ValueChanged="manageVolume" Width="100" Maximum="100" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Stop" Click="stopButton_Click" Content="Stop" Height="Auto"/>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Play" Click="playButton_Click" Content="Play" Height="Auto" />
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Pause" Click="pauseButton_Click" Content="Pause" Height="Auto"/>
-            </StatusBarItem>
-            <StatusBarItem Grid.Column="6">
-                <Button x:Name="FullScreen" Click="SetFullScreen" Content="FullScreen" Height="Auto" IsEnabled="False" />
-           </StatusBarItem>
+
+                <Grid Name="myGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Image Name="DisplayImage"></Image>
+
+                    <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
+
+                        <StatusBar.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+                            </ItemsPanelTemplate>
+                        </StatusBar.ItemsPanel>
+                        <StatusBarItem>
+                            <TextBlock Text="{Binding player.ProgressTime, Source={StaticResource PlayerViewModel}}" Width="50"></TextBlock>
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+                            <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerViewModel} , Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerViewModel}}"/>
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
+                            <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding  player.VolumeValue , Source={StaticResource PlayerViewModel}, Mode=TwoWay}" Width="100" Maximum="100" />
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
+                            <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerViewModel}}"  Content="Stop" Height="Auto"/>
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
+                            <Button x:Name="Play" Command="{Binding Path=_playClick, Source={StaticResource PlayerViewModel}}"  Content="Play" Height="Auto" />
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
+                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerViewModel}}" Content="Pause" Height="Auto"/>
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="6">
+                            <Button x:Name="FullScreen" Command="{Binding Path=_fullscreenClick, Source={StaticResource PlayerViewModel}}" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerViewModel}}">
+                            </Button>
+                        </StatusBarItem>
                     </StatusBar>
 
-    </Grid>
+                </Grid>
             </TabItem>
         </Controls:MetroAnimatedSingleRowTabControl>
 
-        <!--<StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal" Height="20" VerticalAlignment="Top">
-                <Button Content="Downloads" MinWidth="100" Margin="10,0,0,0" Click="downloadsButton_Click"/>
-                <Button Content="Search" MinWidth="100" Margin="10,0,0,0" Click="searchButton_Click"/>
-                <Button Content="Player" MinWidth="100" Margin="10,0,0,0" Click="playerButton_Click"/>
-            </StackPanel>
-            <Frame x:Name="PageContainer" Height="30" Width="Auto" NavigationUIVisibility="Hidden" VerticalAlignment="Top"/>
-        </StackPanel>-->
+
         <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">
-                <!--<StackPanel Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">-->
+
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
                         <Rectangle.OpacityMask>
@@ -280,30 +279,6 @@
                     </StackPanel>
                     <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
                 </StackPanel>
-                    <!--<StackPanel Orientation="Horizontal">
-                        <StackPanel.Style>
-                            <Style TargetType="StackPanel">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed"></Setter>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsChecked, ElementName=toggleAdvanced}" Value="False">
-                                        <Setter Property="Visibility" Value="Visible"></Setter>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </StackPanel.Style>
-                        <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
-                            <Rectangle.OpacityMask>
-                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}" />
-                            </Rectangle.OpacityMask>
-                        </Rectangle>
-                        <TextBlock Text="{Binding SessionStat.TotalDownload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
-                        <TextBlock Text="("></TextBlock>
-                        <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
-                        <TextBlock Text=")" Margin="0,0,20,0"></TextBlock>
-                    </StackPanel>
-                </StackPanel>-->
             </StatusBarItem>
         </StatusBar>
     </Grid>

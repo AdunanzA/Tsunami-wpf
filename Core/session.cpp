@@ -1,6 +1,7 @@
 #include "session.h"
 
 #include <msclr/marshal_cppstd.h>
+#include <fstream>
 
 #include "alert.h"
 #include "add_torrent_params.h"
@@ -29,6 +30,7 @@ Session::Session()
 
 Session::~Session()
 {
+	//save_resume_data();
     delete dispatcher_;
     delete session_;
 }
@@ -325,4 +327,55 @@ cli::array<StatsMetrics ^> ^ Session::session_stats_metrics()
 	}
 	return metrics;
 }
+/*
+void Session::save_resume_data()
+{
+
+	int outstanding_resume_data = 0;
+	auto handles = session_->get_torrents();
+	session_->pause();
+	for (auto it = handles.cbegin(); it != handles.cend(); ++it)
+	{
+		auto h = *it;
+		if (!h.is_valid()) continue;
+		auto s = h.status();
+		if (!s.has_metadata) continue;
+		if (!s.need_save_resume) continue;
+
+		h.save_resume_data();
+		++outstanding_resume_data;
+	}
+
+	while (outstanding_resume_data > 0)
+	{
+		auto a = session_->wait_for_alert(std::chrono::seconds(10));
+
+		// if we don't get an alert within 10 seconds, abort
+		if (a == 0) break;
+
+		auto holder = session_->pop_alert();
+
+		if (libtorrent::alert_cast<libtorrent::save_resume_data_failed_alert>(a))
+		{
+			dispatcher_->invoke_callback(holder);
+			--outstanding_resume_data;
+			continue;
+		}
+
+		auto rd = libtorrent::alert_cast<libtorrent::save_resume_data_alert>(a);
+		if (rd == 0)
+		{
+			dispatcher_->invoke_callback(holder);
+			continue;
+		}
+
+		auto h = rd->handle;
+		
+		std::ofstream out((h.save_path() + "/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
+		out.unsetf(std::ios_base::skipws);
+		bencode(std::ostream_iterator<char>(out), *rd->resume_data);
+		--outstanding_resume_data;
+	}
+}*/
+
 

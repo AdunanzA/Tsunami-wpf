@@ -142,6 +142,7 @@ namespace Tsunami
 		private:
 			SessionAlertDispatcher * dispatcher_;
 			libtorrent::session* session_;
+			//void save_resume_data();
 		};
 	}
 }

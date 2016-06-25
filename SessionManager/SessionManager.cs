@@ -19,6 +19,7 @@ namespace Tsunami
     {
         private static Logger log = LogManager.GetLogger("SessionManager");
         private static Core.Session _torrentSession = new Core.Session();
+        private static int outstanding_resume_data = 0;
 
         private static Timer _dispatcherTimer = new Timer();
         private static Timer _sessionStatusDispatcherTimer = new Timer();
@@ -52,6 +53,7 @@ namespace Tsunami
                     _torrentSession.load_state(entry);
                 }
             }
+            LoadFastResumeData();
 
             _torrentSession.start_dht();
             //_torrentSession.start_lsd();
@@ -67,6 +69,8 @@ namespace Tsunami
             Alert2Func[typeof(Core.torrent_error_alert)] = a => OnTorrentErrorAlert((Core.torrent_error_alert)a);
             //Alert2Func[typeof(Core.stats_alert)] = a => OnStatsAlert((Core.stats_alert)a);
             Alert2Func[typeof(Core.dht_stats_alert)] = a => OnDhtStatsAlert((Core.dht_stats_alert)a);
+            Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
+            Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
 
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
@@ -78,7 +82,18 @@ namespace Tsunami
             _sessionStatusDispatcherTimer.Start();
 
             // http://www.libtorrent.org/reference-Alerts.html
-            _torrentSession.set_alert_mask(Core.AlertMask.all_categories);
+            
+            var alertMask = Core.AlertMask.error_notification
+                    | Core.AlertMask.peer_notification
+                    | Core.AlertMask.port_mapping_notification
+                    | Core.AlertMask.storage_notification
+                    | Core.AlertMask.tracker_notification
+                    | Core.AlertMask.status_notification
+                    | Core.AlertMask.ip_block_notification
+                    | Core.AlertMask.progress_notification
+                    | Core.AlertMask.stats_notification
+                    ;
+            _torrentSession.set_alert_mask(alertMask);
             _torrentSession.set_alert_dispatch(HandleAlertCallback);
 
         }
@@ -87,6 +102,55 @@ namespace Tsunami
         {
             var aaa = a.active_requests;
             
+        }
+
+        private static void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
+        {
+            var h = a.handle;
+            var data = Core.Util.bencode(a.resume_data);
+            FileInfo file = new System.IO.FileInfo("Fastresume/" + h.info_hash().ToString() + ".fastresume");
+            file.Directory.Create();
+            File.WriteAllBytes(file.FullName, data);
+            --outstanding_resume_data;
+            if (outstanding_resume_data == 0)
+                TerminateSaveResume();
+        }
+
+        private static void OnSaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
+        {
+            --outstanding_resume_data;
+            if (outstanding_resume_data == 0)
+                TerminateSaveResume();
+        }
+
+        private static void LoadFastResumeData()
+        {
+            if (Directory.Exists("Fastresume"))
+            {
+                string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
+                foreach (string s in files)
+                {
+                    var data = File.ReadAllBytes(s);
+                    var info_hash = Path.GetFileNameWithoutExtension(s);
+                    var filename = "Fastresume/" + info_hash + ".torrent";
+                    Core.TorrentInfo ti;
+                    if (File.Exists(filename))
+                        ti = new Core.TorrentInfo(filename);
+                    else
+                        ti = new Core.TorrentInfo(new Core.Sha1Hash(info_hash));
+                    using (var atp = new Core.AddTorrentParams())
+                    using (ti)
+                    {
+                        atp.ti = ti;
+                        atp.save_path = Settings.User.PathDownload;
+                        atp.resume_data = (sbyte[])(Array)data;
+                        atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                        atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                        atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
+                        _torrentSession.async_add_torrent(atp);
+                    }
+                }
+            }
         }
 
         public static void startWeb()
@@ -105,7 +169,6 @@ namespace Tsunami
         {
             _dispatcherTimer.Stop();
             _sessionStatusDispatcherTimer.Stop();
-            _torrentSession.clear_alert_dispatch();
             _torrentSession.pause();
             stopWeb();
 
@@ -119,9 +182,15 @@ namespace Tsunami
                     {
                         /* http://libtorrent.org/reference-Core.html#save_resume_flags_t */
                         item.save_resume_data(1 | 2 | 4);
+                        ++outstanding_resume_data;
                     }
                 }
             }
+        }
+
+        private static void TerminateSaveResume()
+        {
+            _torrentSession.clear_alert_dispatch();
             using (var entry = _torrentSession.save_state(0xfffffff))
             {
                 var data = Core.Util.bencode(entry);
@@ -209,6 +278,9 @@ namespace Tsunami
                 atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
                 atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
                 _torrentSession.async_add_torrent(atp);
+                FileInfo file = new System.IO.FileInfo(Environment.CurrentDirectory + "/Fastresume/" + ti.info_hash().ToString() + ".torrent");
+                file.Directory.Create();
+                File.Copy(filename, file.FullName);
             }
         }
 
@@ -231,6 +303,8 @@ namespace Tsunami
             Core.TorrentHandle th = getTorrentHandle(hash);
             _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
             TorrentHandles.TryRemove(hash, out th);
+            File.Delete(Environment.CurrentDirectory + "/Fastresume/" + hash + ".fastresume");
+            File.Delete(Environment.CurrentDirectory + "/Fastresume/" + hash + ".torrent");
         }
 
         public static bool pauseTorrent(string hash)

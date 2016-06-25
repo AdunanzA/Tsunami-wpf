@@ -18,6 +18,7 @@ namespace Tsunami
 		public:
 			TorrentInfo(cli::array<System::Byte>^ buffer);
 			TorrentInfo(System::String^ fileName);
+			TorrentInfo(Sha1Hash ^ info_hash);
 
 			~TorrentInfo();
 

@@ -168,7 +168,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandHandler.cs" />
     <Compile Include="Models\Preferences.cs" />
+    <Compile Include="Models\Player.cs" />
     <Compile Include="ProgressArc.cs" />
     <Compile Include="Models\SessionStatistics.cs" />
     <Compile Include="Models\TorrentItem.cs" />
@@ -177,6 +179,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\TorrentStatusViewModel.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">

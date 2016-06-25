@@ -11,6 +11,7 @@ namespace Tsunami.Gui.Wpf
         private SessionStatistics _sessionStatistics { get; set; }
         private Preferences _preferences { get; set; }
 
+
         private object lockObj = new object();
 
         public TorrentStatusViewModel()
@@ -18,6 +19,7 @@ namespace Tsunami.Gui.Wpf
             _torrentList = new ObservableCollection<TorrentItem>();
             _sessionStatistics = new SessionStatistics();
             _preferences = new Preferences();
+
 
             SessionManager.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
