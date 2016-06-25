@@ -1,31 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Meta.Vlc.Wpf;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Controls;
-using System.ComponentModel;
 using System.Windows.Input;
-using System.Windows.Controls.Primitives;
 using System.Windows;
 using System.Windows.Threading;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
+
 
 namespace Tsunami.Gui.Wpf
 {
     public class PlayerViewModel
     {
-        VlcPlayer vlcPlayer = null;
+        static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
         DispatcherTimer hideBarTimer = null;
-        bool isDragging = false;
         bool isFullScreen = false;
         static PlayerViewModel ptr = null;
         static Image DisplayImage = null;
+
 
         public ICommand _playClick { get; set; }
         public ICommand _stopClick { get; set; }
@@ -46,7 +40,7 @@ namespace Tsunami.Gui.Wpf
             _player = new Player();
             _player.VolumeChanged += new ChangedEventHandler(UpdateVolumeChange);
             _player.MovieProgressChanged += new ChangedEventHandler(UpdateMovieProgress);
-            
+
         }
 
         public Player player
@@ -71,7 +65,11 @@ namespace Tsunami.Gui.Wpf
         {
             vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
 
-            vlcPlayer.Play();
+            Task.Run(() =>
+            {
+                vlcPlayer.Play();
+            });
+
             vlcPlayer.LengthChanged += new EventHandler(OnMediaLengthChanged);
             timer.Start();
             hideBarTimer.Start();
@@ -82,7 +80,7 @@ namespace Tsunami.Gui.Wpf
             //Stop.IsEnabled = true;
         }
 
-        
+
         public void OnMediaLengthChanged(object sender, EventArgs e)
         {
             player.MaxMovieTime = vlcPlayer.Length.TotalSeconds;
@@ -94,9 +92,11 @@ namespace Tsunami.Gui.Wpf
             hideBarTimer.Stop();
             vlcPlayer.LengthChanged -= OnMediaLengthChanged;
 
+
             Task.Run(() =>
             {
                 vlcPlayer.Stop();
+                vlcPlayer.RebuildPlayer();
             });
 
             /*if (isFullScreen)
@@ -116,7 +116,7 @@ namespace Tsunami.Gui.Wpf
             Play.IsEnabled = true;*/
         }
 
-        
+
 
         public void PauseClick(object parameter)
         {
@@ -184,7 +184,7 @@ namespace Tsunami.Gui.Wpf
 
         public void timer_Tick(object sender, EventArgs e)
         {
-            if (!isDragging && vlcPlayer.VideoSource != null)
+            if (vlcPlayer.VideoSource != null)
             {
                 player.MovieProgress = vlcPlayer.Time.TotalSeconds;
                 player.ProgressTime = TimeSpan.FromSeconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
@@ -213,14 +213,13 @@ namespace Tsunami.Gui.Wpf
 
         static public void HandleMouseWheel(MouseWheelEventArgs e)
         {
-            if(ptr != null)
-                ptr.player.VolumeValue = ptr.vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
+            if (ptr != null)
+                ptr.player.VolumeValue = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
         }
 
         public bool CanExecute(object parameter)
         {
             return true;
         }
-        
     }
 }

@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows;
-using System.Linq;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
-using System.Configuration;
-using System.IO;
 using Squirrel;
-using System.Windows.Threading;
-using Meta.Vlc.Wpf;
-using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Controls.Primitives;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -24,15 +18,16 @@ namespace Tsunami.Gui.Wpf
     {
         public delegate void ImageEventHandler(ref Image imagesurface);
         public delegate void MouseWheelEventHandler(MouseWheelEventArgs e);
+
         MouseWheelEventHandler _mouseWheel = new MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
+
 
         public MainWindow()
         {
             InitializeComponent();
             ImageEventHandler _img = new ImageEventHandler(PlayerViewModel.ImageLoadCompleted);
             _img.Invoke(ref DisplayImage);
-            
-
+            Closing += HandleApplClosing;
             // If Nbug CrashReporting is Not Configured don't Inizialize it 
             if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
             {
@@ -95,11 +90,6 @@ namespace Tsunami.Gui.Wpf
             this.Resources.MergedDictionaries.Add(dict);
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-
-        }
-        
         private void Initialize_CrashReporting()
         {
             // TODO: Probabilmente dobbiamo rendere l'inizializzazione async
@@ -162,6 +152,23 @@ namespace Tsunami.Gui.Wpf
         {
             if (_mouseWheel != null)
                 _mouseWheel.Invoke(e);
+        }
+
+        public void HandleApplClosing(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                Task.Run(() =>
+                {
+                    PlayerViewModel.vlcPlayer.Stop();
+                });
+            }
+            catch (TaskCanceledException tc)
+            {
+                Console.WriteLine(tc);
+            }
+            catch(Exception)
+            { }
         }
 
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
