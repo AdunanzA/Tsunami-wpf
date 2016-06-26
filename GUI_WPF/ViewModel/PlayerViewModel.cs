@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows;
 using System.Windows.Threading;
 
 
@@ -101,7 +100,6 @@ namespace Tsunami.Gui.Wpf
                 vlcPlayer.RebuildPlayer();
             });
 
-            player.FullScreenEnabled = false;
             player.StopEnabled = false;
             player.PauseEnabled = false;
             player.PlayEnabled = true;
@@ -130,6 +128,8 @@ namespace Tsunami.Gui.Wpf
             vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" });
             vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
             vlcPlayer.Background = Brushes.Black;
+            i.Source = vlcPlayer.VideoSource;
+            i.Stretch = Stretch.Fill;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);

@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
 
 namespace Tsunami.Gui.Wpf
 {
