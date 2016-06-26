@@ -74,6 +74,57 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
+        private bool _playEnabled { get; set; }
+        public bool PlayEnabled
+        {
+            get
+            {
+                return _playEnabled;
+            }
+            set
+            {
+                if (_playEnabled != value)
+                {
+                    _playEnabled = value;
+                    CallPropertyChanged("PlayEnabled");
+                }
+            }
+        }
+
+        private bool _pauseEnabled { get; set; }
+        public bool PauseEnabled
+        {
+            get
+            {
+                return _pauseEnabled;
+            }
+            set
+            {
+                if (_pauseEnabled != value)
+                {
+                    _pauseEnabled = value;
+                    CallPropertyChanged("PauseEnabled");
+                }
+            }
+        }
+
+        private bool _stopEnabled { get; set; }
+        public bool StopEnabled
+        {
+            get
+            {
+                return _stopEnabled;
+            }
+            set
+            {
+                if (_stopEnabled != value)
+                {
+                    _stopEnabled = value;
+                    CallPropertyChanged("StopEnabled");
+                }
+            }
+        }
+
         private int _volume { get; set; } 
         public int VolumeValue
         {
@@ -131,9 +182,7 @@ namespace Tsunami.Gui.Wpf
         public Player()
         {
             _progressTime = "00:00:00";
-            FullScreenEnabled = true;
-            _volume = 50;
-            _maxMovieTime = 100;
+            _playEnabled = true;
         }
 
         private void CallPropertyChanged(string prop)

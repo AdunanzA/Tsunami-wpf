@@ -233,13 +233,13 @@
                             <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding  player.VolumeValue , Source={StaticResource PlayerViewModel}, Mode=TwoWay}" Width="100" Maximum="100" />
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerViewModel}}"  Content="Stop" Height="Auto"/>
+                            <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerViewModel}}"  Content="Stop" Height="Auto" IsEnabled="{Binding player.StopEnabled, Source={StaticResource PlayerViewModel}}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Play" Command="{Binding Path=_playClick, Source={StaticResource PlayerViewModel}}"  Content="Play" Height="Auto" />
+                            <Button x:Name="Play" Command="{Binding Path=_playClick, Source={StaticResource PlayerViewModel}}"  Content="Play" Height="Auto" IsEnabled="{Binding player.PlayEnabled, Source={StaticResource PlayerViewModel}}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerViewModel}}" Content="Pause" Height="Auto"/>
+                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerViewModel}}" Content="Pause" Height="Auto" IsEnabled="{Binding player.PauseEnabled, Source={StaticResource PlayerViewModel}}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="6">
                             <Button x:Name="FullScreen" Command="{Binding Path=_fullscreenClick, Source={StaticResource PlayerViewModel}}" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerViewModel}}">

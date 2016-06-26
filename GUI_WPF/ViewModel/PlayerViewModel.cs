@@ -63,6 +63,12 @@ namespace Tsunami.Gui.Wpf
 
         public void PlayClick(object parameter)
         {
+            if (vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Playing) return;
+            if (vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Paused)
+            {
+                PauseClick(parameter);
+                return;
+            }
             vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
 
             Task.Run(() =>
@@ -74,10 +80,10 @@ namespace Tsunami.Gui.Wpf
             timer.Start();
             hideBarTimer.Start();
 
-            //FullScreen.IsEnabled = true;
-            //Play.IsEnabled = false;
-            // Pause.IsEnabled = true;
-            //Stop.IsEnabled = true;
+            player.FullScreenEnabled = true;
+            player.PlayEnabled = true;
+            player.PauseEnabled = true;
+            player.StopEnabled = true;
         }
 
 
@@ -108,12 +114,12 @@ namespace Tsunami.Gui.Wpf
                 fscreenGrid = null;
                 isFullScreen = false;
                 this.Show();
-            }
+            }*/
 
-            FullScreen.IsEnabled = false;
-            Stop.IsEnabled = false;
-            Pause.IsEnabled = false;
-            Play.IsEnabled = true;*/
+            player.FullScreenEnabled = false;
+            player.StopEnabled = false;
+            player.PauseEnabled = false;
+            player.PlayEnabled = true;
         }
 
 
@@ -156,8 +162,8 @@ namespace Tsunami.Gui.Wpf
             hideBarTimer.Tick += new EventHandler(HideBar_Tick);
 
             player.VolumeValue = vlcPlayer.Volume;
-            //Stop.IsEnabled = false;
-            //Pause.IsEnabled = false;
+            player.StopEnabled = false;
+            player.PauseEnabled = false;
             //End Player Settings
 
             //Restore default path after vlc initialization
