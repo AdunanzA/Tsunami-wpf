@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -18,13 +19,14 @@ namespace Tsunami.Gui.Wpf
     {
         public delegate void ImageEventHandler(ref Image imagesurface);
         public delegate void MouseWheelEventHandler(MouseWheelEventArgs e);
-
         MouseWheelEventHandler _mouseWheel = new MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
 
+        PlayerFullScreen fullScreenWindow = null;
 
         public MainWindow()
         {
             InitializeComponent();
+            fullScreenWindow = new PlayerFullScreen(this);
             ImageEventHandler _img = new ImageEventHandler(PlayerViewModel.ImageLoadCompleted);
             _img.Invoke(ref DisplayImage);
             Closing += HandleApplClosing;
@@ -158,10 +160,13 @@ namespace Tsunami.Gui.Wpf
         {
             try
             {
-                Task.Run(() =>
+                if (PlayerViewModel.vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped)
                 {
-                    PlayerViewModel.vlcPlayer.Stop();
-                });
+                    Task.Run(() =>
+                    {
+                        PlayerViewModel.vlcPlayer.Stop();
+                    });
+                }
             }
             catch (TaskCanceledException tc)
             {
@@ -169,6 +174,12 @@ namespace Tsunami.Gui.Wpf
             }
             catch(Exception)
             { }
+            fullScreenWindow.Dispose();
+        }
+
+        private void FullScreenClick(object sender, RoutedEventArgs e)
+        {
+            fullScreenWindow.SetFullScreen();
         }
 
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)

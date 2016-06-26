@@ -9,22 +9,21 @@ using System.Windows;
 using System.Windows.Threading;
 
 
+
 namespace Tsunami.Gui.Wpf
 {
     public class PlayerViewModel
     {
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
-        DispatcherTimer hideBarTimer = null;
-        bool isFullScreen = false;
-        static PlayerViewModel ptr = null;
-        static Image DisplayImage = null;
+        static private PlayerViewModel ptr = null;
+        static private Image DisplayImage = null;
+        
 
 
         public ICommand _playClick { get; set; }
         public ICommand _stopClick { get; set; }
         public ICommand _pauseClick { get; set; }
-        public ICommand _fullscreenClick { get; set; }
 
 
         private Player _player { get; set; }
@@ -35,7 +34,6 @@ namespace Tsunami.Gui.Wpf
             this._playClick = new CommandExecutor(PlayClick, CanExecute);
             this._stopClick = new CommandExecutor(StopClick, CanExecute);
             this._pauseClick = new CommandExecutor(PauseClick, CanExecute);
-            this._fullscreenClick = new CommandExecutor(FullScreenClick, CanExecute);
 
             _player = new Player();
             _player.VolumeChanged += new ChangedEventHandler(UpdateVolumeChange);
@@ -78,7 +76,6 @@ namespace Tsunami.Gui.Wpf
 
             vlcPlayer.LengthChanged += new EventHandler(OnMediaLengthChanged);
             timer.Start();
-            hideBarTimer.Start();
 
             player.FullScreenEnabled = true;
             player.PlayEnabled = true;
@@ -87,7 +84,7 @@ namespace Tsunami.Gui.Wpf
         }
 
 
-        public void OnMediaLengthChanged(object sender, EventArgs e)
+        private void OnMediaLengthChanged(object sender, EventArgs e)
         {
             player.MaxMovieTime = vlcPlayer.Length.TotalSeconds;
         }
@@ -95,7 +92,6 @@ namespace Tsunami.Gui.Wpf
         public void StopClick(object parameter)
         {
             timer.Stop();
-            hideBarTimer.Stop();
             vlcPlayer.LengthChanged -= OnMediaLengthChanged;
 
 
@@ -104,17 +100,6 @@ namespace Tsunami.Gui.Wpf
                 vlcPlayer.Stop();
                 vlcPlayer.RebuildPlayer();
             });
-
-            /*if (isFullScreen)
-            {
-                fscreenGrid.Children.Clear();
-                myGrid.Children.Add(DisplayImage);
-                myGrid.Children.Add(playerStatus);
-                fscreen.Close();
-                fscreenGrid = null;
-                isFullScreen = false;
-                this.Show();
-            }*/
 
             player.FullScreenEnabled = false;
             player.StopEnabled = false;
@@ -127,11 +112,6 @@ namespace Tsunami.Gui.Wpf
         public void PauseClick(object parameter)
         {
             vlcPlayer.PauseOrResume();
-        }
-
-        public void FullScreenClick(object parameter)
-        {
-            MessageBox.Show("Executing command 3");
         }
 
         void InitializeVLC(ref Image i)
@@ -151,15 +131,9 @@ namespace Tsunami.Gui.Wpf
             vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
             vlcPlayer.Background = Brushes.Black;
 
-            DisplayImage.MouseMove += showProgressBar;
-
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += new EventHandler(timer_Tick);
-
-            hideBarTimer = new DispatcherTimer();
-            hideBarTimer.Interval = TimeSpan.FromSeconds(5);
-            hideBarTimer.Tick += new EventHandler(HideBar_Tick);
 
             player.VolumeValue = vlcPlayer.Volume;
             player.StopEnabled = false;
@@ -179,16 +153,7 @@ namespace Tsunami.Gui.Wpf
             }));
         }
 
-        public void showProgressBar(object sender, MouseEventArgs e)
-        {
-            if (isFullScreen)
-            {
-                player.PlayerStatusVisibility = false;
-                Mouse.OverrideCursor = Cursors.Arrow;
-            }
-        }
-
-        public void timer_Tick(object sender, EventArgs e)
+        private void timer_Tick(object sender, EventArgs e)
         {
             if (vlcPlayer.VideoSource != null)
             {
@@ -208,24 +173,16 @@ namespace Tsunami.Gui.Wpf
             player.ProgressTime = TimeSpan.FromSeconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
         }
 
-        public void HideBar_Tick(object sender, EventArgs e)
-        {
-            if (isFullScreen)
-            {
-                player.PlayerStatusVisibility = false;
-                Mouse.OverrideCursor = Cursors.None;
-            }
-        }
-
         static public void HandleMouseWheel(MouseWheelEventArgs e)
         {
             if (ptr != null)
                 ptr.player.VolumeValue = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
         }
 
-        public bool CanExecute(object parameter)
+        private bool CanExecute(object parameter)
         {
             return true;
         }
+
     }
 }

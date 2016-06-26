@@ -198,7 +198,7 @@
             <TabItem Name="playerTab"  Header="3 - Play and have fun!">
 
 
-                <Grid Name="myGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
+                <Grid Name="normalGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
@@ -242,7 +242,7 @@
                             <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerViewModel}}" Content="Pause" Height="Auto" IsEnabled="{Binding player.PauseEnabled, Source={StaticResource PlayerViewModel}}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="6">
-                            <Button x:Name="FullScreen" Command="{Binding Path=_fullscreenClick, Source={StaticResource PlayerViewModel}}" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerViewModel}}">
+                            <Button x:Name="FullScreen" Click="FullScreenClick" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerViewModel}}">
                             </Button>
                         </StatusBarItem>
                     </StatusBar>
