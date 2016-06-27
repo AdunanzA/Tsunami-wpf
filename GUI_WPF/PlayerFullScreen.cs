@@ -14,6 +14,9 @@ namespace Tsunami.Gui.Wpf
         DispatcherTimer hideBarTimer = null;
         private MainWindow mainWindow = null;
 
+        public delegate void MouseWheelEventHandler(MouseWheelEventArgs e);
+        static public MouseWheelEventHandler _mouseWheel = null;
+
         public PlayerFullScreen(MainWindow m)
         {
             mainWindow = m;
@@ -44,6 +47,7 @@ namespace Tsunami.Gui.Wpf
                 mainWindow.normalGrid.Children.Clear();
                 fullScreenGrid.Children.Add(mainWindow.DisplayImage);
                 fullScreenGrid.Children.Add(mainWindow.playerStatus);
+                fullScreenWindow.MouseWheel += Grid_MouseWheel;
                 fullScreenWindow.Show();
             }
 
@@ -52,6 +56,7 @@ namespace Tsunami.Gui.Wpf
                 fullScreenGrid.Children.Clear();
                 mainWindow.normalGrid.Children.Add(mainWindow.DisplayImage);
                 mainWindow.normalGrid.Children.Add(mainWindow.playerStatus);
+                fullScreenWindow.MouseWheel -= Grid_MouseWheel;
                 fullScreenWindow.Hide();
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
@@ -76,6 +81,11 @@ namespace Tsunami.Gui.Wpf
                 Mouse.OverrideCursor = Cursors.None;
                 hideBarTimer.Stop();
             }
+        }
+
+        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            _mouseWheel?.Invoke(e);
         }
 
         public void Dispose()

@@ -126,10 +126,10 @@ namespace Tsunami.Gui.Wpf
 
             vlcPlayer = new VlcPlayer(i.Dispatcher);
             vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" });
-            vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
-            vlcPlayer.Background = Brushes.Black;
             i.Source = vlcPlayer.VideoSource;
             i.Stretch = Stretch.Fill;
+            vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
+            vlcPlayer.Background = Brushes.Black;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -146,7 +146,6 @@ namespace Tsunami.Gui.Wpf
 
         public void PlayerOnVideoSourceChanged(object sender, VideoSourceChangedEventArgs videoSourceChangedEventArgs)
         {
-
             DisplayImage.Dispatcher.BeginInvoke(new Action(() =>
             {
                 DisplayImage.Source = videoSourceChangedEventArgs.NewVideoSource;

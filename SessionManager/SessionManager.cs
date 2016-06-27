@@ -53,7 +53,7 @@ namespace Tsunami
                     _torrentSession.load_state(entry);
                 }
             }
-            LoadFastResumeData();
+            //LoadFastResumeData();
 
             _torrentSession.start_dht();
             //_torrentSession.start_lsd();
@@ -69,8 +69,8 @@ namespace Tsunami
             Alert2Func[typeof(Core.torrent_error_alert)] = a => OnTorrentErrorAlert((Core.torrent_error_alert)a);
             //Alert2Func[typeof(Core.stats_alert)] = a => OnStatsAlert((Core.stats_alert)a);
             Alert2Func[typeof(Core.dht_stats_alert)] = a => OnDhtStatsAlert((Core.dht_stats_alert)a);
-            Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
-            Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
+            //Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
+            //Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
 
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
@@ -104,7 +104,7 @@ namespace Tsunami
             
         }
 
-        private static void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
+        /*private static void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
         {
             var h = a.handle;
             var data = Core.Util.bencode(a.resume_data);
@@ -151,7 +151,7 @@ namespace Tsunami
                     }
                 }
             }
-        }
+        }*/
 
         public static void startWeb()
         {
@@ -186,6 +186,7 @@ namespace Tsunami
                     }
                 }
             }
+            TerminateSaveResume();
         }
 
         private static void TerminateSaveResume()

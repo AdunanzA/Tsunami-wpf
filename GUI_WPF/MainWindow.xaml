@@ -20,7 +20,6 @@
         ResizeMode="CanResizeWithGrip"
         mc:Ignorable="d"
         Title="Tsunami 0.1"
-        Closing="Window_Closing"
         RightWindowCommandsOverlayBehavior ="Never"
         DataContext="{StaticResource TorrentStatusViewModel}">
     <Window.Resources>
@@ -198,13 +197,13 @@
             <TabItem Name="playerTab"  Header="3 - Play and have fun!">
 
 
-                <Grid Name="normalGrid" MouseWheel="Grid_MouseWheel" AllowDrop="True">
+                <Grid Name="normalGrid"  AllowDrop="True">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Image Name="DisplayImage"></Image>
+                    <Image Name="DisplayImage" MouseWheel="Grid_MouseWheel"></Image>
 
                     <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
 

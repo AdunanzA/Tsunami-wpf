@@ -18,7 +18,7 @@ namespace Tsunami.Gui.Wpf
     {
         public delegate void ImageEventHandler(ref Image imagesurface);
         public delegate void MouseWheelEventHandler(MouseWheelEventArgs e);
-        MouseWheelEventHandler _mouseWheel = new MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
+        MouseWheelEventHandler _mouseWheel = null;
 
         PlayerFullScreen fullScreenWindow = null;
 
@@ -26,9 +26,11 @@ namespace Tsunami.Gui.Wpf
         {
             InitializeComponent();
             fullScreenWindow = new PlayerFullScreen(this);
+            _mouseWheel = new MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
+            PlayerFullScreen._mouseWheel = new PlayerFullScreen.MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
             ImageEventHandler _img = new ImageEventHandler(PlayerViewModel.ImageLoadCompleted);
             _img.Invoke(ref DisplayImage);
-            Closing += HandleApplClosing;
+            Closing += Window_Closing;
             // If Nbug CrashReporting is Not Configured don't Inizialize it 
             if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
             {
@@ -55,7 +57,7 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             SessionManager.Terminate();
 
@@ -69,7 +71,11 @@ namespace Tsunami.Gui.Wpf
 
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
-
+            fullScreenWindow.Dispose();
+            Task.Run(() =>
+            {
+                PlayerViewModel.vlcPlayer.Dispose();
+            });
         }
 
         private void SetLanguageDictionary()
@@ -151,29 +157,7 @@ namespace Tsunami.Gui.Wpf
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (_mouseWheel != null)
-                _mouseWheel.Invoke(e);
-        }
-
-        public void HandleApplClosing(object sender, CancelEventArgs e)
-        {
-            try
-            {
-                if (PlayerViewModel.vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped)
-                {
-                    Task.Run(() =>
-                    {
-                        PlayerViewModel.vlcPlayer.Stop();
-                    });
-                }
-            }
-            catch (TaskCanceledException tc)
-            {
-                Console.WriteLine(tc);
-            }
-            catch(Exception)
-            { }
-            fullScreenWindow.Dispose();
+            _mouseWheel?.Invoke(e);
         }
 
         private void FullScreenClick(object sender, RoutedEventArgs e)
