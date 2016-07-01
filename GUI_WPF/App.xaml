@@ -21,12 +21,6 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedSingleRowTabControl.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- Tsunami MVVM for SessionManager Events -->
-            <local:TorrentStatusViewModel x:Key="TorrentStatusViewModel" />
-            
-            <!-- Tsunami MVVM for Player-->
-            <local:PlayerViewModel x:Key="PlayerViewModel" />
-
             <!-- Circular ProgressBar - Credits: http://stackoverflow.com/questions/23046565/wpf-radial-progressbar-meter-i-e-battery-meter -->
             <local:ProgressToAngleConverter x:Key="ProgressConverter"/>
             <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">

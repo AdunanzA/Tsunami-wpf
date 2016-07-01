@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Tsunami.Gui.Wpf
+namespace Tsunami
 {
     public delegate void ChangedEventHandler();
 

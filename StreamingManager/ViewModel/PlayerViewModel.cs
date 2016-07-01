@@ -9,13 +9,13 @@ using System.Windows.Threading;
 
 
 
-namespace Tsunami.Gui.Wpf
+
+namespace Tsunami
 {
     public class PlayerViewModel
     {
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
-        static private PlayerViewModel ptr = null;
         static private Image DisplayImage = null;
         
 
@@ -29,7 +29,6 @@ namespace Tsunami.Gui.Wpf
 
         public PlayerViewModel()
         {
-            ptr = this;
             this._playClick = new CommandExecutor(PlayClick, CanExecute);
             this._stopClick = new CommandExecutor(StopClick, CanExecute);
             this._pauseClick = new CommandExecutor(PauseClick, CanExecute);
@@ -48,15 +47,32 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
-        static public void ImageLoadCompleted(ref Image i)
+        public void LoadSurface(ref Image i)
         {
-            if (ptr != null)
-            {
-                DisplayImage = i;
-                ptr.InitializeVLC(ref DisplayImage);
-            }
+            DisplayImage = i;
+            DisplayImage.MouseWheel += HandleMouseWheel;
+            InitializeVLC(ref DisplayImage);
         }
 
+        public void PlayMedia(string mediaPath)
+        {
+            if(vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped &&
+               vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
+            {
+                StopClick(null);
+            }
+            vlcPlayer.LoadMedia(mediaPath);
+        }
+
+        private void PlayMedia(Uri uri)
+        {
+            if (vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped &&
+               vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
+            {
+                StopClick(null);
+            }
+            vlcPlayer.LoadMedia(uri);
+        }
 
         public void PlayClick(object parameter)
         {
@@ -66,6 +82,7 @@ namespace Tsunami.Gui.Wpf
                 PauseClick(parameter);
                 return;
             }
+
             vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
 
             Task.Run(() =>
@@ -81,6 +98,7 @@ namespace Tsunami.Gui.Wpf
             player.PauseEnabled = true;
             player.StopEnabled = true;
         }
+
 
 
         private void OnMediaLengthChanged(object sender, EventArgs e)
@@ -105,14 +123,12 @@ namespace Tsunami.Gui.Wpf
             player.PlayEnabled = true;
         }
 
-
-
         public void PauseClick(object parameter)
         {
             vlcPlayer.PauseOrResume();
         }
 
-        void InitializeVLC(ref Image i)
+        private void InitializeVLC(ref Image i)
         {
             //Player Settings
             string startupPath = System.IO.Directory.GetCurrentDirectory();
@@ -172,10 +188,9 @@ namespace Tsunami.Gui.Wpf
             player.ProgressTime = TimeSpan.FromSeconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
         }
 
-        static public void HandleMouseWheel(MouseWheelEventArgs e)
+        private void HandleMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (ptr != null)
-                ptr.player.VolumeValue = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
+            player.VolumeValue = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
         }
 
         private bool CanExecute(object parameter)
@@ -183,5 +198,12 @@ namespace Tsunami.Gui.Wpf
             return true;
         }
 
+        public void Terminate()
+        {
+            Task.Run(() =>
+            {
+                vlcPlayer.Dispose();
+            });
+        }
     }
 }

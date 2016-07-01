@@ -16,20 +16,24 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-        public delegate void ImageEventHandler(ref Image imagesurface);
-        public delegate void MouseWheelEventHandler(MouseWheelEventArgs e);
-        MouseWheelEventHandler _mouseWheel = null;
-
-        PlayerFullScreen fullScreenWindow = null;
+        FullScreen fullScreenWindow = null;
 
         public MainWindow()
         {
             InitializeComponent();
-            fullScreenWindow = new PlayerFullScreen(this);
-            _mouseWheel = new MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
-            PlayerFullScreen._mouseWheel = new PlayerFullScreen.MouseWheelEventHandler(PlayerViewModel.HandleMouseWheel);
-            ImageEventHandler _img = new ImageEventHandler(PlayerViewModel.ImageLoadCompleted);
-            _img.Invoke(ref DisplayImage);
+
+            // Initialize DataContext
+            DataContext = new
+            {
+                TorrentStatusDataContext = new TorrentStatusViewModel(),
+                PlayerDataContext = StreamingManager.Streaming,
+            };
+            //Finish initializing DataContext
+
+            StreamingManager.SetSurface(ref DisplayImage);
+
+            fullScreenWindow = new FullScreen(this);
+
             Closing += Window_Closing;
             // If Nbug CrashReporting is Not Configured don't Inizialize it 
             if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
@@ -38,12 +42,12 @@ namespace Tsunami.Gui.Wpf
             }
             else Initialize_CrashReporting();
 
-            this.SetLanguageDictionary();
+            SetLanguageDictionary();
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Revision;
-            var title = this.Title + " " +  + verMajor +  "." + verMin + verRev;
-            this.Title = title;
+            var title = Title + " " +  + verMajor +  "." + verMin + verRev;
+            Title = title;
 
             SessionManager.Initialize();
         }
@@ -72,10 +76,8 @@ namespace Tsunami.Gui.Wpf
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
             fullScreenWindow.Dispose();
-            Task.Run(() =>
-            {
-                PlayerViewModel.vlcPlayer.Dispose();
-            });
+
+            StreamingManager.Terminate();
         }
 
         private void SetLanguageDictionary()
@@ -153,11 +155,6 @@ namespace Tsunami.Gui.Wpf
                 SessionManager.addTorrent(file);
             }
 
-        }
-
-        private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            _mouseWheel?.Invoke(e);
         }
 
         private void FullScreenClick(object sender, RoutedEventArgs e)

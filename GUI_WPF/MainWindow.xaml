@@ -20,15 +20,15 @@
         ResizeMode="CanResizeWithGrip"
         mc:Ignorable="d"
         Title="Tsunami 0.1"
-        RightWindowCommandsOverlayBehavior ="Never"
-        DataContext="{StaticResource TorrentStatusViewModel}">
+        RightWindowCommandsOverlayBehavior ="Never">
+
     <Window.Resources>
         <ResourceDictionary>
             <BooleanToVisibilityConverter x:Key="boolConverter" />
         </ResourceDictionary>
     </Window.Resources>
-    <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
+    <Controls:MetroWindow.RightWindowCommands >
+        <Controls:WindowCommands DataContext="{Binding TorrentStatusDataContext}">
             <Button ToolTip="Chat" Cursor="Hand">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
@@ -49,8 +49,8 @@
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
-    <Controls:MetroWindow.Flyouts>
-        <Controls:FlyoutsControl>
+    <Controls:MetroWindow.Flyouts >
+        <Controls:FlyoutsControl DataContext="{Binding TorrentStatusDataContext}">
             <Controls:Flyout x:Name="settingsFlyOut" Header="Settings" Position="Right" Width="400">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
@@ -108,16 +108,16 @@
     </Controls:MetroWindow.Flyouts>
     <Grid>
         <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab">
-            <TabItem Header="1 - Search or add torrent" IsSelected="True">
+            <TabItem Header="1 - Search or add torrent" IsSelected="True" DataContext="{Binding TorrentStatusDataContext}">
                 <StackPanel Orientation="Vertical">
                     <Button Style="{DynamicResource SquareButtonStyle}" Content=" + " Width="150" Margin="15" Click="AddTorrent_Click"></Button>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="2 - Check your download">
+            <TabItem Header="2 - Check your download" DataContext="{Binding TorrentStatusDataContext}">
                 <StackPanel Orientation="Vertical">
                     <DataGrid Name="dataGridx" AutoGenerateColumns="False" Grid.Row="0" IsReadOnly="True" HorizontalAlignment="Stretch"
                       CellStyle="{StaticResource Body_Content_DataGrid_Centering}" HorizontalContentAlignment="Left"
-                      ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}"
+                      ItemsSource="{Binding TorrentList}"
                       Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="#" IsReadOnly="True" Binding="{Binding QueuePosition}" />
@@ -139,7 +139,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <ListBox Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}">
+                        ItemsSource="{Binding TorrentList}">
                         <ListBox.Style>
                             <Style TargetType="ListBox">
                                 <Style.Triggers>
@@ -194,16 +194,16 @@
                     </ListBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Name="playerTab"  Header="3 - Play and have fun!">
+            <TabItem Name="playerTab"  Header="3 - Play and have fun!" >
 
 
-                <Grid Name="normalGrid"  AllowDrop="True">
+                <Grid Name="normalGrid"  AllowDrop="True" DataContext="{Binding PlayerDataContext}">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Image Name="DisplayImage" MouseWheel="Grid_MouseWheel"></Image>
+                    <Image Name="DisplayImage"></Image>
 
                     <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
 
@@ -223,35 +223,34 @@
                             </ItemsPanelTemplate>
                         </StatusBar.ItemsPanel>
                         <StatusBarItem>
-                            <TextBlock Text="{Binding player.ProgressTime, Source={StaticResource PlayerViewModel}}" Width="50"></TextBlock>
+                            <TextBlock Text="{Binding player.ProgressTime}" Width="50"></TextBlock>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                            <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerViewModel} , Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerViewModel}}"/>
+                            <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
-                            <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding  player.VolumeValue , Source={StaticResource PlayerViewModel}, Mode=TwoWay}" Width="100" Maximum="100" />
+                            <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding  player.VolumeValue, Mode=TwoWay}" Width="100" Maximum="100" />
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerViewModel}}"  Content="Stop" Height="Auto" IsEnabled="{Binding player.StopEnabled, Source={StaticResource PlayerViewModel}}"/>
+                            <Button x:Name="Stop" Command="{Binding Path=_stopClick}"  Content="Stop" Height="Auto" IsEnabled="{Binding player.StopEnabled}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Play" Command="{Binding Path=_playClick, Source={StaticResource PlayerViewModel}}"  Content="Play" Height="Auto" IsEnabled="{Binding player.PlayEnabled, Source={StaticResource PlayerViewModel}}"/>
+                            <Button x:Name="Play" Command="{Binding Path=_playClick}"  Content="Play" Height="Auto" IsEnabled="{Binding player.PlayEnabled}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerViewModel}}" Content="Pause" Height="Auto" IsEnabled="{Binding player.PauseEnabled, Source={StaticResource PlayerViewModel}}"/>
+                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick}" Content="Pause" Height="Auto" IsEnabled="{Binding player.PauseEnabled}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="6">
-                            <Button x:Name="FullScreen" Click="FullScreenClick" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerViewModel}}">
+                            <Button x:Name="FullScreen" Click="FullScreenClick" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled}">
                             </Button>
                         </StatusBarItem>
                     </StatusBar>
-
                 </Grid>
             </TabItem>
         </Controls:MetroAnimatedSingleRowTabControl>
 
 
-        <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+        <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" DataContext="{Binding TorrentStatusDataContext}">
             <StatusBarItem HorizontalAlignment="Right">
 
                 <StackPanel Orientation="Horizontal">
@@ -260,9 +259,9 @@
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_down}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
-                    <TextBlock Text="{Binding SessionStat.TotalDownload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                    <TextBlock Text="{Binding SessionStat.TotalDownload_ByteSize}" Margin="10,0"></TextBlock>
                     <TextBlock Text="("></TextBlock>
-                    <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                    <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize}"></TextBlock>
                     <TextBlock Text=")"></TextBlock>
                     <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
                         <TextBlock Text="/" Margin="15,0"></TextBlock>
@@ -271,9 +270,9 @@
                                 <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_up}" />
                             </Rectangle.OpacityMask>
                         </Rectangle>
-                        <TextBlock Text="{Binding SessionStat.TotalUpload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                        <TextBlock Text="{Binding SessionStat.TotalUpload_ByteSize}" Margin="10,0"></TextBlock>
                         <TextBlock Text="("></TextBlock>
-                        <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                        <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize}"></TextBlock>
                         <TextBlock Text=")"></TextBlock>
                     </StackPanel>
                     <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>

@@ -169,9 +169,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandHandler.cs" />
+    <Compile Include="FullScreen.xaml.cs">
+      <DependentUpon>FullScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Preferences.cs" />
-    <Compile Include="Models\Player.cs" />
-    <Compile Include="PlayerFullScreen.cs" />
     <Compile Include="ProgressArc.cs" />
     <Compile Include="Models\SessionStatistics.cs" />
     <Compile Include="Models\TorrentItem.cs" />
@@ -180,9 +181,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\PlayerViewModel.cs" />
     <Compile Include="ViewModel\TorrentStatusViewModel.cs" />
     <Compile Include="Utils.cs" />
+    <Page Include="FullScreen.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -249,6 +253,10 @@
       <Project>{72a3592c-2b4e-45b1-a644-f0a9a4d8644a}</Project>
       <Name>Tsunami.SessionManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\StreamingManager\Tsunami.StreamingManager.csproj">
+      <Project>{c12b4189-79e4-4b3c-ab8a-a0f76f55f179}</Project>
+      <Name>Tsunami.StreamingManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\WindowsIcons-license.txt" />
@@ -274,7 +282,7 @@ echo f | xcopy /d /y "$(SolutionDir)packages\libtorrent4tsunami.1.0.99\lib\$(Pla
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>echo f | xcopy /d /y /s  "$(ProjectDir)Resources\*.*" "$(TargetDir)Resources"</PreBuildEvent>
+    <PreBuildEvent>echo f | xcopy /d /y /s  "$(ProjectDir)Resources\*.*" "$(TargetDir)Resources\"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

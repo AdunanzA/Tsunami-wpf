@@ -279,9 +279,9 @@ namespace Tsunami
                 atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
                 atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
                 _torrentSession.async_add_torrent(atp);
-                FileInfo file = new System.IO.FileInfo(Environment.CurrentDirectory + "/Fastresume/" + ti.info_hash().ToString() + ".torrent");
+                /*FileInfo file = new System.IO.FileInfo(Environment.CurrentDirectory + "/Fastresume/" + ti.info_hash().ToString() + ".torrent");
                 file.Directory.Create();
-                File.Copy(filename, file.FullName);
+                File.Copy(filename, file.FullName);*/
             }
         }
 
