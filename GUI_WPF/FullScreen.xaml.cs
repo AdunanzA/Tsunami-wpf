@@ -36,7 +36,6 @@ namespace Tsunami.Gui.Wpf
         {
             WindowState = WindowState.Maximized;
             WindowStyle = WindowStyle.None;
-            Content = fullScreenGrid;
             Topmost = true;
             Hide();
         }
@@ -46,14 +45,14 @@ namespace Tsunami.Gui.Wpf
             if (!isFullScreen)
             {
                 mainWindow.normalGrid.Children.Clear();
-                fullScreenGrid.Children.Add(mainWindow.DisplayImage);
+                fullScreenGrid.Children.Add(mainWindow.imageBorder);
                 fullScreenGrid.Children.Add(mainWindow.playerStatus);
                 Show();
             }
             else
             {
                 fullScreenGrid.Children.Clear();
-                mainWindow.normalGrid.Children.Add(mainWindow.DisplayImage);
+                mainWindow.normalGrid.Children.Add(mainWindow.imageBorder);
                 mainWindow.normalGrid.Children.Add(mainWindow.playerStatus);
                 Hide();
                 Mouse.OverrideCursor = Cursors.Arrow;

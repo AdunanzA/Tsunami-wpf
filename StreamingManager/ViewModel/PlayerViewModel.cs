@@ -17,13 +17,11 @@ namespace Tsunami
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
         static private Image DisplayImage = null;
-        
-
+        private object _lastMovie = new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi");
 
         public ICommand _playClick { get; set; }
         public ICommand _stopClick { get; set; }
         public ICommand _pauseClick { get; set; }
-
 
         private Player _player { get; set; }
 
@@ -56,34 +54,35 @@ namespace Tsunami
 
         public void PlayMedia(string mediaPath)
         {
-            if(vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped &&
+            if(vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
                vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
             {
                 StopClick(null);
             }
-            vlcPlayer.LoadMedia(mediaPath);
+            
+            _lastMovie = mediaPath;
+            PlayClick(_lastMovie);
         }
 
-        private void PlayMedia(Uri uri)
+        public void PlayMedia(Uri uri)
         {
-            if (vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped &&
+            if (vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
                vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
             {
                 StopClick(null);
             }
-            vlcPlayer.LoadMedia(uri);
+
+            _lastMovie = uri;
+            PlayClick(_lastMovie);
         }
 
         public void PlayClick(object parameter)
         {
-            if (vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Playing) return;
-            if (vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Paused)
-            {
-                PauseClick(parameter);
-                return;
-            }
-
-            vlcPlayer.LoadMedia(new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi"));
+            if (_lastMovie is Uri)
+                vlcPlayer.LoadMedia((Uri)_lastMovie);
+            else if (_lastMovie is string)
+                vlcPlayer.LoadMedia((string)_lastMovie);
+            else return;
 
             Task.Run(() =>
             {
@@ -94,12 +93,10 @@ namespace Tsunami
             timer.Start();
 
             player.FullScreenEnabled = true;
-            player.PlayEnabled = true;
+            player.PlayEnabled = false;
             player.PauseEnabled = true;
             player.StopEnabled = true;
         }
-
-
 
         private void OnMediaLengthChanged(object sender, EventArgs e)
         {
@@ -114,7 +111,6 @@ namespace Tsunami
 
             Task.Run(() =>
             {
-                vlcPlayer.Stop();
                 vlcPlayer.RebuildPlayer();
             });
 
@@ -141,11 +137,13 @@ namespace Tsunami
             }
 
             vlcPlayer = new VlcPlayer(i.Dispatcher);
-            vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" });
+            vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title"});
             i.Source = vlcPlayer.VideoSource;
             i.Stretch = Stretch.Fill;
+            
+            vlcPlayer.EndBehavior = EndBehavior.Nothing;
             vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
-            vlcPlayer.Background = Brushes.Black;
+            vlcPlayer.VlcMediaPlayer.EndReached += OnEndReached;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
@@ -160,6 +158,11 @@ namespace Tsunami
             Directory.SetCurrentDirectory(startupPath);
         }
 
+        private void OnEndReached(object sender, Meta.Vlc.ObjectEventArgs<Meta.Vlc.Interop.Media.MediaState> e)
+        {
+            StopClick(sender);
+        }
+                
         public void PlayerOnVideoSourceChanged(object sender, VideoSourceChangedEventArgs videoSourceChangedEventArgs)
         {
             DisplayImage.Dispatcher.BeginInvoke(new Action(() =>
@@ -202,7 +205,7 @@ namespace Tsunami
         {
             Task.Run(() =>
             {
-                vlcPlayer.Dispose();
+                vlcPlayer.VlcMediaPlayer.Dispose();
             });
         }
     }

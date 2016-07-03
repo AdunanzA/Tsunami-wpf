@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         xmlns:Properties="clr-namespace:Tsunami.Gui.Wpf.Properties"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        xmlns:wpf="clr-namespace:Meta.Vlc.Wpf;assembly=Meta.Vlc.Wpf"
 
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
@@ -203,8 +202,9 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Image Name="DisplayImage"></Image>
-
+                    <Border Background="Black" Name="imageBorder">
+                    <Image Name="DisplayImage" ></Image>
+                    </Border>
                     <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
 
                         <StatusBar.ItemsPanel>

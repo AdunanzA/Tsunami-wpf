@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows.Controls;
 
 namespace Tsunami
 {
@@ -21,6 +22,16 @@ namespace Tsunami
         public static void Terminate()
         {
             _pwm.Terminate();
+        }
+
+        public static void PlayMedia(Uri uri)
+        {
+            _pwm.PlayMedia(uri);
+        }
+
+        public static void PlayMedia(string mediaPath)
+        {
+            _pwm.PlayMedia(mediaPath);
         }
     }
 }

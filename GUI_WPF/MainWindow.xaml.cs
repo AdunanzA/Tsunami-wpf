@@ -35,6 +35,8 @@ namespace Tsunami.Gui.Wpf
             fullScreenWindow = new FullScreen(this);
 
             Closing += Window_Closing;
+            
+
             // If Nbug CrashReporting is Not Configured don't Inizialize it 
             if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
             {
@@ -171,5 +173,7 @@ namespace Tsunami.Gui.Wpf
         //        res.UserPreferences.ShowAdvancedInterface = ts.IsChecked.Value;
         //    }
         //}
+
+        
     }
 }

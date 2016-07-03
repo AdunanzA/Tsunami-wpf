@@ -168,7 +168,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CommandHandler.cs" />
     <Compile Include="FullScreen.xaml.cs">
       <DependentUpon>FullScreen.xaml</DependentUpon>
     </Compile>
