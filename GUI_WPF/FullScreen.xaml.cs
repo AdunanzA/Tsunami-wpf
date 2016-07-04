@@ -19,10 +19,6 @@ namespace Tsunami.Gui.Wpf
         {
             InitializeComponent();
             mainWindow = m;
-            DataContext = new
-            {
-                PlayerDataContext = StreamingManager.Streaming,
-            };
 
             InitializeFullScreen();
             mainWindow.DisplayImage.MouseMove += showProgressBar;

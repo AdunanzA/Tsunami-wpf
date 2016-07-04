@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tsunami
+namespace Tsunami.Streaming
 {
     /// <summary>
     /// The pourpouse of this Class is to Create a dll full with general porpouse functions 

@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:streaming ="clr-namespace:Tsunami.Streaming;assembly=Tsunami.StreamingManager"
         xmlns:local="clr-namespace:Tsunami.Gui.Wpf"
         mc:Ignorable="d"
         Title="FullScreen" Height="300" Width="300">

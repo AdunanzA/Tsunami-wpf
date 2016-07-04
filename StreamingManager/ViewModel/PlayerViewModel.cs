@@ -7,10 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-
-
-
-namespace Tsunami
+namespace Tsunami.Streaming
 {
     public class PlayerViewModel
     {
@@ -25,6 +22,8 @@ namespace Tsunami
 
         private Player _player { get; set; }
 
+        
+
         public PlayerViewModel()
         {
             this._playClick = new CommandExecutor(PlayClick, CanExecute);
@@ -34,6 +33,11 @@ namespace Tsunami
             _player = new Player();
             _player.VolumeChanged += new ChangedEventHandler(UpdateVolumeChange);
             _player.MovieProgressChanged += new ChangedEventHandler(UpdateMovieProgress);
+
+            StreamingManager.SetSurface += new EventHandler<Image>(LoadSurface);
+            StreamingManager.Terminate += new EventHandler(Terminate);
+            StreamingManager.PlayUri += new EventHandler<Uri>(PlayUri);
+            StreamingManager.PlayMediaPath += new EventHandler<string>(PlayMediaPath);
 
         }
 
@@ -45,14 +49,14 @@ namespace Tsunami
             }
         }
 
-        public void LoadSurface(ref Image i)
+        private void LoadSurface(object sender, Image i)
         {
             DisplayImage = i;
             DisplayImage.MouseWheel += HandleMouseWheel;
             InitializeVLC(ref DisplayImage);
         }
 
-        public void PlayMedia(string mediaPath)
+        public void PlayMediaPath(object sender, string mediaPath)
         {
             if(vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
                vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
@@ -64,7 +68,7 @@ namespace Tsunami
             PlayClick(_lastMovie);
         }
 
-        public void PlayMedia(Uri uri)
+        private void PlayUri(object sender,Uri uri)
         {
             if (vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
                vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
@@ -201,11 +205,11 @@ namespace Tsunami
             return true;
         }
 
-        public void Terminate()
+        private void Terminate(object sender, EventArgs e)
         {
             Task.Run(() =>
             {
-                vlcPlayer.VlcMediaPlayer.Dispose();
+                vlcPlayer.Dispose();
             });
         }
     }

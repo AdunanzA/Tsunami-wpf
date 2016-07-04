@@ -23,22 +23,18 @@ namespace Tsunami.Gui.Wpf
             InitializeComponent();
 
             // Initialize DataContext
-            DataContext = new
-            {
-                TorrentStatusDataContext = new TorrentStatusViewModel(),
-                PlayerDataContext = StreamingManager.Streaming,
-            };
+
             //Finish initializing DataContext
 
-            StreamingManager.SetSurface(ref DisplayImage);
+            Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
 
             fullScreenWindow = new FullScreen(this);
 
             Closing += Window_Closing;
-            
+
 
             // If Nbug CrashReporting is Not Configured don't Inizialize it 
-            if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com") 
+            if (System.Configuration.ConfigurationManager.AppSettings["NbugSmtpServer"] == "smtp.dummy.com")
             {
                 //Don't enable Nbug
             }
@@ -48,13 +44,13 @@ namespace Tsunami.Gui.Wpf
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Revision;
-            var title = Title + " " +  + verMajor +  "." + verMin + verRev;
+            var title = Title + " " + +verMajor + "." + verMin + verRev;
             Title = title;
 
             SessionManager.Initialize();
         }
 
-        
+
         async static void SquirrellUpdate()
         {
             using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
@@ -79,23 +75,23 @@ namespace Tsunami.Gui.Wpf
             Properties.Settings.Default.Save();
             fullScreenWindow.Dispose();
 
-            StreamingManager.Terminate();
+            Streaming.StreamingManager.Terminate?.Invoke(this, null);
         }
 
         private void SetLanguageDictionary()
         {
             ResourceDictionary dict = new ResourceDictionary();
             switch (Thread.CurrentThread.CurrentCulture.ToString())
-            {    
+            {
                 case "en-US":
-                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
                 case "it-IT":
-                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/italian.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/italian.xaml", UriKind.RelativeOrAbsolute);
                     break;
 
                 default:
-                    dict.Source = new Uri(Environment.CurrentDirectory+ "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
+                    dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
             }
             this.Resources.MergedDictionaries.Add(dict);
@@ -174,6 +170,6 @@ namespace Tsunami.Gui.Wpf
         //    }
         //}
 
-        
+
     }
 }

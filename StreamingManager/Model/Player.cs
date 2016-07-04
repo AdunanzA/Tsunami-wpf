@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Tsunami
+namespace Tsunami.Streaming
 {
     public delegate void ChangedEventHandler();
 

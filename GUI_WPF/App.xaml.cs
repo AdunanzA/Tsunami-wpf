@@ -14,7 +14,7 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class App : Application
     {
-    
+
     }
 }
 

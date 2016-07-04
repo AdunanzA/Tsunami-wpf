@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Tsunami
+namespace Tsunami.Streaming
 {
     public class CommandExecutor : ICommand
     {
