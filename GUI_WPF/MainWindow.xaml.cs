@@ -4,7 +4,7 @@ using System.Windows;
 using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Squirrel;
-using System.Windows.Controls;
+using System.IO;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -48,6 +48,8 @@ namespace Tsunami.Gui.Wpf
             Title = title;
 
             SessionManager.Initialize();
+            SessionManager.LoadFastResumeData();
+            //Streaming.StreamingManager.PlayMediaPath?.Invoke(this, @"Z:\Film\A\Avatar.mkv");
         }
 
 
@@ -63,13 +65,14 @@ namespace Tsunami.Gui.Wpf
         {
             SessionManager.Terminate();
 
-            string str = "something to put in File";
+
+            /*string str = "something to put in File";
             System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
             var path = Environment.CurrentDirectory + "test.xml";
             System.IO.FileStream file = System.IO.File.Create(path);
 
             writer.Serialize(file, str);
-            file.Close();
+            file.Close();*/
 
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
