@@ -22,9 +22,7 @@ namespace Tsunami.Gui.Wpf
         {
             InitializeComponent();
 
-            // Initialize DataContext
-
-            //Finish initializing DataContext
+            bufferProgress.Opacity = 0;
 
             Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
 
@@ -52,7 +50,6 @@ namespace Tsunami.Gui.Wpf
             //Streaming.StreamingManager.PlayMediaPath?.Invoke(this, @"Z:\Film\A\Avatar.mkv");
         }
 
-
         async static void SquirrellUpdate()
         {
             using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
@@ -63,6 +60,7 @@ namespace Tsunami.Gui.Wpf
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
+            Hide();
             SessionManager.Terminate();
 
 

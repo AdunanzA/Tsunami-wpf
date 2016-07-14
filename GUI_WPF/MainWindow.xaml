@@ -230,6 +230,9 @@
                             <TextBlock Text="{Binding player.ProgressTime, Source={StaticResource PlayerDataContext}}" Width="50"></TextBlock>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
+                            <Slider x:Name="bufferProgress" Height="Auto" Value="{ Binding player.BufferProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="100" />
+                        </StatusBarItem>
+                        <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
                             <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerDataContext}}"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">

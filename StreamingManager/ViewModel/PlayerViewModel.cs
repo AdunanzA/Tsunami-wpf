@@ -58,8 +58,8 @@ namespace Tsunami.Streaming
 
         public void PlayMediaPath(object sender, string mediaPath)
         {
-            if(vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
-               vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
+            if(vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Playing ||
+               vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Paused)
             {
                 StopClick(null);
             }
@@ -70,8 +70,8 @@ namespace Tsunami.Streaming
 
         private void PlayUri(object sender,Uri uri)
         {
-            if (vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Stopped ||
-               vlcPlayer.State != Meta.Vlc.Interop.Media.MediaState.Ended)
+            if (vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Playing ||
+               vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Paused)
             {
                 StopClick(null);
             }

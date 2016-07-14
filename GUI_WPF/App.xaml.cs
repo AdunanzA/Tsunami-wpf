@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using Squirrel;
+﻿using System.Windows;
+using System.Threading;
+using System;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -14,7 +9,12 @@ namespace Tsunami.Gui.Wpf
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            WpfSingleInstance.Make();
 
+            base.OnStartup(e);
+        }
     }
 }
 

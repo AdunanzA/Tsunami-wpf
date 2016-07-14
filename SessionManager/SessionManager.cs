@@ -9,6 +9,7 @@ using Microsoft.Owin.Hosting;
 using System.IO;
 using System.Collections.ObjectModel;
 using System.Threading;
+using Tsunami.Core;
 //using Microsoft.Owin;
 
 //[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
@@ -19,9 +20,15 @@ namespace Tsunami
     {
         private static Logger log = LogManager.GetLogger("SessionManager");
         private static Core.Session _torrentSession = new Core.Session();
+
+        //save_resume_variables
         private static int outstanding_resume_data = 0;
         private static AutoResetEvent no_more_data = new AutoResetEvent(false);
         private static bool no_more_resume = false;
+
+        //window sliding variables
+        private static int start_window = 0;
+        private static int end_window = Int32.MaxValue;
 
         private static System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
         private static System.Timers.Timer _sessionStatusDispatcherTimer = new System.Timers.Timer();
@@ -73,6 +80,7 @@ namespace Tsunami
 
             Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
             Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
+            Alert2Func[typeof(Core.piece_finished_alert)] = a => OnPieceFinishedAlert((Core.piece_finished_alert)a);
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
@@ -97,6 +105,11 @@ namespace Tsunami
             _torrentSession.set_alert_mask(alertMask);
             _torrentSession.set_alert_dispatch(HandleAlertCallback);
 
+        }
+
+        private static void OnPieceFinishedAlert(Core.piece_finished_alert a)
+        {
+            
         }
 
         private static void OnDhtStatsAlert(Core.dht_stats_alert a)
@@ -197,7 +210,8 @@ namespace Tsunami
                 }
             }
             no_more_resume = true;
-            no_more_data.WaitOne();
+            if(outstanding_resume_data != 0)
+                no_more_data.WaitOne();
             TerminateSaveResume();
         }
 
@@ -465,5 +479,36 @@ namespace Tsunami
             int num_channels = a.transferred[10];
         }
 
+        public static void StreamTorrent(Core.TorrentHandle handle, int fileIndex)
+        {
+            var ti = handle.torrent_file();
+            var files = ti.files();
+            if(fileIndex < 0 || fileIndex > files.num_files())
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            var fileEntry = files.at(fileIndex);
+            var peer_req = ti.map_file(fileIndex, 0, 1048576);
+            var startPiece = peer_req.piece;
+            var piece_length = ti.piece_length();
+            var num_pieces = (int)Math.Ceiling((double)(fileEntry.size / piece_length));
+            var end_piece = Math.Min(startPiece + num_pieces, ti.num_pieces() - 1);
+            for (int i = startPiece; i < end_piece; i++)
+                handle.piece_priority(i,0);
+            
+            //set first piece with higher priority
+            handle.piece_priority(startPiece, 7);
+            var lastPiece = startPiece;
+            start_window = startPiece;
+            end_window = Math.Min(end_window, lastPiece);
+            for (int i = start_window; i <= end_window; i++)
+                handle.piece_priority(i, 1);
+            while (start_window <= end_window)
+            {
+                if (handle.have_piece(start_window))
+                    handle.piece_priority(++start_window, 7);
+                Thread.Sleep(200);
+            }
+        }
     }
 }
