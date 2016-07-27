@@ -41,8 +41,8 @@ namespace Tsunami.Gui.Wpf
             SetLanguageDictionary();
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
-            var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Revision;
-            var title = Title + " " + +verMajor + "." + verMin + verRev;
+            var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
+            var title = Title + " " + verMajor + "." + verMin + verRev;
             Title = title;
 
             SessionManager.Initialize();

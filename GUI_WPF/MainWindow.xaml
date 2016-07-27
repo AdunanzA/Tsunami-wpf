@@ -18,7 +18,7 @@
         BorderThickness="1"
         ResizeMode="CanResizeWithGrip"
         mc:Ignorable="d"
-        Title="Tsunami 0.1"
+        Title="Tsunami"
         RightWindowCommandsOverlayBehavior ="Never">
 
     <Window.Resources>
