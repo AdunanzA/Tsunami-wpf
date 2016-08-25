@@ -230,13 +230,10 @@
                             <TextBlock Text="{Binding player.ProgressTime, Source={StaticResource PlayerDataContext}}" Width="50"></TextBlock>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                            <Slider x:Name="bufferProgress" Height="Auto" Value="{ Binding player.BufferProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="100" />
-                        </StatusBarItem>
-                        <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
-                            <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerDataContext}}"/>
+                            <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerDataContext}}" IsMoveToPointEnabled="True"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
-                            <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding player.VolumeValue, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Width="100" Maximum="100" />
+                            <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding player.VolumeValue, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Width="100" Maximum="100" IsMoveToPointEnabled="True"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
                             <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerDataContext}}"  Content="Stop" Height="Auto" IsEnabled="{Binding player.StopEnabled, Source={StaticResource PlayerDataContext}}"/>

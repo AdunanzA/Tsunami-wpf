@@ -506,7 +506,10 @@ namespace Tsunami
             while (start_window <= end_window)
             {
                 if (handle.have_piece(start_window))
+                {
                     handle.piece_priority(++start_window, 7);
+                    continue;
+                }
                 Thread.Sleep(200);
             }
         }

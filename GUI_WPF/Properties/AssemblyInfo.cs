@@ -1,17 +1,15 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("Tsunami.Gui.Wpf")]
+[assembly: AssemblyTitle("Tsunami")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("AdunanzA")]
-[assembly: AssemblyProduct("Tsunami.Gui.Wpf")]
+[assembly: AssemblyProduct("Tsunami")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("by Aduteam")]
 [assembly: AssemblyCulture("")]
@@ -50,5 +48,5 @@ using System.Windows;
 // È possibile specificare tutti i valori oppure impostare valori predefiniti per i numeri relativi alla revisione e alla build 
 // usando l'asterisco '*' come illustrato di seguito:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.1")]
-[assembly: AssemblyFileVersion("0.1.1")]
+[assembly: AssemblyVersion("0.1.2")]
+[assembly: AssemblyFileVersion("0.1.2")]
