@@ -8,184 +8,78 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.Diagnostics;
-using System.Xml;
-using System.IO;
-using System.Text;
-
-namespace Tsunami.Gui.Wpf.Properties
-{
-
-
+namespace Tsunami.Gui.Wpf.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double WindowTop
-        {
-            get
-            {
+        public double WindowTop {
+            get {
                 return ((double)(this["WindowTop"]));
             }
-            set
-            {
+            set {
                 this["WindowTop"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public double WindowLeft
-        {
-            get
-            {
+        public double WindowLeft {
+            get {
                 return ((double)(this["WindowLeft"]));
             }
-            set
-            {
+            set {
                 this["WindowLeft"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("800")]
-        public string WindowWidth
-        {
-            get
-            {
+        public string WindowWidth {
+            get {
                 return ((string)(this["WindowWidth"]));
             }
-            set
-            {
+            set {
                 this["WindowWidth"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("600")]
-        public string WindowHeight
-        {
-            get
-            {
+        public string WindowHeight {
+            get {
                 return ((string)(this["WindowHeight"]));
             }
-            set
-            {
+            set {
                 this["WindowHeight"] = value;
             }
         }
-
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
-        public global::System.Windows.WindowState WindowState
-        {
-            get
-            {
+        public global::System.Windows.WindowState WindowState {
+            get {
                 return ((global::System.Windows.WindowState)(this["WindowState"]));
             }
-            set
-            {
+            set {
                 this["WindowState"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("25")]
-        public string NbugSmtpPort
-        {
-            get
-            {
-                return ((string)(this["NbugSmtpPort"]));
-            }
-            set
-            {
-                this["NbugSmtpPort"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("smtp.dummy.com")]
-        public string NbugSmtpServer
-        {
-            get
-            {
-                return ((string)(this["NbugSmtpServer"]));
-            }
-            set
-            {
-                this["NbugSmtpServer"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("user@dummy.net")]
-        public string NbugSmtpUser
-        {
-            get
-            {
-                return ((string)(this["NbugSmtpUser"]));
-            }
-            set
-            {
-                this["NbugSmtpUser"] = value;
-            }
-        }
-
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("password")]
-        public string NbugSmtpPass
-        {
-            get
-            {
-                return ((string)(this["NbugSmtpPass"]));
-            }
-            set
-            {
-                this["NbugSmtpPass"] = value;
-            }
-        }
-
-        public Settings()
-        {
-            this.SetTeamSettings();
-        }
-
-        [Conditional("ADU_TEAM")]
-        private void SetTeamSettings()
-        {
-            if (!File.Exists("secret.config")) return;
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.Load("secret.config");
-            XmlNodeList nodeList = xmlDoc.DocumentElement.SelectNodes("/NBug");
-
-            foreach (XmlNode node in nodeList)
-            {
-                this["NbugSmtpPort"] = node.SelectSingleNode("NbugSmtpPort").InnerText;
-                this["NbugSmtpServer"] = node.SelectSingleNode("NbugSmtpServer").InnerText;
-                this["NbugSmtpUser"] = node.SelectSingleNode("NbugSmtpUser").InnerText;
-                this["NbugSmtpPass"] = node.SelectSingleNode("NbugSmtpPass").InnerText;
             }
         }
     }

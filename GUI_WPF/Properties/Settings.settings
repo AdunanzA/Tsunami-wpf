@@ -17,17 +17,5 @@
     <Setting Name="WindowState" Type="System.Windows.WindowState" Scope="User">
       <Value Profile="(Default)">Normal</Value>
     </Setting>
-    <Setting Name="NbugSmtpPort" Type="System.String" Scope="User">
-      <Value Profile="(Default)">25</Value>
-    </Setting>
-    <Setting Name="NbugSmtpServer" Type="System.String" Scope="User">
-      <Value Profile="(Default)">smtp.dummy.com</Value>
-    </Setting>
-    <Setting Name="NbugSmtpUser" Type="System.String" Scope="User">
-      <Value Profile="(Default)">user@dummy.net</Value>
-    </Setting>
-    <Setting Name="NbugSmtpPass" Type="System.String" Scope="User">
-      <Value Profile="(Default)">password</Value>
-    </Setting>
   </Settings>
 </SettingsFile>
