@@ -159,28 +159,32 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical" Width="300" Margin="10">
-                                    <Label>
+                                    <Label Width="Auto" Height="Auto">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="270" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
-                                            <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="250" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
+                                            <Button Name="btnDelete" Width="30" Height="30" Margin="0,0,0,10" Click="DeleteTorrent_Click">
+                                                <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
                                                 <Rectangle.OpacityMask>
                                                     <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
                                                 </Rectangle.OpacityMask>
                                             </Rectangle>
+                                            </Button>
                                         </StackPanel>
                                     </Label>
-                                    <Label>
-                                        <StackPanel Orientation="Horizontal" Height="50">
+                                    <Label Width="Auto" Height="Auto">
+                                        <StackPanel Orientation="Horizontal" Height="55">
                                             <StackPanel Orientation="Vertical">
                                                 <StackPanel Orientation="Horizontal" Width="200">
                                                     <Label Content="{Binding State}" FontStyle="Italic"></Label>
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
-                                                    <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                    <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="PauseTorrent_Click">
+                                                        <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
                                                         <Rectangle.OpacityMask>
                                                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
                                                         </Rectangle.OpacityMask>
                                                     </Rectangle>
+                                                    </Button>
                                                 </StackPanel>
                                             </StackPanel>
                                             <ProgressBar Width="50" Height="50" Minimum="0" Style="{StaticResource ProgressBarStyle}"

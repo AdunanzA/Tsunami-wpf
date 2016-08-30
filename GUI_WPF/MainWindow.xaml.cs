@@ -95,6 +95,18 @@ namespace Tsunami.Gui.Wpf
             settingsFlyOut.IsOpen = true;
         }
 
+        private void PauseTorrent_Click(object sender, RoutedEventArgs e)
+        {
+            //Until Undone
+        }
+        private void DeleteTorrent_Click(object sender, RoutedEventArgs e)
+        {
+           // System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+           // TorrentItem ti = (TorrentItem)os.DataContext;
+           // SessionManager.deleteTorrent(ti.Hash, false);
+           // torrentList.Items.RemoveAt(torrentList.Items.IndexOf(torrentList.SelectedItem));
+        }
+
         private void AddTorrent_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
