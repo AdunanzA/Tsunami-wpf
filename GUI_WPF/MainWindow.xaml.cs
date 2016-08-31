@@ -5,6 +5,7 @@ using MahApps.Metro.Controls;
 using Microsoft.Win32;
 using Squirrel;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -18,7 +19,6 @@ namespace Tsunami.Gui.Wpf
         public MainWindow()
         {
             InitializeComponent();
-
 
             Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
 
@@ -37,14 +37,6 @@ namespace Tsunami.Gui.Wpf
 
             SessionManager.Initialize();
             SessionManager.LoadFastResumeData();
-        }
-
-        async static void SquirrellUpdate()
-        {
-            using (var mgr = new UpdateManager(@"C:\DHT\TsunamiLocal\GUI_WPF\bin\x64"))
-            {
-                await mgr.UpdateApp();
-            }
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -103,10 +95,10 @@ namespace Tsunami.Gui.Wpf
         private void DeleteTorrent_Click(object sender, RoutedEventArgs e)
         {
 
-           // System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
-           // TorrentItem ti = (TorrentItem)os.DataContext;
-           // SessionManager.deleteTorrent(ti.Hash, false);
-           // torrentList.Items.RemoveAt(torrentList.Items.IndexOf(torrentList.SelectedItem));
+            // System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+            // TorrentItem ti = (TorrentItem)os.DataContext;
+            // SessionManager.deleteTorrent(ti.Hash, false);
+            // torrentList.Items.RemoveAt(torrentList.Items.IndexOf(torrentList.SelectedItem));
         }
 
         private void AddTorrent_Click(object sender, RoutedEventArgs e)
