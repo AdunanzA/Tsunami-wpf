@@ -25,7 +25,7 @@ namespace Tsunami.Streaming
 
         public static bool Is64BitOs()
         {
-            if (Environment.Is64BitOperatingSystem)
+            if (Environment.Is64BitProcess)
             {
                 return true;
             }
@@ -35,12 +35,7 @@ namespace Tsunami.Streaming
         public static string GetWinVlcPath()
         {
             RegistryKey localMachine = Registry.LocalMachine;
-            string InstallPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
-            if (InstallPath != null)
-            {
-                return InstallPath; ;
-            }
-            else throw new Exception("VLC registry entry not found"+InstallPath);
+            return (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
         }
     }
 }

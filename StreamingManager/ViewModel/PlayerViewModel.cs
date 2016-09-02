@@ -6,6 +6,7 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Windows;
 
 namespace Tsunami.Streaming
 {
@@ -134,7 +135,14 @@ namespace Tsunami.Streaming
             string startupPath = System.IO.Directory.GetCurrentDirectory();
 
             var vlcPath = Utils.GetWinVlcPath();
-
+            if(vlcPath == null || !Directory.Exists(vlcPath))
+            {
+                MessageBox.Show(string.Format("VLC {0} bit non trovato!!! \nTsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
+                player.StopEnabled = false;
+                player.PauseEnabled = false;
+                player.PlayEnabled = false;
+                return;
+            }
             if (Utils.IsWindowsOs())
             {
                 Directory.SetCurrentDirectory(vlcPath);
@@ -209,7 +217,7 @@ namespace Tsunami.Streaming
         {
             Task.Run(() =>
             {
-                vlcPlayer.Dispose();
+                vlcPlayer?.Dispose();
             });
         }
     }

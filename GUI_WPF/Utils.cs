@@ -28,26 +28,11 @@ namespace Tsunami.Gui.Wpf
 
         public static bool Is64BitOs()
         {
-            //if (IntPtr.Size == 8)       // 64 bit - impostare il vs. path
-            //    return true;
-            //else if (IntPtr.Size == 4)  // 32 bit - impostare il vs. path
-            //    return false;
-            if (Environment.Is64BitOperatingSystem)
+           if (Environment.Is64BitProcess)
             {
                 return true;
             }
             else return false;
-        }
-
-        public static string GetWinVlcPath()
-        {
-            RegistryKey localMachine = Registry.LocalMachine;
-            string InstallPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
-            if (InstallPath != null)
-            {
-                return InstallPath; ;
-            }
-            else throw new Exception("VLC non trovato nel registro"+InstallPath);
         }
 
         /// <summary>

@@ -338,8 +338,12 @@ namespace Tsunami
             Core.TorrentHandle th = getTorrentHandle(hash);
             _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
             TorrentHandles.TryRemove(hash, out th);
-            File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".fastresume");
-            File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".torrent");
+            try
+            {
+                File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".fastresume");
+                File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".torrent");
+            }
+            catch (Exception) { }
         }
 
         public static bool pauseTorrent(string hash)

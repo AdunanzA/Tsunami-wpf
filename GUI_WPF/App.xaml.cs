@@ -1,9 +1,9 @@
 ﻿using System.Windows;
 using System;
 using System.Threading.Tasks;
-using Squirrel;
 using System.Linq;
 using NLog;
+using Squirrel;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -32,7 +32,7 @@ namespace Tsunami.Gui.Wpf
         }
 
 
-        async static void SquirrelUpdate()
+        async private void SquirrelUpdate()
         {
             try
             {
@@ -75,9 +75,6 @@ namespace Tsunami.Gui.Wpf
                                 log.Trace("There was an error trying to create the relevant registry entries for the update. " +
                                 "Please try reinstalling the latest full version of the application.");
                             }
-
-                            log.Trace("Nearly there. The application will now restart to complete the update.");
-                            UpdateManager.RestartApp();
                         }
                         else
                         {

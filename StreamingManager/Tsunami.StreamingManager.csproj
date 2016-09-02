@@ -50,10 +50,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Meta.Vlc">
-      <HintPath>..\packages\Meta.Vlc.16.05.01\lib\net45\x64\Meta.Vlc.dll</HintPath>
+      <HintPath>..\packages\Meta.Vlc.16.05.01\lib\net45\$(Platform)\Meta.Vlc.dll</HintPath>
     </Reference>
     <Reference Include="Meta.Vlc.Wpf">
-      <HintPath>..\packages\Meta.Vlc.Wpf.16.05.01.2\lib\net45\x64\Meta.Vlc.Wpf.dll</HintPath>
+      <HintPath>..\packages\Meta.Vlc.Wpf.16.05.01.2\lib\net45\$(Platform)\Meta.Vlc.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
