@@ -164,15 +164,8 @@
                                             <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="250" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
                                             <Button Name="btnDelete" Width="30" Height="30" Margin="0,0,0,10" Click="DeleteTorrent_Click">
                                                 <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
-                                                <Rectangle.OpacityMask>
-                                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
-                                                </Rectangle.OpacityMask>
-                                            </Rectangle>
-                                            </Button>
-                                            <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
-                                                <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
                                                     <Rectangle.OpacityMask>
-                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_play_live}" />
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
                                                     </Rectangle.OpacityMask>
                                                 </Rectangle>
                                             </Button>
@@ -191,6 +184,13 @@
                                                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
                                                         </Rectangle.OpacityMask>
                                                     </Rectangle>
+                                                    </Button>
+                                                    <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
+                                                        <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                            <Rectangle.OpacityMask>
+                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_play_live}" />
+                                                            </Rectangle.OpacityMask>
+                                                        </Rectangle>
                                                     </Button>
                                                 </StackPanel>
                                             </StackPanel>
