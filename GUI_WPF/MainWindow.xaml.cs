@@ -79,6 +79,14 @@ namespace Tsunami.Gui.Wpf
             settingsFlyOut.IsOpen = true;
         }
 
+        private void StreamTorrent_Click(object sender, RoutedEventArgs e)
+        {
+            //System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+            //TorrentItem ti = (TorrentItem)os.DataContext;
+            //SessionManager.StreamTorrent(ti.Hash, 0);           
+            //Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, ti);
+        }
+
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
