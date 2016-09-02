@@ -479,11 +479,12 @@ namespace Tsunami
             int num_channels = a.transferred[10];
         }
 
-        public static void StreamTorrent(Core.TorrentHandle handle, int fileIndex)
+        public static void StreamTorrent(string hash, int fileIndex)
         {
-            var ti = handle.torrent_file();
+            Core.TorrentHandle th = getTorrentHandle(hash);
+            var ti = th.torrent_file();
             var files = ti.files();
-            if(fileIndex < 0 || fileIndex > files.num_files())
+            if (fileIndex < 0 || fileIndex > files.num_files())
             {
                 throw new ArgumentOutOfRangeException();
             }
@@ -494,20 +495,20 @@ namespace Tsunami
             var num_pieces = (int)Math.Ceiling((double)(fileEntry.size / piece_length));
             var end_piece = Math.Min(startPiece + num_pieces, ti.num_pieces() - 1);
             for (int i = startPiece; i < end_piece; i++)
-                handle.piece_priority(i,0);
-            
+                th.piece_priority(i, 0);
+
             //set first piece with higher priority
-            handle.piece_priority(startPiece, 7);
+            th.piece_priority(startPiece, 7);
             var lastPiece = startPiece;
             start_window = startPiece;
             end_window = Math.Min(end_window, lastPiece);
             for (int i = start_window; i <= end_window; i++)
-                handle.piece_priority(i, 1);
+                th.piece_priority(i, 1);
             while (start_window <= end_window)
             {
-                if (handle.have_piece(start_window))
+                if (th.have_piece(start_window))
                 {
-                    handle.piece_priority(++start_window, 7);
+                    th.piece_priority(++start_window, 7);
                     continue;
                 }
                 Thread.Sleep(200);
