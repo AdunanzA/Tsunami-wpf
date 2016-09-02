@@ -169,6 +169,13 @@
                                                 </Rectangle.OpacityMask>
                                             </Rectangle>
                                             </Button>
+                                            <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
+                                                <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_play_live}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </Button>
                                         </StackPanel>
                                     </Label>
                                     <Label Width="Auto" Height="Auto">
