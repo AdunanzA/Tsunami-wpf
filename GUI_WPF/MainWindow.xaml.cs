@@ -81,9 +81,19 @@ namespace Tsunami.Gui.Wpf
 
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+            TorrentItem ti = (TorrentItem)os.DataContext;
 
-            //Until Undone
-        }
+            var status = SessionManager.getTorrentStatus(ti.Hash);
+            if (!status.Paused)
+            {
+                SessionManager.pauseTorrent(ti.Hash);
+            }
+            else
+            {
+                SessionManager.resumeTorrent(ti.Hash);
+            }
+        }    
 
         private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
         {
