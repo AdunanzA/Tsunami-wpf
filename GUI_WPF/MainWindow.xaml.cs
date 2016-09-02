@@ -6,6 +6,7 @@ using Microsoft.Win32;
 using Squirrel;
 using System.ComponentModel;
 using System.Diagnostics;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -43,15 +44,6 @@ namespace Tsunami.Gui.Wpf
         {
             Hide();
             SessionManager.Terminate();
-
-
-            /*string str = "something to put in File";
-            System.Xml.Serialization.XmlSerializer writer = new System.Xml.Serialization.XmlSerializer(typeof(string));
-            var path = Environment.CurrentDirectory + "test.xml";
-            System.IO.FileStream file = System.IO.File.Create(path);
-
-            writer.Serialize(file, str);
-            file.Close();*/
 
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
@@ -92,13 +84,38 @@ namespace Tsunami.Gui.Wpf
 
             //Until Undone
         }
-        private void DeleteTorrent_Click(object sender, RoutedEventArgs e)
-        {
 
-            // System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
-            // TorrentItem ti = (TorrentItem)os.DataContext;
-            // SessionManager.deleteTorrent(ti.Hash, false);
-            // torrentList.Items.RemoveAt(torrentList.Items.IndexOf(torrentList.SelectedItem));
+        private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
+        {
+            TorrentStatusViewModel res = (TorrentStatusViewModel)this.FindResource("TorrentStatusViewModel");
+            System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+            TorrentItem ti = (TorrentItem)os.DataContext;
+            var dialogSettings = new MetroDialogSettings
+            {
+                SuppressDefaultResources = true,
+                AffirmativeButtonText = "Yes, and delete file from disk too",
+                NegativeButtonText = "No",
+                FirstAuxiliaryButtonText = "Yes, but keep file on disk",
+            };
+
+            switch (await this.ShowMessageAsync("", "Do you really want to delete" + " " + ti.Name + " " + "?", MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, dialogSettings))
+            {
+                case MessageDialogResult.Affirmative:
+                    SessionManager.deleteTorrent(ti.Hash, true);
+                    res.TorrentList.Remove(ti);
+                    torrentList.Items.Refresh();
+                    break;
+                case MessageDialogResult.Negative:
+                    break;
+                case MessageDialogResult.FirstAuxiliary:
+                    SessionManager.deleteTorrent(ti.Hash, false);
+                    res.TorrentList.Remove(ti);
+                    torrentList.Items.Refresh();
+                    break;
+                default:
+                    break;
+            }
+
         }
 
         private void AddTorrent_Click(object sender, RoutedEventArgs e)
