@@ -44,6 +44,8 @@ namespace Tsunami
         private static ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
         private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
 
+        public static EventHandler<string> BufferingCompleted;
+
         public static void Initialize()
         {
             Settings.Logger.Inizialize();
@@ -513,16 +515,24 @@ namespace Tsunami
 
             //set first piece with higher priority
             th.piece_priority(startPiece, 7);
-            var lastPiece = startPiece;
+            var lastPiece = end_piece;
             start_window = startPiece;
             end_window = Math.Min(end_window, lastPiece);
             for (int i = start_window; i <= end_window; i++)
                 th.piece_priority(i, 1);
+            int have_piece_count = 0;
+            bool invoke_done = false;
             while (start_window <= end_window)
             {
                 if (th.have_piece(start_window))
                 {
+                    have_piece_count++;
                     th.piece_priority(++start_window, 7);
+                    if (have_piece_count > 0 && !invoke_done)
+                    {
+                        BufferingCompleted?.Invoke(null, Settings.User.PathDownload + "\\" + fileEntry.path);
+                        invoke_done = true;
+                    }
                     continue;
                 }
                 Thread.Sleep(200);

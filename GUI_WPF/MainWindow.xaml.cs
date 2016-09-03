@@ -7,6 +7,7 @@ using Squirrel;
 using System.ComponentModel;
 using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -88,14 +89,25 @@ namespace Tsunami.Gui.Wpf
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = (TorrentItem)os.DataContext;
+            string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
 
-            var status = SessionManager.getTorrentStatus(ti.Hash);
-            if (!status.Paused && !status.IsSeeding)
+            Task.Run(() =>
             {
-                string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
-                SessionManager.StreamTorrent(ti.Hash, 0);           
-                Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
-            }
+                var status = SessionManager.getTorrentStatus(ti.Hash);
+                if (!status.Paused && !status.IsSeeding)
+                {
+                    //string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
+
+                    SessionManager.BufferingCompleted += new EventHandler<string>(BufferingCompleted);
+                    SessionManager.StreamTorrent(ti.Hash, 0);
+                }
+            });
+            
+        }
+
+        private void BufferingCompleted(object sender, string path)
+        {
+            Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
         }
 
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
