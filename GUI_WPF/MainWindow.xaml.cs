@@ -181,6 +181,17 @@ namespace Tsunami.Gui.Wpf
             fullScreenWindow.SetFullScreen();
         }
 
+        private void HandleDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (string file in files)
+                {
+                    SessionManager.addTorrent(file);
+                }
+            }
+        }
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
         //{
         //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
