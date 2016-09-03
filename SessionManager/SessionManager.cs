@@ -483,6 +483,16 @@ namespace Tsunami
             int num_channels = a.transferred[10];
         }
 
+        public static string GetFilePathFromHash(string hash, int fileIndex)
+        {
+            Core.TorrentHandle th = getTorrentHandle(hash);
+            var ti = th.torrent_file();
+            var files = ti.files(); 
+            var fileEntry = files.at(fileIndex);
+            string path = Settings.User.PathDownload + "\\" + fileEntry.path;
+            return path;
+        }
+
         public static void StreamTorrent(string hash, int fileIndex)
         {
             Core.TorrentHandle th = getTorrentHandle(hash);
