@@ -53,6 +53,11 @@ namespace Tsunami.Gui.Wpf
             Environment.Exit(0);
         }
 
+        public async void MetroMessageBox(string t, string s)
+        {
+           await this.ShowMessageAsync(t,s);
+        }
+
         private void SetLanguageDictionary()
         {
             ResourceDictionary dict = new ResourceDictionary();
@@ -81,10 +86,16 @@ namespace Tsunami.Gui.Wpf
 
         private void StreamTorrent_Click(object sender, RoutedEventArgs e)
         {
-            //System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
-            //TorrentItem ti = (TorrentItem)os.DataContext;
-            //SessionManager.StreamTorrent(ti.Hash, 0);           
-            //Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, ti);
+            System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
+            TorrentItem ti = (TorrentItem)os.DataContext;
+
+            var status = SessionManager.getTorrentStatus(ti.Hash);
+            if (!status.Paused && !status.IsSeeding)
+            {
+                string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
+                SessionManager.StreamTorrent(ti.Hash, 0);           
+                Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
+            }
         }
 
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
