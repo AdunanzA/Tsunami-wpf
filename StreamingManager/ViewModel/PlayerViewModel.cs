@@ -17,7 +17,7 @@ namespace Tsunami.Streaming
         CustomDialog message = null;
         Grid messageGrid = null;
         Button bnt = null;
-        TextBox txt = null;
+        TextBlock txt = null;
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
         static private Image DisplayImage = null;
@@ -155,15 +155,23 @@ namespace Tsunami.Streaming
             {
                 message = new CustomDialog();
                 messageGrid = new Grid();
+                messageGrid.Width = 700;
+                messageGrid.Height = 150;
                 bnt = new Button();
-                txt = new TextBox();
+                txt = new TextBlock();
+
+                txt.Text = string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32");
                 bnt.Content = "OK";
                 bnt.Width = 100;
-                bnt.HorizontalAlignment = HorizontalAlignment.Right;
-                txt.Text = string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32");
-                txt.FontSize = 15;
-                messageGrid.Children.Add(txt);
-                messageGrid.Children.Add(bnt);
+                txt.FontSize = 20;
+
+                bnt.HorizontalAlignment = HorizontalAlignment.Center;
+                bnt.VerticalAlignment = VerticalAlignment.Center;
+                txt.HorizontalAlignment = HorizontalAlignment.Center;
+                txt.VerticalAlignment = VerticalAlignment.Top;
+                
+                messageGrid.Children.Insert(0, txt);
+                messageGrid.Children.Insert(1, bnt);
                 message.Content = messageGrid;
                 message.ShowDialogExternally();
                 bnt.Click += new RoutedEventHandler(OnOkClicked);
