@@ -2,16 +2,22 @@
 using System.Threading.Tasks;
 using Meta.Vlc.Wpf;
 using System.IO;
+using MahApps.Metro.Controls.Dialogs;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using System.Windows;
 
+
 namespace Tsunami.Streaming
 {
     public class PlayerViewModel
     {
+        CustomDialog message = null;
+        Grid messageGrid = null;
+        Button bnt = null;
+        TextBox txt = null;
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
         static private Image DisplayImage = null;
@@ -129,6 +135,16 @@ namespace Tsunami.Streaming
             vlcPlayer.PauseOrResume();
         }
 
+
+        private void OnOkClicked(object sender, EventArgs e)
+        {
+            message.RequestCloseAsync();
+            bnt = null;
+            txt = null;
+            messageGrid = null;
+            message = null;
+        }
+
         private void InitializeVLC(ref Image i)
         {
             //Player Settings
@@ -137,10 +153,26 @@ namespace Tsunami.Streaming
             var vlcPath = Utils.GetWinVlcPath();
             if(vlcPath == null || !Directory.Exists(vlcPath))
             {
-                MessageBox.Show(string.Format("VLC {0} bit non trovato!!! \nTsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
+                message = new CustomDialog();
+                messageGrid = new Grid();
+                bnt = new Button();
+                txt = new TextBox();
+                bnt.Content = "OK";
+                bnt.Width = 100;
+                bnt.HorizontalAlignment = HorizontalAlignment.Right;
+                txt.Text = string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32");
+                txt.FontSize = 15;
+                messageGrid.Children.Add(txt);
+                messageGrid.Children.Add(bnt);
+                message.Content = messageGrid;
+                message.ShowDialogExternally();
+                bnt.Click += new RoutedEventHandler(OnOkClicked);
+
+                //MessageBox.Show(string.Format("VLC {0} bit non trovato!!! \nTsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
                 player.StopEnabled = false;
                 player.PauseEnabled = false;
                 player.PlayEnabled = false;
+                
                 return;
             }
             if (Utils.IsWindowsOs())
