@@ -176,7 +176,6 @@ namespace Tsunami.Streaming
                 message.ShowDialogExternally();
                 bnt.Click += new RoutedEventHandler(OnOkClicked);
 
-                //MessageBox.Show(string.Format("VLC {0} bit non trovato!!! \nTsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
                 player.StopEnabled = false;
                 player.PauseEnabled = false;
                 player.PlayEnabled = false;
