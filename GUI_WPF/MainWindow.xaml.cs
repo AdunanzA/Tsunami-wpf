@@ -86,13 +86,17 @@ namespace Tsunami.Gui.Wpf
             TorrentItem ti = (TorrentItem)os.DataContext;
             string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
 
+            if (MainWindow.CheckVideoExts(System.IO.Path.GetExtension(path)) == false)
+            {
+                this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
+                return;
+            }
+
             Task.Run(() =>
             {
                 var status = SessionManager.getTorrentStatus(ti.Hash);
                 if (!status.Paused && !status.IsSeeding)
                 {
-                    //string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
-
                     SessionManager.BufferingCompleted += new EventHandler<string>(BufferingCompleted);
                     SessionManager.StreamTorrent(ti.Hash, 0);
                 }
@@ -109,16 +113,18 @@ namespace Tsunami.Gui.Wpf
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = (TorrentItem)os.DataContext;
-
-            var status = SessionManager.getTorrentStatus(ti.Hash);
-            if (!status.Paused)
+            Task.Run(() =>
             {
-                SessionManager.pauseTorrent(ti.Hash);
-            }
-            else
-            {
-                SessionManager.resumeTorrent(ti.Hash);
-            }
+                var status = SessionManager.getTorrentStatus(ti.Hash);
+                if (!status.Paused)
+                {
+                    SessionManager.pauseTorrent(ti.Hash);                    
+                }
+                else
+                {
+                    SessionManager.resumeTorrent(ti.Hash);
+                }
+            });
         }    
 
         private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
@@ -187,6 +193,22 @@ namespace Tsunami.Gui.Wpf
                 }
             }
         }
+
+        private static bool CheckVideoExts(string s)
+        {
+            int i = 0;
+
+            s = s.ToUpper();
+            string[] videoExts = { ".AVI", ".MKV", ".FLV", ".MOV", ".MP4", ".MPG", ".WMV", ".WEBM" };
+
+            while (i < videoExts.Length)
+            {
+                if (String.Equals(s, videoExts[i++]))
+                    return true;
+            }
+            return false;
+        }
+
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
         //{
         //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
