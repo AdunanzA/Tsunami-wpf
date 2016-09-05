@@ -54,11 +54,6 @@ namespace Tsunami.Gui.Wpf
             Environment.Exit(0);
         }
 
-        public async void MetroMessageBox(string t, string s)
-        {
-           await this.ShowMessageAsync(t,s);
-        }
-
         private void SetLanguageDictionary()
         {
             ResourceDictionary dict = new ResourceDictionary();
