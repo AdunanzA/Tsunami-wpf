@@ -2,22 +2,15 @@
 using System.Threading.Tasks;
 using Meta.Vlc.Wpf;
 using System.IO;
-using MahApps.Metro.Controls.Dialogs;
 using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using System.Windows;
-
 
 namespace Tsunami.Streaming
 {
     public class PlayerViewModel
     {
-        CustomDialog message = null;
-        Grid messageGrid = null;
-        Button bnt = null;
-        TextBlock txt = null;
         static public VlcPlayer vlcPlayer = null;
         DispatcherTimer timer = null;
         static private Image DisplayImage = null;
@@ -45,7 +38,25 @@ namespace Tsunami.Streaming
             StreamingManager.Terminate += new EventHandler(Terminate);
             StreamingManager.PlayUri += new EventHandler<Uri>(PlayUri);
             StreamingManager.PlayMediaPath += new EventHandler<string>(PlayMediaPath);
+            StreamingManager.SetPauseButtonStatus += new EventHandler<bool>(SetPauseButtonStatus);
+            StreamingManager.SetPauseButtonStatus += new EventHandler<bool>(SetPlayButtonStatus);
+            StreamingManager.SetPauseButtonStatus += new EventHandler<bool>(SetStopButtonStatus);
 
+        }
+
+        private void SetStopButtonStatus(object sender, bool e)
+        {
+            player.StopEnabled = e;
+        }
+
+        private void SetPlayButtonStatus(object sender, bool e)
+        {
+            player.PlayEnabled = e;
+        }
+
+        private void SetPauseButtonStatus(object sender, bool e)
+        {
+            player.PauseEnabled = e;
         }
 
         public Player player
@@ -65,6 +76,8 @@ namespace Tsunami.Streaming
 
         public void PlayMediaPath(object sender, string mediaPath)
         {
+            if (vlcPlayer == null) return;
+
             if(vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Playing ||
                vlcPlayer.State == Meta.Vlc.Interop.Media.MediaState.Paused)
             {
@@ -135,53 +148,13 @@ namespace Tsunami.Streaming
             vlcPlayer.PauseOrResume();
         }
 
-
-        private void OnOkClicked(object sender, EventArgs e)
-        {
-            message.RequestCloseAsync();
-            bnt = null;
-            txt = null;
-            messageGrid = null;
-            message = null;
-        }
-
         private void InitializeVLC(ref Image i)
         {
             //Player Settings
             string startupPath = System.IO.Directory.GetCurrentDirectory();
 
             var vlcPath = Utils.GetWinVlcPath();
-            if(vlcPath == null || !Directory.Exists(vlcPath))
-            {
-                message = new CustomDialog();
-                messageGrid = new Grid();
-                messageGrid.Width = 700;
-                messageGrid.Height = 150;
-                bnt = new Button();
-                txt = new TextBlock();
-
-                txt.Text = string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32");
-                bnt.Content = "OK";
-                bnt.Width = 100;
-                txt.FontSize = 20;
-
-                bnt.HorizontalAlignment = HorizontalAlignment.Center;
-                bnt.VerticalAlignment = VerticalAlignment.Center;
-                txt.HorizontalAlignment = HorizontalAlignment.Center;
-                txt.VerticalAlignment = VerticalAlignment.Top;
-                
-                messageGrid.Children.Insert(0, txt);
-                messageGrid.Children.Insert(1, bnt);
-                message.Content = messageGrid;
-                message.ShowDialogExternally();
-                bnt.Click += new RoutedEventHandler(OnOkClicked);
-
-                player.StopEnabled = false;
-                player.PauseEnabled = false;
-                player.PlayEnabled = false;
-                
-                return;
-            }
+            
             if (Utils.IsWindowsOs())
             {
                 Directory.SetCurrentDirectory(vlcPath);

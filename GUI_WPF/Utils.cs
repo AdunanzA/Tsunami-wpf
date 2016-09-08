@@ -77,5 +77,12 @@ namespace Tsunami.Gui.Wpf
             }
             return (_ret);
         }
+
+        public static string GetWinVlcPath()
+        {
+            RegistryKey localMachine = Registry.LocalMachine;
+            return (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
+        }
+
     }
 }

@@ -2,12 +2,11 @@
 using System.Threading;
 using System.Windows;
 using MahApps.Metro.Controls;
-using Microsoft.Win32;
-using Squirrel;
-using System.ComponentModel;
-using System.Diagnostics;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -22,7 +21,20 @@ namespace Tsunami.Gui.Wpf
         {
             InitializeComponent();
 
-            Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
+            var vlcPath = Utils.GetWinVlcPath();
+            if (vlcPath == null || !Directory.Exists(vlcPath))
+            {
+                var cd = new CustomMessage(string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
+                {
+                    Streaming.StreamingManager.SetPauseButtonStatus?.Invoke(this, false);
+                    Streaming.StreamingManager.SetPlayButtonStatus?.Invoke(this, false);
+                    Streaming.StreamingManager.SetStopButtonStatus?.Invoke(this, false);
+                }
+            }
+            else
+            {
+                Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
+            }
 
             fullScreenWindow = new FullScreen(this);
 
@@ -40,6 +52,9 @@ namespace Tsunami.Gui.Wpf
             SessionManager.Initialize();
             SessionManager.LoadFastResumeData();
         }
+
+        
+
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
@@ -86,7 +101,7 @@ namespace Tsunami.Gui.Wpf
             TorrentItem ti = (TorrentItem)os.DataContext;
             string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
 
-            if (MainWindow.CheckVideoExts(System.IO.Path.GetExtension(path)) == false)
+            if (CheckVideoExts(Path.GetExtension(path)) == false)
             {
                 this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
                 return;
@@ -101,12 +116,13 @@ namespace Tsunami.Gui.Wpf
                     SessionManager.StreamTorrent(ti.Hash, 0);
                 }
             });
-            
+
         }
 
         private void BufferingCompleted(object sender, string path)
         {
             Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
+            //MetroTab.SelectedIndex = 2;
         }
 
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
@@ -118,14 +134,14 @@ namespace Tsunami.Gui.Wpf
                 var status = SessionManager.getTorrentStatus(ti.Hash);
                 if (!status.Paused)
                 {
-                    SessionManager.pauseTorrent(ti.Hash);                    
+                    SessionManager.pauseTorrent(ti.Hash);
                 }
                 else
                 {
                     SessionManager.resumeTorrent(ti.Hash);
                 }
             });
-        }    
+        }
 
         private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
         {
@@ -193,8 +209,17 @@ namespace Tsunami.Gui.Wpf
                 }
             }
         }
+        //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
+        //{
+        //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
+        //    if (res != null)
+        //    {
+        //        ToggleSwitch ts = (ToggleSwitch)sender;
+        //        res.UserPreferences.ShowAdvancedInterface = ts.IsChecked.Value;
+        //    }
+        //}
 
-        private static bool CheckVideoExts(string s)
+        private bool CheckVideoExts(string s)
         {
             int i = 0;
 
@@ -208,17 +233,6 @@ namespace Tsunami.Gui.Wpf
             }
             return false;
         }
-
-        //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
-        //{
-        //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
-        //    if (res != null)
-        //    {
-        //        ToggleSwitch ts = (ToggleSwitch)sender;
-        //        res.UserPreferences.ShowAdvancedInterface = ts.IsChecked.Value;
-        //    }
-        //}
-
 
     }
 }

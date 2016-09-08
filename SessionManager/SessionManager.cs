@@ -82,7 +82,6 @@ namespace Tsunami
 
             Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
             Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
-            Alert2Func[typeof(Core.piece_finished_alert)] = a => OnPieceFinishedAlert((Core.piece_finished_alert)a);
 
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
@@ -107,11 +106,6 @@ namespace Tsunami
             _torrentSession.set_alert_mask(alertMask);
             _torrentSession.set_alert_dispatch(HandleAlertCallback);
 
-        }
-
-        private static void OnPieceFinishedAlert(Core.piece_finished_alert a)
-        {
-            
         }
 
         private static void OnDhtStatsAlert(Core.dht_stats_alert a)
@@ -518,8 +512,7 @@ namespace Tsunami
             var lastPiece = end_piece;
             start_window = startPiece;
             end_window = Math.Min(end_window, lastPiece);
-            for (int i = start_window; i <= end_window; i++)
-                th.piece_priority(i, 1);
+
             int have_piece_count = 0;
             bool invoke_done = false;
             while (start_window <= end_window)
