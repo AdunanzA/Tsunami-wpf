@@ -44,7 +44,7 @@ namespace Tsunami
         private static ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
         private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
 
-        public static EventHandler<string> BufferingCompleted;
+        private static Dictionary<string,StreamTorrent> _streamingList = new Dictionary<string, Tsunami.StreamTorrent>();
 
         public static void Initialize()
         {
@@ -83,6 +83,8 @@ namespace Tsunami
             Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
             Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
 
+            Alert2Func[typeof(Core.piece_finished_alert)] = a => OnPieceFinishedAlert((Core.piece_finished_alert)a);
+
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
             _dispatcherTimer.Start();
@@ -108,10 +110,18 @@ namespace Tsunami
 
         }
 
+        private static void OnPieceFinishedAlert(piece_finished_alert a)
+        {
+            string hash = a.handle.info_hash().ToString();
+            if (_streamingList.ContainsKey(hash))
+            {
+                _streamingList[hash].ContinueOne();
+            }
+        }
+
         private static void OnDhtStatsAlert(Core.dht_stats_alert a)
         {
             var aaa = a.active_requests;
-
         }
 
         private static void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
@@ -223,13 +233,14 @@ namespace Tsunami
             _torrentSession = null;
         }
 
-        private static Core.TorrentHandle getTorrentHandle(string hash)
+        public static Core.TorrentHandle getTorrentHandle(string hash)
         {
             log.Trace("requested getTorrentHandle({0})", hash);
             Core.TorrentHandle th;
             if (TorrentHandles.TryGetValue(hash, out th))
             {
-                return th;
+                return _torrentSession.find_torrent(new Sha1Hash(hash));
+                //return th;
             }
             else
             {
@@ -491,44 +502,13 @@ namespace Tsunami
 
         public static void StreamTorrent(string hash, int fileIndex)
         {
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            var ti = th.torrent_file();
-            var files = ti.files();
-            if (fileIndex < 0 || fileIndex > files.num_files())
+            if(_streamingList.ContainsKey(hash))
             {
-                throw new ArgumentOutOfRangeException();
+                _streamingList[hash].ContinueStreaming();
             }
-            var fileEntry = files.at(fileIndex);
-            var peer_req = ti.map_file(fileIndex, 0, 1048576);
-            var startPiece = peer_req.piece;
-            var piece_length = ti.piece_length();
-            var num_pieces = (int)Math.Ceiling((double)(fileEntry.size / piece_length));
-            var end_piece = Math.Min(startPiece + num_pieces, ti.num_pieces() - 1);
-            for (int i = startPiece; i < end_piece; i++)
-                th.piece_priority(i, 0);
-
-            //set first piece with higher priority
-            th.piece_priority(startPiece, 7);
-            var lastPiece = end_piece;
-            start_window = startPiece;
-            end_window = Math.Min(end_window, lastPiece);
-
-            int have_piece_count = 0;
-            bool invoke_done = false;
-            while (start_window <= end_window)
+            else
             {
-                if (th.have_piece(start_window))
-                {
-                    have_piece_count++;
-                    th.piece_priority(++start_window, 7);
-                    if (have_piece_count > 0 && !invoke_done)
-                    {
-                        BufferingCompleted?.Invoke(null, Settings.User.PathDownload + "\\" + fileEntry.path);
-                        invoke_done = true;
-                    }
-                    continue;
-                }
-                Thread.Sleep(200);
+                _streamingList[hash] = new StreamTorrent(hash, fileIndex);
             }
         }
     }

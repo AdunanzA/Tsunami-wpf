@@ -95,24 +95,24 @@ namespace Tsunami.Gui.Wpf
             settingsFlyOut.IsOpen = true;
         }
 
-        private void StreamTorrent_Click(object sender, RoutedEventArgs e)
+        private async void StreamTorrent_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
-            TorrentItem ti = (TorrentItem)os.DataContext;
+            TorrentItem ti = os.DataContext as TorrentItem;
             string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
 
             if (CheckVideoExts(Path.GetExtension(path)) == false)
             {
-                this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
+                await this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
                 return;
             }
 
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 var status = SessionManager.getTorrentStatus(ti.Hash);
                 if (!status.Paused && !status.IsSeeding)
                 {
-                    SessionManager.BufferingCompleted += new EventHandler<string>(BufferingCompleted);
+                    //SessionManager.BufferingCompleted += new EventHandler<string>(BufferingCompleted);
                     SessionManager.StreamTorrent(ti.Hash, 0);
                 }
             });
@@ -122,14 +122,15 @@ namespace Tsunami.Gui.Wpf
         private void BufferingCompleted(object sender, string path)
         {
             Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
-            //MetroTab.SelectedIndex = 2;
+            
+            MetroTab.Dispatcher.Invoke(new Action(() => MetroTab.SelectedIndex = 2));
         }
 
-        private void PauseTorrent_Click(object sender, RoutedEventArgs e)
+        private async void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = (TorrentItem)os.DataContext;
-            Task.Run(() =>
+            await Task.Run(() =>
             {
                 var status = SessionManager.getTorrentStatus(ti.Hash);
                 if (!status.Paused)

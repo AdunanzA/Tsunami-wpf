@@ -19,6 +19,7 @@ namespace Tsunami.Settings
         private static bool _webUseAuth = false;
         private static string _webUser = "admin";
         private static string _webPassword = "admin";
+        private static long _streamingBufferSize = 10485760; //10MB default size
 
         public static string PathDownload
         {
@@ -111,6 +112,17 @@ namespace Tsunami.Settings
             }
         }
 
+        public static long streamingBufferSize
+        {
+            get
+            {
+                return _streamingBufferSize;
+            }
+            set
+            {
+                _streamingBufferSize = value;
+            }
+        }
         public static void readFromFile()
         {
 
