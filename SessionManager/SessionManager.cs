@@ -45,6 +45,9 @@ namespace Tsunami
         private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
 
         private static Dictionary<string,StreamTorrent> _streamingList = new Dictionary<string, Tsunami.StreamTorrent>();
+        public static EventHandler<string> BufferingCompleted;
+        private static bool _isStreaming = false;
+        private static string _streamingHash;
 
         public static void Initialize()
         {
@@ -113,7 +116,7 @@ namespace Tsunami
         private static void OnPieceFinishedAlert(piece_finished_alert a)
         {
             string hash = a.handle.info_hash().ToString();
-            if (_streamingList.ContainsKey(hash))
+            if (_streamingList.ContainsKey(hash) && _streamingList[hash].OnStreaming)
             {
                 _streamingList[hash].ContinueOne();
             }
@@ -239,8 +242,7 @@ namespace Tsunami
             Core.TorrentHandle th;
             if (TorrentHandles.TryGetValue(hash, out th))
             {
-                return _torrentSession.find_torrent(new Sha1Hash(hash));
-                //return th;
+                return th;
             }
             else
             {
@@ -504,11 +506,33 @@ namespace Tsunami
         {
             if(_streamingList.ContainsKey(hash))
             {
-                _streamingList[hash].ContinueStreaming();
+                _streamingList[hash].ContinueStreaming(BufferingReadyCallback);
             }
             else
             {
-                _streamingList[hash] = new StreamTorrent(hash, fileIndex);
+                _streamingList[hash] = new StreamTorrent(hash, fileIndex, BufferingReadyCallback);
+                _isStreaming = true;
+                _streamingHash = hash;
+            }
+        }
+
+        private static void BufferingReadyCallback(object sender, string path)
+        {
+            BufferingCompleted?.Invoke(sender, path);
+        }
+
+        public static bool IsStreaming()
+        {
+            return _isStreaming;
+        }
+
+        public static void StopStreaming()
+        {
+            if (_streamingList.ContainsKey(_streamingHash))
+            {
+                BufferingCompleted = null;
+                _streamingList[_streamingHash].StopStreaming(BufferingReadyCallback);
+                _isStreaming = false;
             }
         }
     }

@@ -40,8 +40,6 @@ namespace Tsunami.Gui.Wpf
 
             Closing += Window_Closing;
 
-
-
             SetLanguageDictionary();
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
@@ -53,9 +51,6 @@ namespace Tsunami.Gui.Wpf
             SessionManager.LoadFastResumeData();
         }
 
-        
-
-
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Hide();
@@ -65,7 +60,7 @@ namespace Tsunami.Gui.Wpf
             Properties.Settings.Default.Save();
             fullScreenWindow.Dispose();
             Streaming.StreamingManager.Terminate?.Invoke(this, null);
-            
+
             Environment.Exit(0);
         }
 
@@ -88,7 +83,7 @@ namespace Tsunami.Gui.Wpf
             this.Resources.MergedDictionaries.Add(dict);
         }
 
-        
+
 
         private void showSettingFlyOut_Click(object sender, RoutedEventArgs e)
         {
@@ -101,30 +96,28 @@ namespace Tsunami.Gui.Wpf
             TorrentItem ti = os.DataContext as TorrentItem;
             string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
 
-            if (CheckVideoExts(Path.GetExtension(path)) == false)
-            {
-                await this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
-                return;
-            }
-
-            await Task.Run(() =>
-            {
-                var status = SessionManager.getTorrentStatus(ti.Hash);
-                if (!status.Paused && !status.IsSeeding)
+                if (CheckVideoExts(Path.GetExtension(path)) == false)
                 {
-                    //SessionManager.BufferingCompleted += new EventHandler<string>(BufferingCompleted);
-                    SessionManager.StreamTorrent(ti.Hash, 0);
+                    await this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
+                    return;
                 }
-            });
+
+                var status = SessionManager.getTorrentStatus(ti.Hash);
+            if (!status.Paused && !status.IsSeeding)
+            {
+                SessionManager.BufferingCompleted = BufferingCompleted;
+                SessionManager.StreamTorrent(ti.Hash, 0);
+            }
 
         }
 
         private void BufferingCompleted(object sender, string path)
         {
             Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
-            
             MetroTab.Dispatcher.Invoke(new Action(() => MetroTab.SelectedIndex = 2));
         }
+
+
 
         private async void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {

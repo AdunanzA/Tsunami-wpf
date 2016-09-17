@@ -132,7 +132,6 @@ namespace Tsunami.Streaming
             timer.Stop();
             vlcPlayer.LengthChanged -= OnMediaLengthChanged;
 
-
             Task.Run(() =>
             {
                 vlcPlayer.RebuildPlayer();
@@ -141,6 +140,10 @@ namespace Tsunami.Streaming
             player.StopEnabled = false;
             player.PauseEnabled = false;
             player.PlayEnabled = true;
+            if(SessionManager.IsStreaming())
+            {
+                SessionManager.StopStreaming();
+            }
         }
 
         public void PauseClick(object parameter)
