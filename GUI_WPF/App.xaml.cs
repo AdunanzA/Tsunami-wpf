@@ -31,7 +31,6 @@ namespace Tsunami.Gui.Wpf
             TaskScheduler.UnobservedTaskException += NBug.Handler.UnobservedTaskException;
         }
 
-
         async private void SquirrelUpdate()
         {
             try

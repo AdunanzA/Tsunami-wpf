@@ -21,7 +21,7 @@ namespace Tsunami.Gui.Wpf
             mainWindow = m;
 
             InitializeFullScreen();
-            mainWindow.DisplayImage.MouseMove += showProgressBar;
+            //mainWindow.DisplayImage.MouseMove += showProgressBar;
 
             hideBarTimer = new DispatcherTimer();
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);

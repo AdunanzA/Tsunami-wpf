@@ -10,46 +10,63 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Threading;
 using Tsunami.Core;
+using System.Threading.Tasks;
 //using Microsoft.Owin;
 
 //[assembly: OwinStartup(typeof(Tsunami.www.Startup))]
 
 namespace Tsunami
 {
-    public static class SessionManager
+    public sealed class SessionManager
     {
-        private static Logger log = LogManager.GetLogger("SessionManager");
-        private static Core.Session _torrentSession = new Core.Session();
+        private static readonly SessionManager instance = new SessionManager();
+        private static readonly object _tsunamiLock = new object();
+
+        static SessionManager()
+        {
+        }
+
+        private SessionManager()
+        {
+        }
+
+        public static SessionManager Instance
+        {
+            get
+            {
+                return instance;
+            }
+        }
+
+        private Logger log = LogManager.GetLogger("SessionManager");
+
+        private Core.Session _torrentSession = new Core.Session();
 
         //save_resume_variables
-        private static int outstanding_resume_data = 0;
-        private static AutoResetEvent no_more_data = new AutoResetEvent(false);
-        private static bool no_more_resume = false;
+        private int outstanding_resume_data = 0;
+        private AutoResetEvent no_more_data = new AutoResetEvent(false);
+        private bool no_more_resume = false;
 
-        //window sliding variables
-        private static int start_window = 0;
-        private static int end_window = Int32.MaxValue;
+        private System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
+        private System.Timers.Timer _sessionStatusDispatcherTimer = new System.Timers.Timer();
 
-        private static System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
-        private static System.Timers.Timer _sessionStatusDispatcherTimer = new System.Timers.Timer();
+        private IDisposable webServer;
 
-        private static IDisposable webServer;
+        public EventHandler<EventsArgs.OnTorrentUpdatedEventArgs> TorrentUpdated;
+        public EventHandler<EventsArgs.OnTorrentAddedEventArgs> TorrentAdded;
+        public EventHandler<EventsArgs.OnTorrentRemovedEventArgs> TorrentRemoved;
+        public EventHandler<EventsArgs.OnSessionStatisticsEventArgs> SessionStatisticsUpdate;
+        public EventHandler<Models.ErrorCode> TorrentError;
 
-        public static EventHandler<EventsArgs.OnTorrentUpdatedEventArgs> TorrentUpdated;
-        public static EventHandler<EventsArgs.OnTorrentAddedEventArgs> TorrentAdded;
-        public static EventHandler<EventsArgs.OnTorrentRemovedEventArgs> TorrentRemoved;
-        public static EventHandler<EventsArgs.OnSessionStatisticsEventArgs> SessionStatisticsUpdate;
-        public static EventHandler<Models.ErrorCode> TorrentError;
+        private ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
+        private Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
 
-        private static ConcurrentDictionary<string, Core.TorrentHandle> TorrentHandles = new ConcurrentDictionary<string, Core.TorrentHandle>();
-        private static Dictionary<Type, Action<Object>> Alert2Func = new Dictionary<Type, Action<Object>>();
+        private Dictionary<string, StreamTorrent> _streamingList = new Dictionary<string, Tsunami.StreamTorrent>();
+        public EventHandler<string> BufferingCompleted;
+        private bool _isStreaming = false;
+        private string _streamingHash;
 
-        private static Dictionary<string,StreamTorrent> _streamingList = new Dictionary<string, Tsunami.StreamTorrent>();
-        public static EventHandler<string> BufferingCompleted;
-        private static bool _isStreaming = false;
-        private static string _streamingHash;
-
-        public static void Initialize()
+        public void Initialize()
         {
             Settings.Logger.Inizialize();
 
@@ -64,15 +81,14 @@ namespace Tsunami
                 var data = File.ReadAllBytes(".session_state");
                 using (var entry = Core.Util.lazy_bdecode(data))
                 {
-                    _torrentSession.load_state(entry);
+                    lock (_tsunamiLock)
+                    {
+                        _torrentSession.load_state(entry);
+                    }
                 }
             }
 
-            _torrentSession.start_dht();
-            //_torrentSession.start_lsd();
-            _torrentSession.start_natpmp();
-            _torrentSession.start_upnp();
-
+            // http://www.libtorrent.org/reference-Alerts.html
             Alert2Func[typeof(Core.torrent_added_alert)] = a => OnTorrentAddAlert((Core.torrent_added_alert)a);
             Alert2Func[typeof(Core.state_update_alert)] = a => OnTorrentUpdateAlert((Core.state_update_alert)a);
             //Alert2Func[typeof(Core.torrent_paused_alert)] = a => OnTorrentPausedAlert((Core.torrent_paused_alert)a);
@@ -88,6 +104,30 @@ namespace Tsunami
 
             Alert2Func[typeof(Core.piece_finished_alert)] = a => OnPieceFinishedAlert((Core.piece_finished_alert)a);
 
+            lock (_tsunamiLock)
+            {
+                _torrentSession.start_dht();
+                //_torrentSession.start_lsd();
+                _torrentSession.start_natpmp();
+                _torrentSession.start_upnp();
+
+                var alertMask = Core.AlertMask.error_notification
+                                | Core.AlertMask.peer_notification
+                                | Core.AlertMask.port_mapping_notification
+                                | Core.AlertMask.storage_notification
+                                | Core.AlertMask.tracker_notification
+                                | Core.AlertMask.status_notification
+                                | Core.AlertMask.ip_block_notification
+                                | Core.AlertMask.progress_notification
+                                | Core.AlertMask.stats_notification
+                                ;
+
+                _torrentSession.set_alert_mask(alertMask);
+                _torrentSession.set_alert_dispatch(HandleAlertCallback);
+            }
+
+
+
             _dispatcherTimer.Elapsed += new ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
             _dispatcherTimer.Start();
@@ -96,24 +136,9 @@ namespace Tsunami
             _sessionStatusDispatcherTimer.Interval = 1000;
             _sessionStatusDispatcherTimer.Start();
 
-            // http://www.libtorrent.org/reference-Alerts.html
-
-            var alertMask = Core.AlertMask.error_notification
-                    | Core.AlertMask.peer_notification
-                    | Core.AlertMask.port_mapping_notification
-                    | Core.AlertMask.storage_notification
-                    | Core.AlertMask.tracker_notification
-                    | Core.AlertMask.status_notification
-                    | Core.AlertMask.ip_block_notification
-                    | Core.AlertMask.progress_notification
-                    | Core.AlertMask.stats_notification
-                    ;
-            _torrentSession.set_alert_mask(alertMask);
-            _torrentSession.set_alert_dispatch(HandleAlertCallback);
-
         }
 
-        private static void OnPieceFinishedAlert(piece_finished_alert a)
+        private void OnPieceFinishedAlert(piece_finished_alert a)
         {
             string hash = a.handle.info_hash().ToString();
             if (_streamingList.ContainsKey(hash) && _streamingList[hash].OnStreaming)
@@ -122,12 +147,12 @@ namespace Tsunami
             }
         }
 
-        private static void OnDhtStatsAlert(Core.dht_stats_alert a)
+        private void OnDhtStatsAlert(Core.dht_stats_alert a)
         {
             var aaa = a.active_requests;
         }
 
-        private static void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
+        private void OnSaveResumeDataAlert(Core.save_resume_data_alert a)
         {
             var h = a.handle;
             string newfilePath = ("./Fastresume/" + h.info_hash().ToString() + ".fastresume");
@@ -142,37 +167,40 @@ namespace Tsunami
                 no_more_data.Set();
         }
 
-        private static void OnSaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
+        private void OnSaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
         {
             Interlocked.Decrement(ref outstanding_resume_data);
             if (outstanding_resume_data == 0 && no_more_resume)
                 no_more_data.Set();
         }
 
-        public static void LoadFastResumeData()
+        public void LoadFastResumeData()
         {
             if (Directory.Exists("Fastresume"))
             {
-                string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
-                foreach (string s in files)
+                lock (_tsunamiLock)
                 {
-                    var data = File.ReadAllBytes(s);
-                    var info_hash = Path.GetFileNameWithoutExtension(s);
-                    var filename = "Fastresume/" + info_hash + ".torrent";
-                    Core.TorrentInfo ti;
-                    if (File.Exists(filename))
-                        ti = new Core.TorrentInfo(filename);
-                    else
-                        ti = new Core.TorrentInfo(new Core.Sha1Hash(info_hash));
-                    using (var atp = new Core.AddTorrentParams())
-                    using (ti)
+                    string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
+                    foreach (string s in files)
                     {
-                        atp.ti = ti;
-                        atp.save_path = Settings.User.PathDownload;
-                        atp.resume_data = (sbyte[])(Array)data;
-                        atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
-                        atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
-                        _torrentSession.async_add_torrent(atp);
+                        var data = File.ReadAllBytes(s);
+                        var info_hash = Path.GetFileNameWithoutExtension(s);
+                        var filename = "Fastresume/" + info_hash + ".torrent";
+                        Core.TorrentInfo ti;
+                        if (File.Exists(filename))
+                            ti = new Core.TorrentInfo(filename);
+                        else
+                            ti = new Core.TorrentInfo(new Core.Sha1Hash(info_hash));
+                        using (var atp = new Core.AddTorrentParams())
+                        using (ti)
+                        {
+                            atp.ti = ti;
+                            atp.save_path = Settings.User.PathDownload;
+                            atp.resume_data = (sbyte[])(Array)data;
+                            atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                            atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                            _torrentSession.async_add_torrent(atp);
+                        }
                     }
                 }
             }
@@ -182,49 +210,52 @@ namespace Tsunami
             }
         }
 
-        public static void startWeb()
+        public void startWeb()
         {
             Uri baseAddress = new Uri(string.Format("http://{0}:{1}", Settings.User.WebAddress, Settings.User.WebPort));
             webServer = WebApp.Start<www.Startup>(baseAddress.ToString());
         }
 
-        public static void stopWeb()
+        public void stopWeb()
         {
             webServer?.Dispose();
             webServer = null;
         }
 
-        public static void Terminate()
+        public void Terminate()
         {
-            _sessionStatusDispatcherTimer.Stop();
-            _sessionStatusDispatcherTimer.Dispose();
-            _dispatcherTimer.Stop();
-            _dispatcherTimer.Dispose();
-            stopWeb();
-                        
-            _torrentSession.pause();
-
-            /* http://libtorrent.org/reference-Core.html#save_resume_data() */
-            foreach (var item in TorrentHandles)
+            lock (_tsunamiLock)
             {
-                if (item.Value.is_valid())
+                _sessionStatusDispatcherTimer.Stop();
+                _sessionStatusDispatcherTimer.Enabled = false;
+                _dispatcherTimer.Stop();
+                _dispatcherTimer.Enabled = false;
+                stopWeb();
+
+                _torrentSession.pause();
+
+                /* http://libtorrent.org/reference-Core.html#save_resume_data() */
+                foreach (var item in TorrentHandles)
                 {
-                    Core.TorrentStatus ts = item.Value.status();
-                    if (ts.has_metadata && ts.need_save_resume)
+                    if (item.Value.is_valid())
                     {
-                        /* http://libtorrent.org/reference-Core.html#save_resume_flags_t */
-                        item.Value.save_resume_data(1 | 2 | 4);
-                        ++outstanding_resume_data;
+                        Core.TorrentStatus ts = item.Value.status();
+                        if (ts.has_metadata && ts.need_save_resume)
+                        {
+                            /* http://libtorrent.org/reference-Core.html#save_resume_flags_t */
+                            item.Value.save_resume_data(1 | 2 | 4);
+                            ++outstanding_resume_data;
+                        }
                     }
                 }
+                no_more_resume = true;
+                if (outstanding_resume_data != 0)
+                    no_more_data.WaitOne();
             }
-            no_more_resume = true;
-            if(outstanding_resume_data != 0)
-                no_more_data.WaitOne();
             TerminateSaveResume();
         }
 
-        private static void TerminateSaveResume()
+        private void TerminateSaveResume()
         {
             _torrentSession.clear_alert_dispatch();
             using (var entry = _torrentSession.save_state(0xfffffff))
@@ -232,11 +263,14 @@ namespace Tsunami
                 var data = Core.Util.bencode(entry);
                 File.WriteAllBytes(".session_state", data);
             }
-            _torrentSession?.Dispose();
-            _torrentSession = null;
+            Task.Run(() =>
+            {
+                _torrentSession?.Dispose();
+                _torrentSession = null;
+            });
         }
 
-        public static Core.TorrentHandle getTorrentHandle(string hash)
+        public Core.TorrentHandle getTorrentHandle(string hash)
         {
             log.Trace("requested getTorrentHandle({0})", hash);
             Core.TorrentHandle th;
@@ -252,148 +286,172 @@ namespace Tsunami
             }
         }
 
-        public static Models.TorrentStatus getTorrentStatus(string hash)
+        public Models.TorrentStatus getTorrentStatus(string hash)
         {
-            Core.TorrentHandle th;
-            log.Trace("requested getTorrentStatus({0})", hash);
-            if (TorrentHandles.TryGetValue(hash, out th))
+            lock (_tsunamiLock)
             {
-                return new Models.TorrentStatus(th.status());
-            }
-            else
-            {
-                string smgs = "cannot find requested torrent in Tsunami";
-                log.Error(smgs);
-                throw new Exception(smgs);
-            }
-        }
-
-        public static List<Models.FileEntry> getTorrentFiles(string hash)
-        {
-            List<Models.FileEntry> feList = new List<Models.FileEntry>();
-            Models.FileEntry fe;
-
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            Core.TorrentInfo ti = th.torrent_file();
-            for (int i = 0; i <= ti.num_files() - 1; i++)
-            {
-                fe = new Models.FileEntry(ti.files().at(i));
-                fe.FileName = ti.files().file_name(i);
-                fe.IsValid = ti.files().is_valid();
-                fe.PieceSize = ti.piece_size(i);
-                //ti.files().name(); ???
-                //ti.trackers();
-                feList.Add(fe);
-            }
-            return feList;
-        }
-
-        public static List<Models.TorrentStatus> getTorrentStatusList()
-        {
-            _dispatcherTimer.Stop();
-            _sessionStatusDispatcherTimer.Stop();
-            List<Models.TorrentStatus> thl = new List<Models.TorrentStatus>();
-            foreach (KeyValuePair<string, Core.TorrentHandle> item in TorrentHandles)
-            {
-                Core.TorrentHandle th = item.Value;
-                thl.Add(new Models.TorrentStatus(th.status()));// Models.TorrentHandle(item.Value));
-            }
-            _dispatcherTimer.Start();
-            _sessionStatusDispatcherTimer.Start();
-            return thl;
-        }
-
-        public static void addTorrent(string filename)
-        {
-            var data = File.ReadAllBytes(filename);
-            string newfilePath;
-            using (var atp = new Core.AddTorrentParams())
-            using (var ti = new Core.TorrentInfo(filename))
-            {
-                atp.save_path = Settings.User.PathDownload;
-                atp.ti = ti;
-                atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
-                atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
-                atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
-                newfilePath = "./Fastresume/" + ti.info_hash().ToString() + ".torrent";
-                if (!File.Exists(newfilePath))
+                Core.TorrentHandle th;
+                log.Trace("requested getTorrentStatus({0})", hash);
+                if (TorrentHandles.TryGetValue(hash, out th))
                 {
-                    using (var bw = new BinaryWriter(new FileStream(newfilePath, FileMode.Create)))
-                    {
-                        bw.Write(data);
-                        bw.Close();
-                    }
+                    return new Models.TorrentStatus(th.status());
                 }
-                _torrentSession.async_add_torrent(atp);
+                else
+                {
+                    string smgs = "cannot find requested torrent in Tsunami";
+                    log.Error(smgs);
+                    throw new Exception(smgs);
+                }
             }
         }
 
-        public static void addTorrent(byte[] buffer)
+        public List<Models.FileEntry> getTorrentFiles(string hash)
         {
-            using (var atp = new Core.AddTorrentParams())
-            using (var ti = new Core.TorrentInfo(buffer))
+            lock (_tsunamiLock)
             {
-                atp.save_path = Settings.User.PathDownload;
-                atp.ti = ti;
-                atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
-                atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
-                _torrentSession.async_add_torrent(atp);
+                List<Models.FileEntry> feList = new List<Models.FileEntry>();
+                Models.FileEntry fe;
+
+                Core.TorrentHandle th = getTorrentHandle(hash);
+                Core.TorrentInfo ti = th.torrent_file();
+                for (int i = 0; i <= ti.num_files() - 1; i++)
+                {
+                    fe = new Models.FileEntry(ti.files().at(i));
+                    fe.FileName = ti.files().file_name(i);
+                    fe.IsValid = ti.files().is_valid();
+                    fe.PieceSize = ti.piece_size(i);
+                    //ti.files().name(); ???
+                    //ti.trackers();
+                    feList.Add(fe);
+                }
+                return feList;
             }
         }
 
-        public static void deleteTorrent(string hash, bool deleteFileToo = false)
+        public List<Models.TorrentStatus> getTorrentStatusList()
         {
-            log.Trace("requested delete({0}, deleteFile:{1})", hash, deleteFileToo);
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
-            TorrentHandles.TryRemove(hash, out th);
-            try
+            lock (_tsunamiLock)
             {
-                File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".fastresume");
-                File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".torrent");
+                _dispatcherTimer.Stop();
+                _sessionStatusDispatcherTimer.Stop();
+                List<Models.TorrentStatus> thl = new List<Models.TorrentStatus>();
+                foreach (KeyValuePair<string, Core.TorrentHandle> item in TorrentHandles)
+                {
+                    Core.TorrentHandle th = item.Value;
+                    thl.Add(new Models.TorrentStatus(th.status()));// Models.TorrentHandle(item.Value));
+                }
+                _dispatcherTimer.Start();
+                _sessionStatusDispatcherTimer.Start();
+                return thl;
             }
-            catch (Exception) { }
         }
 
-        public static bool pauseTorrent(string hash)
+        public void addTorrent(string filename)
         {
-            log.Trace("requested pause({0})", hash);
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            th.pause();
-            return (th.status().paused == true);
-        }
-
-        public static bool resumeTorrent(string hash)
-        {
-            log.Trace("requested resume({0})", hash);
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            th.resume();
-            return (th.status().paused == true);
-        }
-
-        private static void dispatcherTimer_Tick(object sender, ElapsedEventArgs e)
-        {
-            _torrentSession.post_torrent_updates();
-            _torrentSession.post_dht_stats();
-            //_torrentSession.post_session_stats();
-        }
-
-        private static void sessionStatusDispatcher_Tick(object sender, ElapsedEventArgs e)
-        {
-            var evnt = new EventsArgs.OnSessionStatisticsEventArgs(_torrentSession.status());
-
-            // notify web
-            if (webServer != null)
+            lock (_tsunamiLock)
             {
-                var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-                context.Clients.All.notifySessionStatistics(evnt);
+                var data = File.ReadAllBytes(filename);
+                string newfilePath;
+                using (var atp = new Core.AddTorrentParams())
+                using (var ti = new Core.TorrentInfo(filename))
+                {
+                    atp.save_path = Settings.User.PathDownload;
+                    atp.ti = ti;
+                    atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                    atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                    atp.flags &= ~Core.ATPFlags.flag_use_resume_save_path; // 
+                    newfilePath = "./Fastresume/" + ti.info_hash().ToString() + ".torrent";
+                    if (!File.Exists(newfilePath))
+                    {
+                        using (var bw = new BinaryWriter(new FileStream(newfilePath, FileMode.Create)))
+                        {
+                            bw.Write(data);
+                            bw.Close();
+                        }
+                    }
+                    _torrentSession.async_add_torrent(atp);
+                }
             }
-
-            // invoke event
-            SessionStatisticsUpdate?.Invoke(null, evnt);
         }
 
-        private static void HandleAlertCallback(Core.Alert a)
+        public void addTorrent(byte[] buffer)
+        {
+            lock (_tsunamiLock)
+            {
+                using (var atp = new Core.AddTorrentParams())
+                using (var ti = new Core.TorrentInfo(buffer))
+                {
+                    atp.save_path = Settings.User.PathDownload;
+                    atp.ti = ti;
+                    atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                    atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                    _torrentSession.async_add_torrent(atp);
+                }
+            }
+        }
+
+        public void deleteTorrent(string hash, bool deleteFileToo = false)
+        {
+            lock (_tsunamiLock)
+            {
+                log.Trace("requested delete({0}, deleteFile:{1})", hash, deleteFileToo);
+                Core.TorrentHandle th = getTorrentHandle(hash);
+                _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
+                TorrentHandles.TryRemove(hash, out th);
+                try
+                {
+                    File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".fastresume");
+                    File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".torrent");
+                }
+                catch (Exception) { }
+            }
+        }
+
+        public bool pauseTorrent(string hash)
+        {
+            lock (_tsunamiLock)
+            {
+                log.Trace("requested pause({0})", hash);
+                Core.TorrentHandle th = getTorrentHandle(hash);
+                th.pause();
+                return (th.status().paused == true);
+            }
+        }
+
+        public bool resumeTorrent(string hash)
+        {
+            lock (_tsunamiLock)
+            {
+                log.Trace("requested resume({0})", hash);
+                Core.TorrentHandle th = getTorrentHandle(hash);
+                th.resume();
+                return (th.status().paused == true);
+            }
+        }
+
+        private void dispatcherTimer_Tick(object sender, ElapsedEventArgs e)
+        {
+                _torrentSession.post_torrent_updates();
+                _torrentSession.post_dht_stats();
+                //_torrentSession.post_session_stats();
+        }
+
+        private void sessionStatusDispatcher_Tick(object sender, ElapsedEventArgs e)
+        {
+             var evnt = new EventsArgs.OnSessionStatisticsEventArgs(_torrentSession.status());
+
+                // notify web
+                if (webServer != null)
+                {
+                    var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                    context.Clients.All.notifySessionStatistics(evnt);
+                }
+
+                // invoke event
+                SessionStatisticsUpdate?.Invoke(null, evnt);
+        }
+
+        private void HandleAlertCallback(Core.Alert a)
         {
             using (a)
             {
@@ -405,64 +463,70 @@ namespace Tsunami
             }
         }
 
-        private static void OnTorrentUpdateAlert(Core.state_update_alert a)
+        private void OnTorrentUpdateAlert(Core.state_update_alert a)
         {
-            foreach (Core.TorrentStatus ts in a.status)
+            lock (_tsunamiLock)
             {
-                var stat = "Paused";
-                if (!ts.paused)
-                {
-                    stat = Utils.GiveMeStateFromEnum(ts.state);
-                }
-                var evnt = new EventsArgs.OnTorrentUpdatedEventArgs(ts);
-                evnt.State = stat;
-                //log.Trace("torrent: name {0}; status {1}; progress {2}", ts.name, ts.state.ToString(), ts.progress);
-
-                if (webServer != null)
-                {
-                    var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-                    context.Clients.All.notifyUpdateProgress(evnt);
-                }
-
-                TorrentUpdated?.Invoke(null, evnt);
-            }
-        }
-
-        private static void OnTorrentAddAlert(Core.torrent_added_alert a)
-        {
-            Core.TorrentHandle th = a.handle;
-            if (TorrentHandles.TryAdd(th.info_hash().ToString(), th))
-            {
-                using (Core.TorrentStatus ts = th.status())
+                foreach (Core.TorrentStatus ts in a.status)
                 {
                     var stat = "Paused";
                     if (!ts.paused)
                     {
                         stat = Utils.GiveMeStateFromEnum(ts.state);
                     }
-                    var evnt = new EventsArgs.OnTorrentAddedEventArgs
-                    {
-                        Hash = th.info_hash().ToString(),
-                        Name = ts.name,
-                        Progress = ts.progress,
-                        QueuePosition = ts.queue_position,
-                        Status = stat
-                    };
-                    //log.Debug("torrent added: name {0}; status {1}; hash {2}", ts.name, ts.state.ToString(), ts.info_hash.ToString());
+                    var evnt = new EventsArgs.OnTorrentUpdatedEventArgs(ts);
+                    evnt.State = stat;
+                    //log.Trace("torrent: name {0}; status {1}; progress {2}", ts.name, ts.state.ToString(), ts.progress);
 
-                    // notify web that a new id must be requested via webapi
                     if (webServer != null)
                     {
                         var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
-                        context.Clients.All.notifyTorrentAdded(evnt.Hash);
+                        context.Clients.All.notifyUpdateProgress(evnt);
                     }
 
-                    TorrentAdded?.Invoke(null, evnt);
+                    TorrentUpdated?.Invoke(null, evnt);
                 }
             }
         }
 
-        private static void OnTorrentErrorAlert(Core.torrent_error_alert a)
+        private void OnTorrentAddAlert(Core.torrent_added_alert a)
+        {
+            lock (_tsunamiLock)
+            {
+                Core.TorrentHandle th = a.handle;
+                if (TorrentHandles.TryAdd(th.info_hash().ToString(), th))
+                {
+                    using (Core.TorrentStatus ts = th.status())
+                    {
+                        var stat = "Paused";
+                        if (!ts.paused)
+                        {
+                            stat = Utils.GiveMeStateFromEnum(ts.state);
+                        }
+                        var evnt = new EventsArgs.OnTorrentAddedEventArgs
+                        {
+                            Hash = th.info_hash().ToString(),
+                            Name = ts.name,
+                            Progress = ts.progress,
+                            QueuePosition = ts.queue_position,
+                            Status = stat
+                        };
+                        //log.Debug("torrent added: name {0}; status {1}; hash {2}", ts.name, ts.state.ToString(), ts.info_hash.ToString());
+
+                        // notify web that a new id must be requested via webapi
+                        if (webServer != null)
+                        {
+                            var context = Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<www.SignalRHub>();
+                            context.Clients.All.notifyTorrentAdded(evnt.Hash);
+                        }
+
+                        TorrentAdded?.Invoke(null, evnt);
+                    }
+                }
+            }
+        }
+
+        private void OnTorrentErrorAlert(Core.torrent_error_alert a)
         {
             var evnt = new Models.ErrorCode(a.error);
 
@@ -476,7 +540,7 @@ namespace Tsunami
             TorrentError?.Invoke(null, evnt);
         }
 
-        private static void OnStatsAlert(Core.stats_alert a)
+        private void OnStatsAlert(Core.stats_alert a)
         {
 
             int upload_payload = a.transferred[0];
@@ -492,19 +556,22 @@ namespace Tsunami
             int num_channels = a.transferred[10];
         }
 
-        public static string GetFilePathFromHash(string hash, int fileIndex)
+        public string GetFilePathFromHash(string hash, int fileIndex)
         {
-            Core.TorrentHandle th = getTorrentHandle(hash);
-            var ti = th.torrent_file();
-            var files = ti.files(); 
-            var fileEntry = files.at(fileIndex);
-            string path = Settings.User.PathDownload + "\\" + fileEntry.path;
-            return path;
+            lock (_tsunamiLock)
+            {
+                Core.TorrentHandle th = getTorrentHandle(hash);
+                var ti = th.torrent_file();
+                var files = ti.files();
+                var fileEntry = files.at(fileIndex);
+                string path = Settings.User.PathDownload + "\\" + fileEntry.path;
+                return path;
+            }
         }
 
-        public static void StreamTorrent(string hash, int fileIndex)
+        public void StreamTorrent(string hash, int fileIndex)
         {
-            if(_streamingList.ContainsKey(hash))
+            if (_streamingList.ContainsKey(hash))
             {
                 _streamingList[hash].ContinueStreaming(BufferingReadyCallback);
             }
@@ -516,17 +583,17 @@ namespace Tsunami
             }
         }
 
-        private static void BufferingReadyCallback(object sender, string path)
+        private void BufferingReadyCallback(object sender, string path)
         {
             BufferingCompleted?.Invoke(sender, path);
         }
 
-        public static bool IsStreaming()
+        public bool IsStreaming()
         {
             return _isStreaming;
         }
 
-        public static void StopStreaming()
+        public void StopStreaming()
         {
             if (_streamingList.ContainsKey(_streamingHash))
             {

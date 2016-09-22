@@ -26,7 +26,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested get()");
-                return SessionManager.getTorrentStatusList();
+                return SessionManager.Instance.getTorrentStatusList();
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested get({0})", sha1);
-                return SessionManager.getTorrentStatus(sha1);
+                return SessionManager.Instance.getTorrentStatus(sha1);
             }
             catch (Exception ex)
             {
@@ -78,7 +78,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested pause({0})", sha1);
-                return SessionManager.pauseTorrent(sha1);
+                return SessionManager.Instance.pauseTorrent(sha1);
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested resume({0})", sha1);
-                return SessionManager.resumeTorrent(sha1);
+                return SessionManager.Instance.resumeTorrent(sha1);
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested delete({0}, deleteFile:{1})", sha1, deleteFile);
-                SessionManager.deleteTorrent(sha1, deleteFile);
+                SessionManager.Instance.deleteTorrent(sha1, deleteFile);
             }
             catch (Exception ex)
             {
@@ -135,7 +135,7 @@ namespace Tsunami.Controllers
             try
             {
                 log.Trace("requested TorrentFileList({0})", sha1);
-                return SessionManager.getTorrentFiles(sha1);
+                return SessionManager.Instance.getTorrentFiles(sha1);
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace Tsunami.Controllers
             {
                 var file = data.Files["inputFile[]"].File;
                 var fileName = data.Files["inputFile[]"].Filename;
-                SessionManager.addTorrent(file);
+                SessionManager.Instance.addTorrent(file);
             }
             JObject jret = new JObject("Torrent added");
             //jret.Add("result", "ok");

@@ -180,10 +180,10 @@
                                                 <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
                                                     <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="PauseTorrent_Click">
                                                         <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
-                                                        <Rectangle.OpacityMask>
-                                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
-                                                        </Rectangle.OpacityMask>
-                                                    </Rectangle>
+                                                            <Rectangle.OpacityMask>
+                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
+                                                            </Rectangle.OpacityMask>
+                                                        </Rectangle>
                                                     </Button>
                                                     <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
                                                         <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
@@ -218,7 +218,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Border Background="Black" Name="imageBorder" Grid.ColumnSpan="2">
-                        <Image Name="DisplayImage" ></Image>
+                        <Image Name="DisplayImage"/>
                     </Border>
                     <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible" Grid.ColumnSpan="2">
 

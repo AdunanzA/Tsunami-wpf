@@ -47,14 +47,14 @@ namespace Tsunami.Gui.Wpf
             var title = Title + " " + +verMajor + "." + verMin + verRev;
             Title = title;
 
-            SessionManager.Initialize();
-            SessionManager.LoadFastResumeData();
+            SessionManager.Instance.Initialize();
+            SessionManager.Instance.LoadFastResumeData();
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             Hide();
-            SessionManager.Terminate();
+            SessionManager.Instance.Terminate();
 
             //Save MainWindow Settings
             Properties.Settings.Default.Save();
@@ -90,23 +90,23 @@ namespace Tsunami.Gui.Wpf
             settingsFlyOut.IsOpen = true;
         }
 
-        private async void StreamTorrent_Click(object sender, RoutedEventArgs e)
+        private void StreamTorrent_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = os.DataContext as TorrentItem;
-            string path = SessionManager.GetFilePathFromHash(ti.Hash, 0);
+            string path = SessionManager.Instance.GetFilePathFromHash(ti.Hash, 0);
 
-                if (CheckVideoExts(Path.GetExtension(path)) == false)
-                {
-                    await this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
-                    return;
-                }
+            if (CheckVideoExts(Path.GetExtension(path)) == false)
+            {
+                this.ShowMessageAsync("Error", "Streaming not available!", MessageDialogStyle.Affirmative, null);
+                return;
+            }
 
-                var status = SessionManager.getTorrentStatus(ti.Hash);
+            var status = SessionManager.Instance.getTorrentStatus(ti.Hash);
             if (!status.Paused && !status.IsSeeding)
             {
-                SessionManager.BufferingCompleted = BufferingCompleted;
-                SessionManager.StreamTorrent(ti.Hash, 0);
+                SessionManager.Instance.BufferingCompleted = BufferingCompleted;
+                SessionManager.Instance.StreamTorrent(ti.Hash, 0);
             }
 
         }
@@ -119,22 +119,19 @@ namespace Tsunami.Gui.Wpf
 
 
 
-        private async void PauseTorrent_Click(object sender, RoutedEventArgs e)
+        private void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = (TorrentItem)os.DataContext;
-            await Task.Run(() =>
-            {
-                var status = SessionManager.getTorrentStatus(ti.Hash);
+            var status = SessionManager.Instance.getTorrentStatus(ti.Hash);
                 if (!status.Paused)
                 {
-                    SessionManager.pauseTorrent(ti.Hash);
+                    SessionManager.Instance.pauseTorrent(ti.Hash);
                 }
                 else
                 {
-                    SessionManager.resumeTorrent(ti.Hash);
+                    SessionManager.Instance.resumeTorrent(ti.Hash);
                 }
-            });
         }
 
         private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
@@ -153,14 +150,14 @@ namespace Tsunami.Gui.Wpf
             switch (await this.ShowMessageAsync("", "Do you really want to delete" + " " + ti.Name + " " + "?", MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, dialogSettings))
             {
                 case MessageDialogResult.Affirmative:
-                    SessionManager.deleteTorrent(ti.Hash, true);
+                    SessionManager.Instance.deleteTorrent(ti.Hash, true);
                     res.TorrentList.Remove(ti);
                     torrentList.Items.Refresh();
                     break;
                 case MessageDialogResult.Negative:
                     break;
                 case MessageDialogResult.FirstAuxiliary:
-                    SessionManager.deleteTorrent(ti.Hash, false);
+                    SessionManager.Instance.deleteTorrent(ti.Hash, false);
                     res.TorrentList.Remove(ti);
                     torrentList.Items.Refresh();
                     break;
@@ -182,7 +179,7 @@ namespace Tsunami.Gui.Wpf
             ofd.ShowDialog();
             foreach (string file in ofd.FileNames)
             {
-                SessionManager.addTorrent(file);
+                SessionManager.Instance.addTorrent(file);
             }
 
         }
@@ -199,7 +196,7 @@ namespace Tsunami.Gui.Wpf
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
                 foreach (string file in files)
                 {
-                    SessionManager.addTorrent(file);
+                    SessionManager.Instance.addTorrent(file);
                 }
             }
         }

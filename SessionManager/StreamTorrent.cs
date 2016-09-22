@@ -5,7 +5,8 @@ namespace Tsunami
     class StreamTorrent : IDisposable
     {
         private int last_have_piece = -1;
-        private int num_have_pieces = 0;
+        private int starting_point = -1;
+        private int num_have_pieces = -1;
         private int end_piece = -1;
         private Core.TorrentHandle _torrentHandle = null;
         private string _hash;
@@ -33,7 +34,7 @@ namespace Tsunami
             if (_callback != null)
                 BufferReady += _callback;
             _hash = hash;
-            _torrentHandle = SessionManager.getTorrentHandle(hash);
+            _torrentHandle = SessionManager.Instance.getTorrentHandle(hash);
             if (!_torrentHandle.has_metadata()) return;
             Core.TorrentInfo ti = _torrentHandle.torrent_file();
             var files = ti.files();
@@ -44,7 +45,7 @@ namespace Tsunami
             var fileEntry = files.at(fileIndex);
             file_path = Settings.User.PathDownload + "\\" + fileEntry.path;
             var peer_req = ti.map_file(fileIndex, 0, 1048576);
-            last_have_piece = peer_req.piece;
+            starting_point = last_have_piece = peer_req.piece;
             piece_length = ti.piece_length();
             num_pieces = (int)Math.Ceiling((double)(fileEntry.size / piece_length));
             end_piece = Math.Min(last_have_piece + num_pieces, ti.num_pieces() - 1);
@@ -60,8 +61,14 @@ namespace Tsunami
                 BufferReady += _callback;
             _onStreaming = true;
             invoke_done = false;
-            while (_torrentHandle.have_piece(last_have_piece))
-                last_have_piece++;
+             var all_pieces =  _torrentHandle.status().pieces;
+
+            for (int i = starting_point; i < end_piece; i++)
+            {
+                
+                if (!all_pieces.op_Subscript(i))
+                    last_have_piece = starting_point + i; 
+            }
             ContinueOne();
         }
 

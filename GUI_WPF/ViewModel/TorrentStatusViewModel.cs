@@ -21,10 +21,10 @@ namespace Tsunami.Gui.Wpf
             _preferences = new Preferences();
 
 
-            SessionManager.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
-            SessionManager.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
-            SessionManager.TorrentRemoved += new EventHandler<EventsArgs.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
-            SessionManager.SessionStatisticsUpdate += new EventHandler<EventsArgs.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
+            SessionManager.Instance.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
+            SessionManager.Instance.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
+            SessionManager.Instance.TorrentRemoved += new EventHandler<EventsArgs.OnTorrentRemovedEventArgs>(RemovedFromTsunamiCore);
+            SessionManager.Instance.SessionStatisticsUpdate += new EventHandler<EventsArgs.OnSessionStatisticsEventArgs>(UpdateFromSessionStatistics);
         }
 
         public ObservableCollection<TorrentItem> TorrentList

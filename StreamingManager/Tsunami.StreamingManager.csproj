@@ -49,23 +49,38 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Meta.Vlc">
-      <HintPath>..\packages\Meta.Vlc.16.05.01\lib\net45\$(Platform)\Meta.Vlc.dll</HintPath>
-    </Reference>
-    <Reference Include="Meta.Vlc.Wpf">
-      <HintPath>..\packages\Meta.Vlc.Wpf.16.05.01.2\lib\net45\$(Platform)\Meta.Vlc.Wpf.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vlc.DotNet.Core, Version=2.1.126.0, Culture=neutral, PublicKeyToken=84529da31f4eb963">
+      <HintPath>..\packages\Vlc.DotNet.Core.2.1.126\lib\net45\$(Platform)\Vlc.DotNet.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Core.Interops, Version=2.1.126.0, Culture=neutral, PublicKeyToken=84529da31f4eb963">
+      <HintPath>..\packages\Vlc.DotNet.Core.Interops.2.1.126\lib\net45\$(Platform)\Vlc.DotNet.Core.Interops.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Forms, Version=2.1.126.0, Culture=neutral, PublicKeyToken=84529da31f4eb963">
+      <HintPath>..\packages\Vlc.DotNet.Forms.2.1.126\lib\net45\$(Platform)\Vlc.DotNet.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Vlc.DotNet.Wpf, Version=2.1.126.0, Culture=neutral, PublicKeyToken=84529da31f4eb963">
+      <HintPath>..\packages\Vlc.DotNet.Wpf.2.1.126\lib\net45\$(Platform)\Vlc.DotNet.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandHandler.cs" />
@@ -80,6 +95,12 @@
       <Project>{72a3592c-2b4e-45b1-a644-f0a9a4d8644a}</Project>
       <Name>Tsunami.SessionManager</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
