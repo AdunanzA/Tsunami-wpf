@@ -17,7 +17,7 @@ namespace Tsunami.Streaming
     {
         static public Vlc.DotNet.Wpf.VlcControl vlcPlayer = null;
         DispatcherTimer timer = null;
-        static private Image DisplayImage = null;
+        static private Grid DisplayGrid = null;
         private object _lastMovie = new Uri("http://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_480p_surround-fix.avi");
 
         public ICommand _playClick { get; set; }
@@ -38,7 +38,7 @@ namespace Tsunami.Streaming
             _player.VolumeChanged += new ChangedEventHandler(UpdateVolumeChange);
             _player.MovieProgressChanged += new ChangedEventHandler(UpdateMovieProgress);
 
-            StreamingManager.SetSurface += new EventHandler<Image>(LoadSurface);
+            StreamingManager.SetSurface += new EventHandler<Grid>(LoadSurface);
             StreamingManager.Terminate += new EventHandler(Terminate);
             StreamingManager.PlayUri += new EventHandler<Uri>(PlayUri);
             StreamingManager.PlayMediaPath += new EventHandler<string>(PlayMediaPath);
@@ -71,11 +71,11 @@ namespace Tsunami.Streaming
             }
         }
 
-        private void LoadSurface(object sender, Image i)
+        private void LoadSurface(object sender, Grid g)
         {
-            DisplayImage = i;
-            DisplayImage.MouseWheel += HandleMouseWheel;
-            InitializeVLC(ref i);
+            DisplayGrid = g;
+            DisplayGrid.MouseWheel += HandleMouseWheel;
+            InitializeVLC(ref g);
         }
 
         public void PlayMediaPath(object sender, string mediaPath)
@@ -117,11 +117,11 @@ namespace Tsunami.Streaming
             if (_lastMovie is Uri)
                 vlcPlayer.MediaPlayer.Play((Uri)_lastMovie);
             else if (_lastMovie is string)
-                vlcPlayer.MediaPlayer.Play((string)_lastMovie);
+                vlcPlayer.MediaPlayer.Play(new FileInfo((string)_lastMovie));
             else return;
 
 
-            //vlcPlayer.LengthChanged += OnMediaLengthChanged;
+           // vlcPlayer.MediaPlayer.TimeChanged += OnMediaLengthChanged;
             timer.Start();
 
             player.FullScreenEnabled = true;
@@ -132,7 +132,7 @@ namespace Tsunami.Streaming
 
         private void OnMediaLengthChanged(object sender,  EventArgs e)
         {
-           // player.MaxMovieTime = vlcPlayer.Length.TotalSeconds;
+            player.MaxMovieTime = vlcPlayer.MediaPlayer.Time;
         }
 
         public void StopClick(object parameter)
@@ -158,7 +158,7 @@ namespace Tsunami.Streaming
             vlcPlayer.MediaPlayer.Pause();
         }
 
-        private void InitializeVLC(ref Image i)
+        private void InitializeVLC(ref Grid g)
         {
             //Player Settings
 
@@ -172,44 +172,19 @@ namespace Tsunami.Streaming
             }
 
             vlcPlayer = new Vlc.DotNet.Wpf.VlcControl();
+            vlcPlayer.Background = Brushes.Black;
+            g.Children.Add(vlcPlayer);
+            Grid.SetRow(vlcPlayer, 1);
             vlcPlayer.MediaPlayer.BeginInit();
             vlcPlayer.MediaPlayer.VlcLibDirectoryNeeded += OnVlcControlNeedsLibDirectory;
             vlcPlayer.MediaPlayer.VlcMediaplayerOptions = new string[] { "-I", "dummy", "--ignore-config", "--no-video-title" };
             vlcPlayer.MediaPlayer.EndInit();
 
-            /*var vlcBinding = new Binding("VideoSource");
-            vlcBinding.Source = vlcPlayer;
-
-            var vImage = new Image();
-            vImage.SetBinding(Image.SourceProperty, vlcBinding);
-
-            var vBrush = new VisualBrush();
-            vBrush.TileMode = TileMode.None;
-            vBrush.Stretch = Stretch.Uniform;
-            vBrush.Visual = vImage;
-
-            i.Background = vBrush;*/
-            Binding binding = new Binding("VideoSource") { Source = vlcPlayer };
-            i.SetBinding(Image.SourceProperty, binding);
-            
-            
-            //i.Children.Add(vlcPlayer);
-            
-
-            /*vlcPlayer.Initialize(vlcPath, new string[] { "-I", "dummy", "--ignore-config", "--no-video-title"});
-            i.Source = vlcPlayer.VideoSource;
-            i.Stretch = Stretch.Fill;
-            
-            vlcPlayer.EndBehavior = EndBehavior.Nothing;
-            vlcPlayer.VideoSourceChanged += PlayerOnVideoSourceChanged;
-            vlcPlayer.VlcMediaPlayer.EndReached += OnEndReached;*/
-
-
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromSeconds(1);
             timer.Tick += new EventHandler(timer_Tick);
 
-            //player.VolumeValue = vlcPlayer.Volume;
+            player.VolumeValue = vlcPlayer.MediaPlayer.Audio.Volume;
             player.StopEnabled = false;
             player.PauseEnabled = false;
             //End Player Settings
@@ -230,35 +205,35 @@ namespace Tsunami.Streaming
                 
         /*public void PlayerOnVideoSourceChanged(object sender, VideoSourceChangedEventArgs videoSourceChangedEventArgs)
         {
-            DisplayImage.Dispatcher.BeginInvoke(new Action(() =>
+            DisplayGrid.Dispatcher.BeginInvoke(new Action(() =>
             {
-                DisplayImage.Source = videoSourceChangedEventArgs.NewVideoSource;
+                DisplayGrid.Source = videoSourceChangedEventArgs.NewVideoSource;
             }));
         }*/
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            /*if (vlcPlayer.VideoSource != null)
+            if (vlcPlayer.MediaPlayer.IsPlaying)
             {
-                player.MovieProgress = vlcPlayer.Time.TotalSeconds;
-                player.ProgressTime = TimeSpan.FromSeconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
-            }*/
+                player.MovieProgress = vlcPlayer.MediaPlayer.Time;
+                player.ProgressTime = TimeSpan.FromMilliseconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
+            }
         }
 
         public void UpdateVolumeChange()
         {
-            //vlcPlayer.Volume = player.VolumeValue;
+            vlcPlayer.MediaPlayer.Audio.Volume = player.VolumeValue;
         }
 
         public void UpdateMovieProgress()
         {
-           // vlcPlayer.Time = TimeSpan.FromSeconds(player.MovieProgress);
-            player.ProgressTime = TimeSpan.FromSeconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
+         //   player.MovieProgress = vlcPlayer.MediaPlayer.Time ;
+         //   player.ProgressTime = TimeSpan.FromMilliseconds(player.MovieProgress).ToString(@"hh\:mm\:ss");
         }
 
         private void HandleMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            //player.VolumeValue = vlcPlayer.Volume += (e.Delta > 0) ? 1 : -1;
+            player.VolumeValue = vlcPlayer.MediaPlayer.Audio.Volume += (e.Delta > 0) ? 1 : -1;
         }
 
         private bool CanExecute(object parameter)

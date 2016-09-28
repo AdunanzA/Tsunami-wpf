@@ -9,7 +9,7 @@ namespace Tsunami.Gui.Wpf
     /// <summary>
     /// Logica di interazione per FullScreen.xaml
     /// </summary>
-    public partial class FullScreen : Window
+    public partial class FullScreen : Window, IDisposable
     {
         private bool isFullScreen = false;
         DispatcherTimer hideBarTimer = null;
@@ -21,11 +21,12 @@ namespace Tsunami.Gui.Wpf
             mainWindow = m;
 
             InitializeFullScreen();
-            //mainWindow.DisplayImage.MouseMove += showProgressBar;
+            this.MouseMove += ShowProgressBar;
 
             hideBarTimer = new DispatcherTimer();
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);
             hideBarTimer.Tick += new EventHandler(HideBar_Tick);
+
         }
 
         private void InitializeFullScreen()
@@ -40,23 +41,24 @@ namespace Tsunami.Gui.Wpf
         {
             if (!isFullScreen)
             {
-                mainWindow.normalGrid.Children.Clear();
-                fullScreenGrid.Children.Add(mainWindow.imageBorder);
-                fullScreenGrid.Children.Add(mainWindow.playerStatus);
+                mainWindow.playerGrid.Children.Clear();
+                this.fullScreenGrid.Children.Insert(0, mainWindow.playerStatus);
+                this.fullScreenGrid.Children.Insert(1, (UIElement)Tsunami.Streaming.PlayerViewModel.vlcPlayer);
                 Show();
+                mainWindow.playerStatus.Visibility = Visibility.Collapsed;
             }
             else
             {
                 fullScreenGrid.Children.Clear();
-                mainWindow.normalGrid.Children.Add(mainWindow.imageBorder);
-                mainWindow.normalGrid.Children.Add(mainWindow.playerStatus);
+                mainWindow.playerGrid.Children.Insert(0, mainWindow.playerStatus);
+                mainWindow.playerGrid.Children.Insert(1, (UIElement)Tsunami.Streaming.PlayerViewModel.vlcPlayer);
                 Hide();
                 Mouse.OverrideCursor = Cursors.Arrow;
             }
             isFullScreen = !isFullScreen;
         }
 
-        public void showProgressBar(object sender, MouseEventArgs e)
+        public void ShowProgressBar(object sender, MouseEventArgs e)
         {
             if (isFullScreen)
             {
@@ -69,7 +71,7 @@ namespace Tsunami.Gui.Wpf
         private void HideBar_Tick(object sender, EventArgs e)
         {
             if (isFullScreen)
-            {
+            {               
                 mainWindow.playerStatus.Visibility = Visibility.Collapsed;
                 Mouse.OverrideCursor = Cursors.None;
                 hideBarTimer.Stop();

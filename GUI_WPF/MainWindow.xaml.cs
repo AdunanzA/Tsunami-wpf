@@ -33,7 +33,7 @@ namespace Tsunami.Gui.Wpf
             }
             else
             {
-                Streaming.StreamingManager.SetSurface?.Invoke(this, DisplayImage);
+                Streaming.StreamingManager.SetSurface?.Invoke(this, playerGrid);
             }
 
             fullScreenWindow = new FullScreen(this);

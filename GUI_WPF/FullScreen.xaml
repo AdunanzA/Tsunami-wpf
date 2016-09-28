@@ -9,6 +9,9 @@
         Title="FullScreen" Height="300" Width="300">
 
     <Grid Name="fullScreenGrid"  AllowDrop="True" DataContext="{Binding PlayerDataContext}">
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
     </Grid>
 </Window>

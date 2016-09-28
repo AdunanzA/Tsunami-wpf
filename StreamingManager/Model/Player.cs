@@ -130,8 +130,8 @@ namespace Tsunami.Streaming
             }
         }
 
-        private double _movieProgress { get; set; }
-        public double MovieProgress
+        private long _movieProgress { get; set; }
+        public long MovieProgress
         {
             get
             {
@@ -148,8 +148,8 @@ namespace Tsunami.Streaming
             }
         }
 
-        private double _maxMovieTime { get; set; }
-        public double MaxMovieTime
+        private long _maxMovieTime { get; set; }
+        public long MaxMovieTime
         {
             get
             {

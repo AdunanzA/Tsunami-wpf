@@ -206,20 +206,20 @@
             </TabItem>
             <TabItem Name="playerTab"  Header="3 - Play and have fun!">
 
-
-                <Grid Name="normalGrid"  AllowDrop="True">
-                    <Grid.ColumnDefinitions>
+                <Grid Name="playerGrid"  AllowDrop="True">
+                    <!--<Grid.ColumnDefinitions>
                         <ColumnDefinition Width="96*"/>
-                        <ColumnDefinition Width="91*"/>
-                    </Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="91*"/>  
+                    </Grid.ColumnDefinitions>-->
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <Border Background="Black" Name="imageBorder" Grid.ColumnSpan="2">
-                        <Image Name="DisplayImage"/>
-                    </Border>
+                    <!--<Border Background="Black" Name="imageBorder" Grid.ColumnSpan="2">
+                        --><!--<Image Name="DisplayImage"/>--><!--                        
+                    </Border>-->
                     <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible" Grid.ColumnSpan="2">
 
                         <StatusBar.ItemsPanel>
