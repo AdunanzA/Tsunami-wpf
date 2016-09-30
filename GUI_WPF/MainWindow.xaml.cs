@@ -114,10 +114,8 @@ namespace Tsunami.Gui.Wpf
         private void BufferingCompleted(object sender, string path)
         {
             Tsunami.Streaming.StreamingManager.PlayMediaPath?.Invoke(this, path);
-            MetroTab.Dispatcher.Invoke(new Action(() => MetroTab.SelectedIndex = 2));
+            MetroTab.Dispatcher.Invoke(new Action(() => MetroTab.SelectedIndex = 1));
         }
-
-
 
         private void PauseTorrent_Click(object sender, RoutedEventArgs e)
         {
