@@ -53,6 +53,11 @@ namespace Tsunami
             //set first piece with higher priority
             _torrentHandle.piece_priority(last_have_piece, 7);
             _onStreaming = true;
+            if (_torrentHandle.have_piece(last_have_piece))
+            {
+                CountHavePieces();
+                InvokeStreaming();
+            }
         }
 
         public void ContinueStreaming(EventHandler<string> _callback)
@@ -61,15 +66,22 @@ namespace Tsunami
                 BufferReady += _callback;
             _onStreaming = true;
             invoke_done = false;
-             var all_pieces =  _torrentHandle.status().pieces;
+            
+            CountHavePieces();
+            ContinueOne();
+        }
 
+        private void CountHavePieces()
+        {
+            var all_pieces = _torrentHandle.status().pieces;
             for (int i = starting_point; i < end_piece; i++)
             {
-                
                 if (!all_pieces.op_Subscript(i))
-                    last_have_piece = starting_point + i; 
+                {
+                    last_have_piece = starting_point + i;
+                    num_have_pieces = i;
+                }
             }
-            ContinueOne();
         }
 
         public void StopStreaming(EventHandler<string> _callback)
@@ -81,13 +93,17 @@ namespace Tsunami
         public void ContinueOne()
         {
             num_have_pieces++;
+            InvokeStreaming();
+            _torrentHandle.piece_priority(last_have_piece, 7);
+            last_have_piece++;
+        }
+        private void InvokeStreaming()
+        {
             if (!invoke_done && (num_have_pieces * piece_length >= Settings.User.streamingBufferSize))
             {
                 invoke_done = true;
-                BufferReady?.Invoke(this,file_path);
+                BufferReady?.Invoke(this, file_path);
             }
-            _torrentHandle.piece_priority(last_have_piece, 7);
-            last_have_piece++;
         }
 
         public void Dispose()

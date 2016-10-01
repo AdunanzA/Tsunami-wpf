@@ -121,7 +121,7 @@ namespace Tsunami.Streaming
             else return;
 
 
-           // vlcPlayer.MediaPlayer.TimeChanged += OnMediaLengthChanged;
+            vlcPlayer.MediaPlayer.TimeChanged += OnMediaLengthChanged;
             timer.Start();
 
             player.FullScreenEnabled = true;
@@ -132,13 +132,13 @@ namespace Tsunami.Streaming
 
         private void OnMediaLengthChanged(object sender,  EventArgs e)
         {
-            player.MaxMovieTime = vlcPlayer.MediaPlayer.Time;
+            player.MaxMovieTime = vlcPlayer.MediaPlayer.Length;
         }
 
         public void StopClick(object parameter)
         {
             timer.Stop();
-            //vlcPlayer.LengthChanged -= OnMediaLengthChanged;
+            vlcPlayer.MediaPlayer.TimeChanged -= OnMediaLengthChanged;
 
             vlcPlayer.MediaPlayer.Stop();
 
