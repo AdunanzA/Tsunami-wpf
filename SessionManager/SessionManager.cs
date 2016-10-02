@@ -69,6 +69,7 @@ namespace Tsunami
         public void Initialize()
         {
             Settings.Logger.Inizialize();
+            Settings.User.readFromFile();
 
             // web server
             if (Settings.User.StartWebOnAppLoad)
@@ -149,7 +150,7 @@ namespace Tsunami
 
         private void OnDhtStatsAlert(Core.dht_stats_alert a)
         {
-            var aaa = a.active_requests;
+            //var aaa = a.active_requests;
         }
 
         private void OnSaveResumeDataAlert(Core.save_resume_data_alert a)

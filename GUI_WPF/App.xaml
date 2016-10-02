@@ -28,6 +28,9 @@
             <!-- Tsunami MVVM for Player-->
             <streaming:PlayerViewModel x:Key="PlayerDataContext" />
 
+            <!-- Tsunami User Preferences -->
+            <local:Preferences x:Key="Preferences" />
+
             <!-- Circular ProgressBar - Credits: http://stackoverflow.com/questions/23046565/wpf-radial-progressbar-meter-i-e-battery-meter -->
             <local:ProgressToAngleConverter x:Key="ProgressConverter"/>
             <Style TargetType="{x:Type ProgressBar}" x:Key="ProgressBarStyle">

@@ -9,8 +9,7 @@ namespace Tsunami.Gui.Wpf
     {
         private ObservableCollection<TorrentItem> _torrentList { get; set; }
         private SessionStatistics _sessionStatistics { get; set; }
-        private Preferences _preferences { get; set; }
-
+        //private Preferences _preferences { get; set; }
 
         private object lockObj = new object();
 
@@ -18,8 +17,7 @@ namespace Tsunami.Gui.Wpf
         {
             _torrentList = new ObservableCollection<TorrentItem>();
             _sessionStatistics = new SessionStatistics();
-            _preferences = new Preferences();
-
+            //_preferences = new Preferences();
 
             SessionManager.Instance.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.Instance.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
@@ -43,13 +41,13 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
-        public Preferences UserPreferences
-        {
-            get
-            {
-                return _preferences;
-            }
-        }
+        //public Preferences UserPreferences
+        //{
+        //    get
+        //    {
+        //        return _preferences;
+        //    }
+        //}
 
         private void UpdateFromSessionStatistics(object sender, EventsArgs.OnSessionStatisticsEventArgs e)
         {

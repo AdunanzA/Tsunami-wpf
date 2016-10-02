@@ -28,7 +28,7 @@
     </Window.Resources>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button ToolTip="Chat" Cursor="Hand">
+            <Button ToolTip="Chat" Cursor="Hand" Click="Chat_Click">
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
                         <Rectangle.OpacityMask>
@@ -57,48 +57,72 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0"
-                               Text="Something above the ScrollPanel" />
-
-                    <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto">
+                    <!--<TextBlock Grid.Row="0"
+                               Text="Something above the ScrollPanel" />-->
+                    <StackPanel Orientation="Vertical">
+                        <Controls:ToggleSwitch x:Name="toggleAdvanced" Header="Choose Tsunami interface" OnLabel="Advanced" OffLabel="Simple">
+                        </Controls:ToggleSwitch>
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            <Controls:ToggleSwitch x:Name="toggleAdvanced" Header="Choose Tsunami interface" OnLabel="Advanced" OffLabel="Simple" 
-                                   Width="150" HorizontalAlignment="Right">
-                            </Controls:ToggleSwitch>
-                            <Controls:ToggleSwitch Header="Start web interface on Tsunami start" OnLabel="Yes" OffLabel="No" 
+                            
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
+                                Start web interface on Tsunami start</Label>
+                            <Controls:ToggleSwitch OnLabel="Yes" OffLabel="No" 
+                                           IsChecked="{Binding StartWebOnAppLoad, Source={StaticResource Preferences}, Mode=TwoWay}"
                                            Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"></Controls:ToggleSwitch>
-                            <TextBox Controls:TextBoxHelper.Watermark="TextBox 01" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 02" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 03" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 04" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 05" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 06" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 07" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 08" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 09" />
-                            <TextBox Margin="0,5,0,0"
-                                     Controls:TextBoxHelper.Watermark="TextBox 10" />
+                            
+                            <Label Margin="0,5,0,0">Download directory</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <Button ToolTip="select folder" Cursor="Hand" Click="selectFolder_Click" Width="60">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_folder}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
+                                    </StackPanel>
+                                </Button>
+                                <TextBox Name="txtPathDownload" Width="315" Margin="5,0,0,0" Text="{Binding PathDownload, Source={StaticResource Preferences}, Mode=TwoWay}"/>
+                            </StackPanel>
+                            
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
+                                   >Web Interface address</Label>
+                            <TextBox Text="{Binding WebAddress, Source={StaticResource Preferences}, Mode=TwoWay}"
+                                     Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+                            
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
+                                   >Web Interface port</Label>
+                            <TextBox Text="{Binding WebPort, Source={StaticResource Preferences}, Mode=TwoWay}"
+                                     Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
+                                Web Interface: use authorization</Label>
+                            <Controls:ToggleSwitch OnLabel="Yes" OffLabel="No" 
+                                           IsChecked="{Binding WebUseAuth, Source={StaticResource Preferences}, Mode=TwoWay}"
+                                           Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"></Controls:ToggleSwitch>
+
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
+                                   >Web Interface: username</Label>
+                            <TextBox Text="{Binding WebUser, Source={StaticResource Preferences}, Mode=TwoWay}"
+                                     Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
+                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
+                                   >Web Interface: password</Label>
+                            <TextBox Text="{Binding WebPassword, Source={StaticResource Preferences}, Mode=TwoWay}"
+                                     Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
                         </StackPanel>
                     </ScrollViewer>
-
                     <UniformGrid Columns="2"
                                  Grid.Row="2"
                                  Margin="10">
                         <Button Style="{DynamicResource SquareButtonStyle}"
                                 Margin="10"
-                                Content="Create" />
+                                Content="Apply" Click="confApply_Click"/>
                         <Button Style="{DynamicResource SquareButtonStyle}"
                                 Margin="10"
-                                Content="Cancel" />
+                                Content="Cancel" Click="confCancel_Click"/>
                     </UniformGrid>
 
                 </Grid>

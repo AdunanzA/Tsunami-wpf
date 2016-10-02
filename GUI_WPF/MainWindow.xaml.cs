@@ -223,5 +223,36 @@ namespace Tsunami.Gui.Wpf
             return false;
         }
 
+        private void confApply_Click(object sender, RoutedEventArgs e)
+        {
+            Preferences res = (Preferences)this.FindResource("Preferences");
+            res.savePreferenceToFile();
+            settingsFlyOut.IsOpen = false;
+        }
+
+        private void confCancel_Click(object sender, RoutedEventArgs e)
+        {
+
+            Preferences res = (Preferences)this.FindResource("Preferences");
+            res.reloadPreferenceFromFile();
+            settingsFlyOut.IsOpen = false;
+        }
+
+        private void selectFolder_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+            fbd.ShowNewFolderButton = true;
+            System.Windows.Forms.DialogResult result = fbd.ShowDialog();
+            if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            {
+                Preferences res = (Preferences)this.FindResource("Preferences");
+                res.PathDownload = fbd.SelectedPath;
+            }
+        }
+
+        private void Chat_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://discordapp.com/invite/0pfzTOXuEjt9ifvF");
+        }
     }
 }
