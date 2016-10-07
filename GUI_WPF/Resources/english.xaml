@@ -4,11 +4,29 @@
   xmlns:system="clr-namespace:System;assembly=mscorlib">
 
   <!-- String resource that can be localized -->
-  <system:String x:Key="Start">Start</system:String>
-  <system:String x:Key="Add">Add Torrent / Link</system:String>
-  <system:String x:Key="Delete">Delete</system:String>
-  <system:String x:Key="Stop">Stop</system:String>
-  <system:String x:Key="Read">Read XML</system:String>
-  <system:String x:Key="AutoKill">Self-destruction</system:String>
-  <system:String x:Key="OpenWeb">Open Web</system:String>
+    <system:String x:Key="No">No</system:String>
+    <system:String x:Key="Yes">Yes</system:String>
+    <system:String x:Key="DownList">Downloads List</system:String>
+    <system:String x:Key="Add">Add Torrent</system:String>
+    <system:String x:Key="Settings">Settings</system:String>
+    <system:String x:Key="ChoseInterface">Choose Tsunami interface</system:String>
+    <system:String x:Key="Simple">Simple</system:String>
+    <system:String x:Key="Advanced">Advanced</system:String>
+    <system:String x:Key="Apply">Apply</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+    <system:String x:Key="DelTorrentMessage">Do you really want to delete</system:String>
+    <system:String x:Key="DelAffermativeButton">Yes, and delete file from disk too</system:String>
+    <system:String x:Key="DelFirstAuxiliary">Yes, but keep file on disk</system:String>
+    <system:String x:Key="StartWeb">Start web interface on Tsunami start</system:String>
+    <system:String x:Key="DownDir">Download Directory</system:String>
+    <system:String x:Key="WebIntAddress">Web interface address</system:String>
+    <system:String x:Key="WebIntPort">Web Interface port</system:String>
+    <system:String x:Key="WebAuth">Web Interface: use authorization</system:String>
+    <system:String x:Key="WebUsername">Web Interface: username</system:String>
+    <system:String x:Key="WebPwd">Web Interface: password</system:String>
+    <system:String x:Key="Name">Name</system:String>
+    <system:String x:Key="Status">Status</system:String>
+    <system:String x:Key="Downloaded">Downloaded</system:String>
+    <system:String x:Key="Size">Size</system:String>
+    <system:String x:Key="Progress">Progress</system:String>
 </ResourceDictionary>

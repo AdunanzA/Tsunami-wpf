@@ -50,7 +50,7 @@
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="settingsFlyOut" Header="Settings" Position="Right" Width="400">
+            <Controls:Flyout x:Name="settingsFlyOut" Header="{DynamicResource Settings}" Position="Right" Width="400">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -60,19 +60,18 @@
                     <!--<TextBlock Grid.Row="0"
                                Text="Something above the ScrollPanel" />-->
                     <StackPanel Orientation="Vertical">
-                        <Controls:ToggleSwitch x:Name="toggleAdvanced" Header="Choose Tsunami interface" OnLabel="Advanced" OffLabel="Simple">
+                        <Controls:ToggleSwitch x:Name="toggleAdvanced" Header="{DynamicResource ChoseInterface}" OnLabel="{DynamicResource Advanced}" OffLabel="{DynamicResource Simple}">
                         </Controls:ToggleSwitch>
                     </StackPanel>
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
-                                Start web interface on Tsunami start</Label>
-                            <Controls:ToggleSwitch OnLabel="Yes" OffLabel="No" 
+
+                            <Label Margin="0,5,0,0" Content="{DynamicResource StartWeb}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+                            <Controls:ToggleSwitch OnLabel="{DynamicResource Yes}" OffLabel="{DynamicResource No}" 
                                            IsChecked="{Binding StartWebOnAppLoad, Source={StaticResource Preferences}, Mode=TwoWay}"
                                            Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"></Controls:ToggleSwitch>
-                            
-                            <Label Margin="0,5,0,0">Download directory</Label>
+
+                            <Label Margin="0,5,0,0" Content="{DynamicResource DownDir}"/>
                             <StackPanel Orientation="Horizontal">
                                 <Button ToolTip="select folder" Cursor="Hand" Click="selectFolder_Click" Width="60">
                                     <StackPanel Orientation="Horizontal">
@@ -85,30 +84,30 @@
                                 </Button>
                                 <TextBox Name="txtPathDownload" Width="315" Margin="5,0,0,0" Text="{Binding PathDownload, Source={StaticResource Preferences}, Mode=TwoWay}"/>
                             </StackPanel>
-                            
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
-                                   >Web Interface address</Label>
+
+                            <Label Margin="0,5,0,0" Content="{DynamicResource WebIntAddress}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
                             <TextBox Text="{Binding WebAddress, Source={StaticResource Preferences}, Mode=TwoWay}"
                                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
-                            
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
-                                   >Web Interface port</Label>
+
+                            <Label Margin="0,5,0,0" Content="{DynamicResource WebIntPort}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
                             <TextBox Text="{Binding WebPort, Source={StaticResource Preferences}, Mode=TwoWay}"
                                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
 
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
-                                Web Interface: use authorization</Label>
-                            <Controls:ToggleSwitch OnLabel="Yes" OffLabel="No" 
+                            <Label Margin="0,5,0,0" Content="{DynamicResource WebAuth}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
+                            <Controls:ToggleSwitch OnLabel="{DynamicResource Yes}" OffLabel="{DynamicResource No}" 
                                            IsChecked="{Binding WebUseAuth, Source={StaticResource Preferences}, Mode=TwoWay}"
                                            Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"></Controls:ToggleSwitch>
 
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
-                                   >Web Interface: username</Label>
+                            <Label Margin="0,5,0,0" Content="{DynamicResource WebUsername}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
                             <TextBox Text="{Binding WebUser, Source={StaticResource Preferences}, Mode=TwoWay}"
                                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
 
-                            <Label Margin="0,5,0,0" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"
-                                   >Web Interface: password</Label>
+                            <Label Margin="0,5,0,0" Content="{DynamicResource WebPwd}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
+
                             <TextBox Text="{Binding WebPassword, Source={StaticResource Preferences}, Mode=TwoWay}"
                                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
 
@@ -119,10 +118,10 @@
                                  Margin="10">
                         <Button Style="{DynamicResource SquareButtonStyle}"
                                 Margin="10"
-                                Content="Apply" Click="confApply_Click"/>
+                                Content="{DynamicResource Apply}" Click="confApply_Click"/>
                         <Button Style="{DynamicResource SquareButtonStyle}"
                                 Margin="10"
-                                Content="Cancel" Click="confCancel_Click"/>
+                                Content="{DynamicResource Cancel}" Click="confCancel_Click"/>
                     </UniformGrid>
 
                 </Grid>
@@ -131,10 +130,10 @@
     </Controls:MetroWindow.Flyouts>
     <Grid>
         <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab">
-            <TabItem Header="Downloads list" AllowDrop="True" Drop="HandleDrop" HorizontalAlignment="Center">
+            <TabItem Header="{DynamicResource DownList}" AllowDrop="True" Drop="HandleDrop" HorizontalAlignment="Center">
                 <StackPanel Orientation="Vertical" Background="Transparent">
                     <Menu>
-                        <Button Style="{DynamicResource SquareButtonStyle}" Content="+" Width="30" Height="30" Click="AddTorrent_Click"/>
+                        <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource Add}" Width="Auto" Height="Auto" Click="AddTorrent_Click"/>
                     </Menu>
                     <DataGrid Name="dataGridx" AutoGenerateColumns="False" Grid.Row="0" IsReadOnly="True" HorizontalAlignment="Stretch"
                       CellStyle="{StaticResource Body_Content_DataGrid_Centering}" HorizontalContentAlignment="Left"

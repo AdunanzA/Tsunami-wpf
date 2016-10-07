@@ -140,12 +140,12 @@ namespace Tsunami.Gui.Wpf
             var dialogSettings = new MetroDialogSettings
             {
                 SuppressDefaultResources = true,
-                AffirmativeButtonText = "Yes, and delete file from disk too",
-                NegativeButtonText = "No",
-                FirstAuxiliaryButtonText = "Yes, but keep file on disk",
+                AffirmativeButtonText = (string)FindResource("DelAffermativeButton"),
+                NegativeButtonText = (string)FindResource("No"),
+                FirstAuxiliaryButtonText = (string)FindResource("DelFirstAuxiliary"),
             };
 
-            switch (await this.ShowMessageAsync("", "Do you really want to delete" + " " + ti.Name + " " + "?", MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, dialogSettings))
+            switch (await this.ShowMessageAsync("", (string)FindResource("DelTorrentMessage") + " " + ti.Name + " " + "?", MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, dialogSettings))
             {
                 case MessageDialogResult.Affirmative:
                     SessionManager.Instance.deleteTorrent(ti.Hash, true);
