@@ -9,7 +9,6 @@ namespace Tsunami.Gui.Wpf
     {
         private ObservableCollection<TorrentItem> _torrentList { get; set; }
         private SessionStatistics _sessionStatistics { get; set; }
-        //private Preferences _preferences { get; set; }
 
         private object lockObj = new object();
 
@@ -17,7 +16,6 @@ namespace Tsunami.Gui.Wpf
         {
             _torrentList = new ObservableCollection<TorrentItem>();
             _sessionStatistics = new SessionStatistics();
-            //_preferences = new Preferences();
 
             SessionManager.Instance.TorrentUpdated += new EventHandler<EventsArgs.OnTorrentUpdatedEventArgs>(UpdateFromTsunamiCore);
             SessionManager.Instance.TorrentAdded += new EventHandler<EventsArgs.OnTorrentAddedEventArgs>(AddFromTsunamiCore);
@@ -40,14 +38,6 @@ namespace Tsunami.Gui.Wpf
                 return _sessionStatistics;
             }
         }
-
-        //public Preferences UserPreferences
-        //{
-        //    get
-        //    {
-        //        return _preferences;
-        //    }
-        //}
 
         private void UpdateFromSessionStatistics(object sender, EventsArgs.OnSessionStatisticsEventArgs e)
         {
@@ -74,15 +64,20 @@ namespace Tsunami.Gui.Wpf
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() => {
                 TorrentItem ob = _torrentList.FirstOrDefault(o => o.Hash == e.InfoHash);
-                ob.Name = e.Name;
-                ob.QueuePosition = e.QueuePosition;
-                ob.TotalDone = e.TotalDone;
-                ob.TotalWanted = e.TotalWanted;
-                ob.State = e.State;
-                ob.Progress = e.Progress;
-                ob.Priority = e.Priority;
-                ob.DownloadRate = e.DownloadRate;
-                ob.UploadRate = e.UploadRate;
+                // ISSUE: Se si fa delete di un file arrivano update su torrent non più presenti
+                // capire perchè! nel frattempo evito l'exception
+                if (ob!=null)
+                {
+                    ob.Name = e.Name;
+                    ob.QueuePosition = e.QueuePosition;
+                    ob.TotalDone = e.TotalDone;
+                    ob.TotalWanted = e.TotalWanted;
+                    ob.State = e.State;
+                    ob.Progress = e.Progress;
+                    ob.Priority = e.Priority;
+                    ob.DownloadRate = e.DownloadRate;
+                    ob.UploadRate = e.UploadRate;
+                }
             });
         }
     }

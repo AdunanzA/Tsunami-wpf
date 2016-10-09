@@ -21,6 +21,8 @@ namespace Tsunami.Gui.Wpf
         private static string _webUser;
         private static string _webPassword;
         private static long _streamingBufferSize;
+        private static bool _isDarkTheme;
+        private static string _themeColor;
 
         public bool ShowAdvancedInterface { get { return _showAdvancedInterface; } set { if (_showAdvancedInterface != value) { _showAdvancedInterface = value; CallPropertyChanged("ShowAdvancedInterface"); } } }
 
@@ -40,6 +42,39 @@ namespace Tsunami.Gui.Wpf
 
         public long StreamingBufferSize { get { return _streamingBufferSize; } set { if (_streamingBufferSize != value) { _streamingBufferSize = value; CallPropertyChanged("streamingBufferSize"); } } }
 
+        public bool IsDarkTheme {
+            get { return _isDarkTheme; }
+            set {
+                if (_isDarkTheme != value)
+                {
+                    _isDarkTheme = value;
+                    string stheme = "BaseLight";
+                    if (_isDarkTheme)
+                    {
+                        stheme = "BaseDark";
+                    }
+                    var theme = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+                    MahApps.Metro.ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, MahApps.Metro.ThemeManager.GetAppTheme(stheme));
+                    CallPropertyChanged("IsDarkTheme");
+                }
+            }
+        }
+
+        public string ThemeColor
+        {
+            get { return _themeColor; }
+            set
+            {
+                if (_themeColor != value)
+                {
+                    _themeColor = value;
+                    var theme = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
+                    MahApps.Metro.ThemeManager.ChangeAppStyle(Application.Current, MahApps.Metro.ThemeManager.GetAccent(value), theme.Item1);
+                    CallPropertyChanged("ThemeColor");
+                }
+            }
+        }
+
         public Preferences()
         {
             _showAdvancedInterface = false;
@@ -58,6 +93,8 @@ namespace Tsunami.Gui.Wpf
             WebUseAuth = Settings.User.WebUseAuth;
             WebUser = Settings.User.WebUser;
             StreamingBufferSize = Settings.User.streamingBufferSize;
+            IsDarkTheme = Settings.User.IsDarkTheme;
+            ThemeColor = Settings.User.ThemeColor;
         }
 
         public void savePreferenceToFile()
@@ -71,6 +108,8 @@ namespace Tsunami.Gui.Wpf
             Settings.User.WebUseAuth = WebUseAuth;
             Settings.User.WebUser = WebUser;
             Settings.User.streamingBufferSize = StreamingBufferSize;
+            Settings.User.IsDarkTheme = IsDarkTheme;
+            Settings.User.ThemeColor = ThemeColor;
             Settings.User.writeToFile();
         }
 

@@ -34,6 +34,8 @@ namespace Tsunami.Gui.Wpf
         public int DownloadRate { get { return _DownloadRate; } set { if (_DownloadRate != value) { _DownloadRate = value; CallPropertyChanged("DownloadRate_ByteSize"); } } }
         public int UploadRate { get { return _UploadRate; } set { if (_UploadRate != value) { _UploadRate = value; CallPropertyChanged("UploadRate_ByteSize"); } } }
 
+        public bool IsSelected { get { return false; } set { } }
+
         public string Progress_String
         {
             get
@@ -48,6 +50,7 @@ namespace Tsunami.Gui.Wpf
                 return (Progress * 100);
             }
         }
+        public Func<double, string> Formatter { get; set; }
         public string TotalWanted_ByteSize
         {
             get
@@ -108,6 +111,33 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
+        public Color ColorFrom
+        {
+            get
+            {
+                Tuple<MahApps.Metro.AppTheme, MahApps.Metro.Accent> appStyle = MahApps.Metro.ThemeManager.DetectAppStyle(System.Windows.Application.Current);
+                SolidColorBrush scb;
+                if (appStyle.Item1.Name == "BaseDark")
+                {
+                    scb = new SolidColorBrush(Colors.White);
+                } else
+                {
+                    scb = new SolidColorBrush(Colors.Black);
+                }
+                return scb.Color;
+            }
+        }
+
+        public Color ColorTo
+        {
+            get
+            {
+                Tuple<MahApps.Metro.AppTheme, MahApps.Metro.Accent> appStyle = MahApps.Metro.ThemeManager.DetectAppStyle(System.Windows.Application.Current);
+                SolidColorBrush scb = (SolidColorBrush)appStyle.Item2.Resources["HighlightBrush"];
+                return scb.Color;
+            }
+        }
+
         public TorrentItem()
         {
 
@@ -125,9 +155,11 @@ namespace Tsunami.Gui.Wpf
             Priority = priority;
             DownloadRate = down_rate;
             UploadRate = up_rate;
+            //Formatter = x => x.ToString("0.##") + "%";
+            Formatter = x => ((int)x).ToString() + "%";
         }
 
-        private void CallPropertyChanged(string prop)
+        public void CallPropertyChanged(string prop)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }

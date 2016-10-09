@@ -24,6 +24,8 @@ namespace Tsunami.Settings
         private static string _webUser = "admin";
         private static string _webPassword = "admin";
         private static long _streamingBufferSize = 1048576; //1MB default size
+        private static bool _isDarkTheme = true;
+        private static string _themeColor = "Orange";
 
         public static string PathDownload
         {
@@ -128,6 +130,32 @@ namespace Tsunami.Settings
             }
         }
 
+        public static bool IsDarkTheme
+        {
+            get
+            {
+                return _isDarkTheme;
+            }
+
+            set
+            {
+                _isDarkTheme = value;
+            }
+        }
+
+        public static string ThemeColor
+        {
+            get
+            {
+                return _themeColor;
+            }
+
+            set
+            {
+                _themeColor = value;
+            }
+        }
+
         public static void readFromFile()
         {
             if (File.Exists(_fileName))
@@ -161,6 +189,12 @@ namespace Tsunami.Settings
                         case "StreamingBufferSize":
                             _streamingBufferSize = long.Parse(element.Value);
                             break;
+                        case "IsDarkTheme":
+                            _isDarkTheme = bool.Parse(element.Value);
+                            break;
+                        case "ThemeColor":
+                            _themeColor = element.Value;
+                            break;
                         default:
                             break;
                     }
@@ -183,6 +217,8 @@ namespace Tsunami.Settings
             doc.Root.Add(new XElement("WebUser", WebUser));
             doc.Root.Add(new XElement("WebPassword", WebPassword));
             doc.Root.Add(new XElement("StreamingBufferSize", streamingBufferSize));
+            doc.Root.Add(new XElement("IsDarkTheme", IsDarkTheme));
+            doc.Root.Add(new XElement("ThemeColor", ThemeColor));
             doc.Save(_fileName);
         }
     }

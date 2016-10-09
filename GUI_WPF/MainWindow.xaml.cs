@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -16,6 +17,7 @@ namespace Tsunami.Gui.Wpf
     public partial class MainWindow : MetroWindow
     {
         FullScreen fullScreenWindow = null;
+        public List<ColorItem> ColorsList = new List<ColorItem>();
 
         public MainWindow()
         {
@@ -50,6 +52,20 @@ namespace Tsunami.Gui.Wpf
 
             SessionManager.Instance.Initialize();
             SessionManager.Instance.LoadFastResumeData();
+
+            Preferences pref = (Preferences)FindResource("Preferences");
+            foreach (MahApps.Metro.Accent item in MahApps.Metro.ThemeManager.Accents)
+            {
+                System.Windows.Media.SolidColorBrush res = (System.Windows.Media.SolidColorBrush)item.Resources["HighlightBrush"];
+                ColorItem ci = new ColorItem(res, item.Name.ToString());
+                ColorsList.Add(ci);
+                cmbColor.Items.Add(ci);
+                if (pref.ThemeColor == ci.Name)
+                {
+                    cmbColor.SelectedIndex = cmbColor.Items.IndexOf(ci);//SelectedItem = typeof(ColorItem).GetProperty(ci.Name); //ci.Name;
+                }
+            }
+            //cmbColor.SelectedItem = pref.ThemeColor;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -83,8 +99,6 @@ namespace Tsunami.Gui.Wpf
             }
             this.Resources.MergedDictionaries.Add(dict);
         }
-
-
 
         private void showSettingFlyOut_Click(object sender, RoutedEventArgs e)
         {
@@ -122,15 +136,15 @@ namespace Tsunami.Gui.Wpf
         {
             System.Windows.Controls.Button os = (System.Windows.Controls.Button)e.OriginalSource;
             TorrentItem ti = (TorrentItem)os.DataContext;
-            var status = SessionManager.Instance.getTorrentStatus(ti.Hash);
-                if (!status.Paused)
-                {
-                    SessionManager.Instance.pauseTorrent(ti.Hash);
-                }
-                else
-                {
-                    SessionManager.Instance.resumeTorrent(ti.Hash);
-                }
+            Models.TorrentStatus status = SessionManager.Instance.getTorrentStatus(ti.Hash);
+            if (!status.Paused)
+            {
+                SessionManager.Instance.pauseTorrent(ti.Hash);
+            }
+            else
+            {
+                SessionManager.Instance.resumeTorrent(ti.Hash);
+            }
         }
 
         private async void DeleteTorrent_Click(object sender, RoutedEventArgs e)
@@ -200,16 +214,6 @@ namespace Tsunami.Gui.Wpf
             }
         }
 
-        //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
-        //{
-        //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
-        //    if (res != null)
-        //    {
-        //        ToggleSwitch ts = (ToggleSwitch)sender;
-        //        res.UserPreferences.ShowAdvancedInterface = ts.IsChecked.Value;
-        //    }
-        //}
-
         private bool CheckVideoExts(string s)
         {
             int i = 0;
@@ -234,9 +238,18 @@ namespace Tsunami.Gui.Wpf
 
         private void confCancel_Click(object sender, RoutedEventArgs e)
         {
-
             Preferences res = (Preferences)this.FindResource("Preferences");
             res.reloadPreferenceFromFile();
+            res = (Preferences)FindResource("Preferences");
+            //cmbColor.SelectedItem = res.ThemeColor;
+            foreach (ColorItem ci in ColorsList)
+            {
+                if (ci.Name == res.ThemeColor)
+                {
+                    cmbColor.SelectedIndex = cmbColor.Items.IndexOf(ci);
+                    break;
+                }
+            }
             settingsFlyOut.IsOpen = false;
         }
 
@@ -256,5 +269,58 @@ namespace Tsunami.Gui.Wpf
         {
             System.Diagnostics.Process.Start("https://discordapp.com/invite/0pfzTOXuEjt9ifvF");
         }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            Preferences res = (Preferences)this.FindResource("Preferences");
+            ColorItem ci = (ColorItem)cmbColor.SelectedItem;
+            //res.ThemeColor = cmbColor.SelectedItem.ToString();
+            res.ThemeColor = ci.Name;
+
+            // devo fare refresh per tutti i grafici presenti in tutti i TorrentItem in download
+            // altrimenti non cambiano colore
+            TorrentStatusViewModel tsvm = (TorrentStatusViewModel)FindResource("TorrentStatusViewModel");
+            foreach (TorrentItem ti in tsvm.TorrentList)
+            {
+                ti.CallPropertyChanged("ColorFrom");
+                ti.CallPropertyChanged("ColorTo");
+            }
+
+        }
+
+        private async void torrentFile_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.TextBlock os = (System.Windows.Controls.TextBlock)e.OriginalSource;
+            TorrentItem ti = (TorrentItem)os.DataContext;
+
+            List<Models.FileEntry> feList = SessionManager.Instance.getTorrentFiles(ti.Hash);
+
+            var dialogSettings = new MetroDialogSettings
+            {
+                SuppressDefaultResources = true,                
+                AffirmativeButtonText = "Close",
+            };
+
+            string msg = ti.Name + " files:\n";
+
+            foreach (Models.FileEntry fe in feList)
+            {
+                msg += "\n" + fe.FileName;
+            }
+
+            MessageDialogResult x = await this.ShowMessageAsync("", msg, MessageDialogStyle.Affirmative, dialogSettings);
+        }
+    }
+}
+
+public class ColorItem
+{
+    public System.Windows.Media.SolidColorBrush Color { get; set; }
+    public string Name { get; set; }
+
+    public ColorItem(System.Windows.Media.SolidColorBrush color, string name)
+    {
+        Color = color;
+        Name = name;
     }
 }

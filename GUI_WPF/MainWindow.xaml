@@ -8,6 +8,8 @@
         xmlns:Properties="clr-namespace:Tsunami.Gui.Wpf.Properties"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
 
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+                      
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
@@ -50,7 +52,7 @@
     </Controls:MetroWindow.RightWindowCommands>
     <Controls:MetroWindow.Flyouts>
         <Controls:FlyoutsControl>
-            <Controls:Flyout x:Name="settingsFlyOut" Header="{DynamicResource Settings}" Position="Right" Width="400">
+            <Controls:Flyout x:Name="settingsFlyOut" Header="{DynamicResource Settings}" Position="Right" Width="500">
                 <Grid Margin="10">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -111,6 +113,23 @@
                             <TextBox Text="{Binding WebPassword, Source={StaticResource Preferences}, Mode=TwoWay}"
                                      Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
 
+                            <Label Margin="0,5,0,0" Visibility="Visible">Skin</Label>
+                            <Controls:ToggleSwitch OnLabel="Dark" OffLabel="Light" 
+                                                   IsChecked="{Binding IsDarkTheme, Source={StaticResource Preferences}, Mode=TwoWay}">
+                            </Controls:ToggleSwitch>
+
+                            <Label Margin="0,5,0,0" Visibility="Visible">Color</Label>
+                            <ComboBox x:Name="cmbColor" Width="200" SelectionChanged="ComboBox_SelectionChanged" ItemsSource="{Binding ColorsList}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Fill="{Binding Color}" Width="9" Height="9" Margin="2,2,5,2"></Rectangle>
+                                            <TextBlock Text="{Binding Name}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
                         </StackPanel>
                     </ScrollViewer>
                     <UniformGrid Columns="2"
@@ -131,11 +150,17 @@
     <Grid>
         <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab">
             <TabItem Header="{DynamicResource DownList}" AllowDrop="True" Drop="HandleDrop" HorizontalAlignment="Center">
-                <StackPanel Orientation="Vertical" Background="Transparent">
-                    <Menu>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Menu Grid.Row="0">
                         <Button Style="{DynamicResource SquareButtonStyle}" Content="{DynamicResource Add}" Width="Auto" Height="Auto" Click="AddTorrent_Click"/>
                     </Menu>
-                    <DataGrid Name="dataGridx" AutoGenerateColumns="False" Grid.Row="0" IsReadOnly="True" HorizontalAlignment="Stretch"
+                    <DataGrid Grid.Row="1" Name="dataGridx" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch"
                       CellStyle="{StaticResource Body_Content_DataGrid_Centering}" HorizontalContentAlignment="Left"
                       ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}"
                       Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
@@ -158,8 +183,8 @@
                             <DataGridTextColumn Header="Upload Speed" IsReadOnly="True" Binding="{Binding UploadRate_ByteSize}" />
                         </DataGrid.Columns>
                     </DataGrid>
-                    <ListBox Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}">
+                    <ListBox Grid.Row="1" Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        ItemsSource="{Binding TorrentList, Source={StaticResource TorrentStatusViewModel}}" Background="Transparent">
                         <ListBox.Style>
                             <Style TargetType="ListBox">
                                 <Style.Triggers>
@@ -177,56 +202,168 @@
                                 <WrapPanel Orientation="Horizontal" IsItemsHost="True"></WrapPanel>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
+                        <ListBox.ItemContainerStyle><!-- Remove mouse over and item selection -->
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Vertical" Width="300" Margin="10">
-                                    <Label Width="Auto" Height="Auto">
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="250" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
-                                            <Button Name="btnDelete" Width="30" Height="30" Margin="0,0,0,10" Click="DeleteTorrent_Click">
-                                                <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
-                                                    <Rectangle.OpacityMask>
-                                                        <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
-                                                    </Rectangle.OpacityMask>
-                                                </Rectangle>
-                                            </Button>
-                                        </StackPanel>
-                                    </Label>
-                                    <Label Width="Auto" Height="Auto">
-                                        <StackPanel Orientation="Horizontal" Height="55">
-                                            <StackPanel Orientation="Vertical">
-                                                <StackPanel Orientation="Horizontal" Width="200">
-                                                    <Label Content="{Binding State}" FontStyle="Italic"></Label>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
-                                                    <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="PauseTorrent_Click">
-                                                        <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
-                                                            <Rectangle.OpacityMask>
-                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
-                                                            </Rectangle.OpacityMask>
-                                                        </Rectangle>
-                                                    </Button>
-                                                    <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
-                                                        <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
-                                                            <Rectangle.OpacityMask>
-                                                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_play_live}" />
-                                                            </Rectangle.OpacityMask>
-                                                        </Rectangle>
-                                                    </Button>
-                                                </StackPanel>
+                                <Border CornerRadius="4" BorderBrush="Gray" BorderThickness="2" Margin="10">
+                                    <StackPanel Orientation="Vertical" Width="300" Margin="5">
+                                        <Label Width="Auto" Height="Auto">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Width="250" VerticalAlignment="Center" 
+                                                           FontSize="15" FontWeight="Bold" Cursor="Hand" ToolTip="Click here to see torrent files"
+                                                           PreviewMouseDown="torrentFile_PreviewMouseDown">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <Button Name="btnDelete" Width="30" Height="30" Margin="0,0,0,10" Click="DeleteTorrent_Click">
+                                                    <Rectangle Width="13" Height="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                        <Rectangle.OpacityMask>
+                                                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_delete}" />
+                                                        </Rectangle.OpacityMask>
+                                                    </Rectangle>
+                                                </Button>
                                             </StackPanel>
-                                            <ProgressBar Width="50" Height="50" Minimum="0" Style="{StaticResource ProgressBarStyle}"
-                                                Value="{Binding Progress_Number, Mode=OneWay}" Background="{Binding Progress_Color, Mode=OneWay}"/>
-                                        </StackPanel>
-                                    </Label>
-                                </StackPanel>
+                                        </Label>
+                                        <Label Width="Auto" Height="Auto">
+                                            <StackPanel Orientation="Horizontal" Height="55">
+                                                <StackPanel Orientation="Vertical">
+                                                    <StackPanel Orientation="Horizontal" Width="200">
+                                                        <Label Content="{Binding State}" FontStyle="Italic"></Label>
+                                                    </StackPanel>
+                                                    <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
+                                                        <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="PauseTorrent_Click">
+                                                            <Rectangle Width="20" Height="20" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                                <Rectangle.OpacityMask>
+                                                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_pause}" />
+                                                                </Rectangle.OpacityMask>
+                                                            </Rectangle>
+                                                        </Button>
+                                                        <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10" Click="StreamTorrent_Click">
+                                                            <Rectangle x:Name="rettStreamTorrent" Width="15" Height="19" Fill="{Binding RelativeSource={RelativeSource AncestorType=ListBox}, Path=Foreground}">
+                                                                <Rectangle.OpacityMask>
+                                                                    <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_control_play_live}" />
+                                                                </Rectangle.OpacityMask>
+                                                            </Rectangle>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <lvc:Gauge Width="70" Height="50" Uses360Mode="True" From="0" To="100"
+                                                           Value="{Binding Progress_Number, Mode=OneWay}"
+                                                           TextElement.Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrush}}" 
+                                                           LabelFormatter="{Binding Formatter}"
+                                                           FromColor="{Binding ColorFrom}"
+                                                           ToColor="{Binding ColorTo}"
+                                                           GaugeBackground="{DynamicResource IdealForegroundDisabledBrush}"
+                                                           HighFontSize="14">
+                                                </lvc:Gauge>
+                                                <!--<ProgressBar Width="50" Height="50" Minimum="0" Style="{StaticResource ProgressBarStyle}"
+                                                    Value="{Binding Progress_Number, Mode=OneWay}" Background="{Binding Progress_Color, Mode=OneWay}"/>-->
+                                            </StackPanel>
+                                        </Label>
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </StackPanel>
+
+                    <!-- DynamicResource with color related to mahapp theme -->
+                    <!--<StackPanel Orientation="Vertical" Margin="20,20,20,20">
+                        <TextBox Background="{DynamicResource HighlightBrush}">HighlightBrush</TextBox>
+                        <TextBox Background="{DynamicResource AccentColorBrush}">AccentColorBrush</TextBox>
+                        <TextBox Background="{DynamicResource AccentColorBrush2}">AccentColorBrush2</TextBox>
+                        <TextBox Background="{DynamicResource AccentColorBrush3}">AccentColorBrush3</TextBox>
+                        <TextBox Background="{DynamicResource AccentColorBrush4}">AccentColorBrush4</TextBox>
+                        <TextBox Background="{DynamicResource AccentBaseColorBrush}">AccentBaseColorBrush</TextBox>
+                        <TextBox Background="{DynamicResource ProgressBrush}">ProgressBrush</TextBox>
+                        <TextBox Background="{DynamicResource IdealForegroundDisabledBrush}">IdealForegroundDisabledBrush</TextBox>
+                    </StackPanel>-->
+
+                    <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2.5*" />
+                            <ColumnDefinition Width="2.5*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- DOWNLOAD CHART -->
+                        <lvc:CartesianChart Grid.Column="0" Width="Auto" Height="100" Margin="5,5,5,35">
+                            <lvc:CartesianChart.Series>
+                                <lvc:LineSeries Values="{Binding SessionStat.DownloadChartValues, Source={StaticResource TorrentStatusViewModel}}" PointGeometrySize="1" 
+                                                StrokeThickness="2" Fill="{DynamicResource AccentColorBrush4}" 
+                                                Stroke="#FF1FA225"/>
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis LabelFormatter="{Binding SessionStat.DateTimeFormatter, Source={StaticResource TorrentStatusViewModel}}" 
+                                          MaxValue="{Binding SessionStat.DownloadAxisMax, Source={StaticResource TorrentStatusViewModel}}" 
+                                          MinValue="{Binding SessionStat.DownloadAxisMin, Source={StaticResource TorrentStatusViewModel}}"
+                                          DisableAnimations="True" ShowLabels="False">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Visibility="Hidden" Stroke="LightGray" Step="{Binding SessionStat.XAxisStep, Source={StaticResource TorrentStatusViewModel}}"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="DOWNLOAD" Position="LeftBottom" MinValue="0" LabelFormatter="{Binding SessionStat.SizeFormatter, Source={StaticResource TorrentStatusViewModel}}"
+                                          MaxValue="{Binding SessionStat.YAxisMax, Source={StaticResource TorrentStatusViewModel}}">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Stroke="DarkGray" Step="{Binding SessionStat.YSeparatorStep, Source={StaticResource TorrentStatusViewModel}}"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+
+                        <!-- UPLOAD CHART -->
+                        <lvc:CartesianChart Grid.Column="1" Width="Auto" Height="100" Margin="5,5,5,35">
+                            <lvc:CartesianChart.Series>
+                                <lvc:LineSeries Values="{Binding SessionStat.UploadChartValues, Source={StaticResource TorrentStatusViewModel}}" PointGeometrySize="1"
+                                                StrokeThickness="2"  Fill="{DynamicResource AccentColorBrush4}" 
+                                                Stroke="#FFA42828"/>
+                            </lvc:CartesianChart.Series>
+                            <lvc:CartesianChart.AxisX>
+                                <lvc:Axis LabelFormatter="{Binding SessionStat.DateTimeFormatter, Source={StaticResource TorrentStatusViewModel}}" 
+                                      MaxValue="{Binding SessionStat.UploadAxisMax, Source={StaticResource TorrentStatusViewModel}}" 
+                                      MinValue="{Binding SessionStat.UploadAxisMin, Source={StaticResource TorrentStatusViewModel}}"
+                                      DisableAnimations="True" ShowLabels="False">
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Visibility="Hidden" Stroke="LightGray"></lvc:Separator>
+                                        <!--Step="{Binding SessionStat.AxisStep, Source={StaticResource TorrentStatusViewModel}}"-->
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisX>
+                            <lvc:CartesianChart.AxisY>
+                                <lvc:Axis Title="UPLOAD" Position="RightTop" MinValue="0" LabelFormatter="{Binding SessionStat.SizeFormatter, Source={StaticResource TorrentStatusViewModel}}"
+                                          >
+                                    <lvc:Axis.Separator>
+                                        <lvc:Separator Stroke="DarkGray"></lvc:Separator>
+                                    </lvc:Axis.Separator>
+                                </lvc:Axis>
+                            </lvc:CartesianChart.AxisY>
+                        </lvc:CartesianChart>
+                    </Grid>
+
+                </Grid>
+                <!--<StackPanel Orientation="Vertical" Background="Transparent">
+                </StackPanel>-->
             </TabItem>
             <TabItem Name="playerTab"  Header="Player" HorizontalAlignment="Center">
-
                 <Grid Name="playerGrid"  AllowDrop="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -301,7 +438,6 @@
 
         <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">
-
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
                         <Rectangle.OpacityMask>
@@ -312,7 +448,7 @@
                     <TextBlock Text="("></TextBlock>
                     <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
                     <TextBlock Text=")"></TextBlock>
-                    <StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">
+                    <!--<StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">-->
                         <TextBlock Text="/" Margin="15,0"></TextBlock>
                         <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
                             <Rectangle.OpacityMask>
@@ -323,7 +459,7 @@
                         <TextBlock Text="("></TextBlock>
                         <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
                         <TextBlock Text=")"></TextBlock>
-                    </StackPanel>
+                    <!--</StackPanel>-->
                     <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
                 </StackPanel>
             </StatusBarItem>

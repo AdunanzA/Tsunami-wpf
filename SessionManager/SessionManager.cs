@@ -20,7 +20,7 @@ namespace Tsunami
     public sealed class SessionManager
     {
         private static readonly SessionManager instance = new SessionManager();
-        private static readonly object _tsunamiLock = new object();
+        private static object _tsunamiLock = new object();
 
         static SessionManager()
         {
@@ -99,6 +99,7 @@ namespace Tsunami
             Alert2Func[typeof(Core.torrent_error_alert)] = a => OnTorrentErrorAlert((Core.torrent_error_alert)a);
             //Alert2Func[typeof(Core.stats_alert)] = a => OnStatsAlert((Core.stats_alert)a);
             Alert2Func[typeof(Core.dht_stats_alert)] = a => OnDhtStatsAlert((Core.dht_stats_alert)a);
+            Alert2Func[typeof(Core.dht_bootstrap_alert)] = a => OnDhtBootstrapAlert((Core.dht_bootstrap_alert)a);
 
             Alert2Func[typeof(Core.save_resume_data_alert)] = a => OnSaveResumeDataAlert((Core.save_resume_data_alert)a);
             Alert2Func[typeof(Core.save_resume_data_failed_alert)] = a => OnSaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
@@ -107,10 +108,15 @@ namespace Tsunami
 
             lock (_tsunamiLock)
             {
-                _torrentSession.start_dht();
                 //_torrentSession.start_lsd();
                 _torrentSession.start_natpmp();
                 _torrentSession.start_upnp();
+
+                DhtSettings dhts = _torrentSession.get_dht_settings();
+                dhts.aggressive_lookups = true;
+                _torrentSession.set_dht_settings(dhts);
+
+                _torrentSession.start_dht();
 
                 var alertMask = Core.AlertMask.error_notification
                                 | Core.AlertMask.peer_notification
@@ -136,7 +142,12 @@ namespace Tsunami
             _sessionStatusDispatcherTimer.Elapsed += new ElapsedEventHandler(sessionStatusDispatcher_Tick);
             _sessionStatusDispatcherTimer.Interval = 1000;
             _sessionStatusDispatcherTimer.Start();
+            
+        }
 
+        private void OnDhtBootstrapAlert(dht_bootstrap_alert a)
+        {
+            log.Info("Dht Bootstrap: "+a.message());
         }
 
         private void OnPieceFinishedAlert(piece_finished_alert a)
@@ -312,19 +323,31 @@ namespace Tsunami
             {
                 List<Models.FileEntry> feList = new List<Models.FileEntry>();
                 Models.FileEntry fe;
-
                 Core.TorrentHandle th = getTorrentHandle(hash);
-                Core.TorrentInfo ti = th.torrent_file();
-                for (int i = 0; i <= ti.num_files() - 1; i++)
+                using (Core.TorrentInfo ti = th.torrent_file())
                 {
-                    fe = new Models.FileEntry(ti.files().at(i));
-                    fe.FileName = ti.files().file_name(i);
-                    fe.IsValid = ti.files().is_valid();
-                    fe.PieceSize = ti.piece_size(i);
-                    //ti.files().name(); ???
-                    //ti.trackers();
-                    feList.Add(fe);
+                    if (ti == null)
+                    {
+                        // non ci sono file nel torrent
+                        fe = new Models.FileEntry();
+                        fe.FileName = th.ToString();
+                        feList.Add(fe);
+                    } else
+                    {
+                        for (int i = 0; i <= ti.num_files() - 1; i++)
+                        {
+                            fe = new Models.FileEntry(ti.files().at(i));
+                            fe.FileName = ti.files().file_name(i);
+                            fe.IsValid = ti.files().is_valid();
+                            fe.PieceSize = ti.piece_size(i);
+                            //ti.files().name(); ???
+                            //ti.trackers();
+                            feList.Add(fe);
+                        }
+                    }
                 }
+                //Core.TorrentHandle th = getTorrentHandle(hash);
+                //Core.TorrentInfo ti = th.torrent_file();
                 return feList;
             }
         }
@@ -399,6 +422,8 @@ namespace Tsunami
                 Core.TorrentHandle th = getTorrentHandle(hash);
                 _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
                 TorrentHandles.TryRemove(hash, out th);
+                th?.Dispose();
+                th = null;
                 try
                 {
                     File.Delete(Environment.CurrentDirectory + "./Fastresume/" + hash + ".fastresume");

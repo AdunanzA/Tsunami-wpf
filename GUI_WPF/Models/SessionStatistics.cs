@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using LiveCharts;
+using LiveCharts.Configurations;
 
 namespace Tsunami.Gui.Wpf
 {
@@ -11,6 +13,7 @@ namespace Tsunami.Gui.Wpf
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        #region private
         private int _allowedUploadSlots;
         private int _dhtDownloadRate;
         private long _dhtGlobalNodes;
@@ -51,7 +54,9 @@ namespace Tsunami.Gui.Wpf
         private int _uploadRate;
         private int _upBandwidthBytesQueue;
         private int _upBandwidthQueue;
+        #endregion
 
+        #region public
         public int AllowedUploadSlots { get { return _allowedUploadSlots; } set { if (_allowedUploadSlots != value) { _allowedUploadSlots = value; CallPropertyChanged("AllowedUploadSlots"); } } }
         public int DhtDownloadRate { get { return _dhtDownloadRate; } set { if (_dhtDownloadRate != value) { _dhtDownloadRate = value; CallPropertyChanged("DhtDownloadRate"); } } }
         public long DhtGlobalNodes { get { return _dhtGlobalNodes; } set { if (_dhtGlobalNodes != value) { _dhtGlobalNodes = value; CallPropertyChanged("DhtGlobalNodes"); } } }
@@ -124,10 +129,42 @@ namespace Tsunami.Gui.Wpf
                 return Utils.StrFormatByteSize(_uploadRate) + @"/s";
             }
         }
+        #endregion
 
         public SessionStatistics()
         {
+            //To handle live data easily, in this case we built a specialized type
+            //the MeasureModel class, it only contains 2 properties
+            //DateTime and Value
+            //We need to configure LiveCharts to handle MeasureModel class
+            //The next code configures MEasureModel  globally, this means
+            //that livecharts learns to plot MeasureModel and will use this config every time
+            //a ChartValues instance uses this type.
+            //this code ideally should only run once, when application starts is reccomended.
+            //you can configure series in many ways, learn more at http://lvcharts.net/App/examples/v1/wpf/Types%20and%20Configuration
 
+            var mapper = Mappers.Xy<MeasureModel>()
+                .X(model => model.DateTime.Ticks)   //use DateTime.Ticks as X
+                .Y(model => model.Value);           //use the value property as Y
+
+            //lets save the mapper globally.
+            Charting.For<MeasureModel>(mapper);
+
+            //the values property will store our values array
+            DownloadChartValues = new ChartValues<MeasureModel>();
+            UploadChartValues = new ChartValues<MeasureModel>();
+
+            //lets set how to display the X Labels
+            DateTimeFormatter = value => new DateTime((long)value).ToString("hh:mm:ss");
+
+            // the y label
+            SizeFormatter = value => Utils.StrFormatByteSize((long)value).Replace("0 bytes", "0");
+
+            XAxisStep = TimeSpan.FromSeconds(1).Ticks;
+
+            YAxisMax = 0.1;
+            SetAxisLimits(DateTime.Now);
+            
         }
 
         public void Update(EventsArgs.OnSessionStatisticsEventArgs es)
@@ -172,6 +209,26 @@ namespace Tsunami.Gui.Wpf
             UploadRate = es.UploadRate;
             UpBandwidthBytesQueue = es.UpBandwidthBytesQueue;
             UpBandwidthQueue = es.UpBandwidthQueue;
+
+            var now = DateTime.Now;
+
+            DownloadChartValues.Add(new MeasureModel
+            {
+                DateTime = now,
+                Value = DownloadRate
+            });
+
+            UploadChartValues.Add(new MeasureModel
+            {
+                DateTime = now,
+                Value = UploadRate
+            });
+
+            SetAxisLimits(now);
+
+            //lets only use the last 30 values
+            if (DownloadChartValues.Count > 30) DownloadChartValues.RemoveAt(0);
+            if (UploadChartValues.Count > 30) UploadChartValues.RemoveAt(0);
         }
 
         private void CallPropertyChanged(string prop)
@@ -179,5 +236,113 @@ namespace Tsunami.Gui.Wpf
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
+        private double _downloadAxisMax;
+        private double _downloadAxisMin;
+        private double _uploadAxisMax;
+        private double _uploadAxisMin;
+
+        private double _yAxisMax;
+        private double? _ySeparatorStep;
+
+        public ChartValues<MeasureModel> DownloadChartValues { get; set; }
+        public ChartValues<MeasureModel> UploadChartValues { get; set; }
+
+        public Func<double, string> DateTimeFormatter { get; set; }
+        public Func<double, string> SizeFormatter { get; set; }
+
+        public double XAxisStep { get; set; }
+
+        public double DownloadAxisMax
+        {
+            get { return _downloadAxisMax; }
+            set
+            {
+                _downloadAxisMax = value;
+                CallPropertyChanged("DownloadAxisMax");
+            }
+        }
+        public double DownloadAxisMin
+        {
+            get { return _downloadAxisMin; }
+            set
+            {
+                _downloadAxisMin = value;
+                CallPropertyChanged("DownloadAxisMin");
+            }
+        }
+        public double UploadAxisMax
+        {
+            get { return _downloadAxisMax; }
+            set
+            {
+                _uploadAxisMax = value;
+                CallPropertyChanged("UploadAxisMax");
+            }
+        }
+        public double UploadAxisMin
+        {
+            get { return _uploadAxisMin; }
+            set
+            {
+                _uploadAxisMin = value;
+                CallPropertyChanged("UploadAxisMin");
+            }
+        }
+
+        public double YAxisMax
+        {
+            get
+            {
+                return _yAxisMax;
+            }
+
+            set
+            {
+                _yAxisMax = value;
+                CallPropertyChanged("YAxisMax");
+            }
+        }
+
+        public double? YSeparatorStep
+        {
+            get
+            {
+                return _ySeparatorStep;
+            }
+
+            set
+            {
+                _ySeparatorStep = value;
+                CallPropertyChanged("YSeparatorStep");
+            }
+        }
+
+        private void SetAxisLimits(DateTime now)
+        {
+            DownloadAxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
+            DownloadAxisMin = now.Ticks - TimeSpan.FromSeconds(30).Ticks; //we only care about the last 8 seconds
+
+            UploadAxisMax = now.Ticks + TimeSpan.FromSeconds(1).Ticks; // lets force the axis to be 100ms ahead
+            UploadAxisMin = now.Ticks - TimeSpan.FromSeconds(30).Ticks; //we only care about the last 8 seconds
+
+            if (YAxisMax < DownloadRate)
+            {
+                YAxisMax = DownloadRate;
+            }
+
+            if (YAxisMax < 500000)
+            {
+                YSeparatorStep = null;
+            } else
+            {
+                YSeparatorStep = 500000;
+            }
+        }
+    }
+
+    public class MeasureModel
+    {
+        public DateTime DateTime { get; set; }
+        public double Value { get; set; }
     }
 }
