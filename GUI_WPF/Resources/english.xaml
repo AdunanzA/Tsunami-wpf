@@ -29,4 +29,7 @@
     <system:String x:Key="Downloaded">Downloaded</system:String>
     <system:String x:Key="Size">Size</system:String>
     <system:String x:Key="Progress">Progress</system:String>
+    <system:String x:Key="NotFound">not found!</system:String>
+    <system:String x:Key="NotAvaiable">not avaiable!</system:String>
+
 </ResourceDictionary>
