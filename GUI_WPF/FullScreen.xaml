@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="FullScreen" Height="300" Width="300">
 
-    <Grid Name="fullScreenGrid"  AllowDrop="True" DataContext="{Binding PlayerDataContext}">
+    <Grid Name="fullScreenGrid" Margin="0,1,0,0"  AllowDrop="True" DataContext="{Binding PlayerDataContext}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>

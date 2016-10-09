@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -21,12 +20,12 @@ namespace Tsunami.Gui.Wpf
             mainWindow = m;
 
             InitializeFullScreen();
+
             this.MouseMove += ShowProgressBar;
 
             hideBarTimer = new DispatcherTimer();
             hideBarTimer.Interval = TimeSpan.FromSeconds(5);
             hideBarTimer.Tick += new EventHandler(HideBar_Tick);
-
         }
 
         private void InitializeFullScreen()

@@ -228,21 +228,12 @@
             <TabItem Name="playerTab"  Header="Player" HorizontalAlignment="Center">
 
                 <Grid Name="playerGrid"  AllowDrop="True">
-                    <!--<Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="96*"/>
-                        <ColumnDefinition Width="91*"/>  
-                    </Grid.ColumnDefinitions>-->
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <!--<Border Background="Black" Name="imageBorder" Grid.ColumnSpan="2">
-                        --><!--<Image Name="DisplayImage"/>--><!--                        
-                    </Border>-->
-                    <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible" Grid.ColumnSpan="2">
-
+                    <StatusBar x:Name="playerStatus" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible" Grid.ColumnSpan="1">
                         <StatusBar.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <Grid>
@@ -259,7 +250,7 @@
                             </ItemsPanelTemplate>
                         </StatusBar.ItemsPanel>
                         <StatusBarItem>
-                            <TextBlock Text="{Binding player.ProgressTime, Source={StaticResource PlayerDataContext}}" Width="50"></TextBlock>
+                            <TextBlock Grid.Column="0" Text="{Binding player.ProgressTime, Source={StaticResource PlayerDataContext}}" Width="50"></TextBlock>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="1" HorizontalContentAlignment="Stretch">
                             <Slider x:Name="movieProgress" Height="Auto" Value="{ Binding player.MovieProgress, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Maximum="{ Binding player.MaxMovieTime, Source={StaticResource PlayerDataContext}}" IsMoveToPointEnabled="True"/>
@@ -268,23 +259,45 @@
                             <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding player.VolumeValue, Source={StaticResource PlayerDataContext}, Mode=TwoWay}" Width="100" Maximum="100" IsMoveToPointEnabled="True"/>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Stop" Command="{Binding Path=_stopClick, Source={StaticResource PlayerDataContext}}"  Content="Stop" Height="Auto" IsEnabled="{Binding player.StopEnabled, Source={StaticResource PlayerDataContext}}"/>
+                            <Button x:Name="Stop" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_stopClick, Source={StaticResource PlayerDataContext}}" IsEnabled="{Binding player.StopEnabled, Source={StaticResource PlayerDataContext}}">
+                                <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{DynamicResource appbar_control_stop}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Play" Command="{Binding Path=_playClick, Source={StaticResource PlayerDataContext}}"  Content="Play" Height="Auto" IsEnabled="{Binding player.PlayEnabled, Source={StaticResource PlayerDataContext}}"/>
+                            <Button x:Name="Play" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_playClick, Source={StaticResource PlayerDataContext}}" IsEnabled="{Binding player.PlayEnabled, Source={StaticResource PlayerDataContext}}">
+                                <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{DynamicResource appbar_control_play}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
-                            <Button x:Name="Pause" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerDataContext}}" Content="Pause" Height="Auto" IsEnabled="{Binding player.PauseEnabled, Source={StaticResource PlayerDataContext}}"/>
+                            <Button x:Name="Pause" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_pauseClick, Source={StaticResource PlayerDataContext}}" IsEnabled="{Binding player.PauseEnabled, Source={StaticResource PlayerDataContext}}">
+                                <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{DynamicResource appbar_control_pause}"/>
+                                    </Rectangle.OpacityMask>
+                            </Rectangle>
+                            </Button>
                         </StatusBarItem>
                         <StatusBarItem Grid.Column="6">
-                            <Button x:Name="FullScreen" Click="FullScreenClick" Content="FullScreen" Height="Auto" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerDataContext}}">
+                            <Button x:Name="FullScreen" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Click="FullScreenClick" IsEnabled="{Binding player.FullScreenEnabled, Source={StaticResource PlayerDataContext}}">
+                                <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Visual="{DynamicResource appbar_fullscreen}"/>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
                             </Button>
                         </StatusBarItem>
                     </StatusBar>
                 </Grid>
             </TabItem>
         </Controls:MetroAnimatedSingleRowTabControl>
-
 
         <StatusBar x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">

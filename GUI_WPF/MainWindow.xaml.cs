@@ -24,7 +24,8 @@ namespace Tsunami.Gui.Wpf
             var vlcPath = Utils.GetWinVlcPath();
             if (vlcPath == null || !Directory.Exists(vlcPath))
             {
-                var cd = new CustomMessage(string.Format("VLC {0} bit non trovato!!! Tsunami Streaming non disponibile!!!", Utils.Is64BitOs() ? "64" : "32"));
+                var cd = new CustomMessage(string.Format("VLC" + "{0} bit" +  (string)FindResource("NotFound") + 
+                    "Tsunami Streaming" + (string)FindResource("NotAvaiable"), Utils.Is64BitOs() ? "64" : "32"));
                 {
                     Streaming.StreamingManager.SetPauseButtonStatus?.Invoke(this, false);
                     Streaming.StreamingManager.SetPlayButtonStatus?.Invoke(this, false);
@@ -198,6 +199,7 @@ namespace Tsunami.Gui.Wpf
                 }
             }
         }
+
         //private void ToggleSwitch_Click(object sender, RoutedEventArgs e)
         //{
         //    TorrentStatusViewModel res = (TorrentStatusViewModel) this.FindResource("TorrentStatusViewModel");
