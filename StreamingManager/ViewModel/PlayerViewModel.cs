@@ -145,6 +145,9 @@ namespace Tsunami.Streaming
             player.StopEnabled = false;
             player.PauseEnabled = false;
             player.PlayEnabled = true;
+            player.MovieProgress = 0;
+            player.ProgressTime = "00:00:00";
+
             if (SessionManager.Instance.IsStreaming())
             {
                 SessionManager.Instance.StopStreaming();
