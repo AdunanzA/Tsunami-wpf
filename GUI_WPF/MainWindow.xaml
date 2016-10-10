@@ -148,7 +148,7 @@
         </Controls:FlyoutsControl>
     </Controls:MetroWindow.Flyouts>
     <Grid>
-        <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab">
+        <Controls:MetroAnimatedSingleRowTabControl x:Name="MetroTab" TabStripPlacement="Left">
             <TabItem Header="{DynamicResource DownList}" AllowDrop="True" Drop="HandleDrop" HorizontalAlignment="Center">
                 <Grid>
                     <Grid.RowDefinitions>
