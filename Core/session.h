@@ -26,10 +26,12 @@ namespace Tsunami
 		ref class StatsMetrics;
 
 		class SessionAlertDispatcher;
+		class SessionDispatcher;
 
 		public ref class Session
 		{
 		public:
+
 			Session();
 			~Session();
 
@@ -138,11 +140,18 @@ namespace Tsunami
 			void start_natpmp();
 			void post_dht_stats();
 			void post_session_stats();
+			void Session_SetGetAlertCallback(System::Action<Alert^>^ dispatch);
+			void Session_SetCallback(System::Action ^ dispatch);
+			void Session_GetPendingAlert();
 			
 		private:
 			SessionAlertDispatcher * dispatcher_;
+			SessionDispatcher * sd;
 			libtorrent::session* session_;
-			//void save_resume_data();
+			std::vector<libtorrent::alert *> *m_alerts;
+			System::Action <Alert ^> ^ alertCall;
 		};
 	}
+
+	
 }

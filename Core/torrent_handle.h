@@ -19,6 +19,8 @@ namespace Tsunami
 		{
 		internal:
 			TorrentHandle(libtorrent::torrent_handle& handle);
+			TorrentHandle();
+			TorrentHandle(TorrentHandle ^ other);
 			libtorrent::torrent_handle* ptr();
 
 		public:

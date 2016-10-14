@@ -22,14 +22,20 @@ Alert::~Alert()
     delete alert_;
 }
 
-Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
-{
-    libtorrent::alert* a = al->clone().release();
 
-    switch (a->type())
-    {
-        ALERT_CASE(torrent_added_alert);
-        ALERT_CASE(torrent_removed_alert);
+Alert ^ Alert::Create2(libtorrent::alert * al)
+{
+	return SwitchType(al);
+}
+
+
+Alert^ Alert::SwitchType(libtorrent::alert * a)
+{
+	auto val = a->type();
+	switch (val)
+	{
+		ALERT_CASE(torrent_added_alert);
+		ALERT_CASE(torrent_removed_alert);
 		ALERT_CASE(torrent_finished_alert);
 		ALERT_CASE(state_update_alert);
 		ALERT_CASE(read_piece_alert);
@@ -101,14 +107,19 @@ Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
 		ALERT_CASE(dht_mutable_item_alert);
 		ALERT_CASE(dht_put_alert);
 		ALERT_CASE(i2p_alert);
-    default:
-        return gcnew Alert(a);
-    }
+	default:
+		return gcnew Alert(a);
+	}
 
-    throw gcnew System::NotImplementedException();
+	throw gcnew System::NotImplementedException();
 }
 
+Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
+{
+    libtorrent::alert* a = al->clone().release();
 
+	return SwitchType(a);
+}
 
 
 System::DateTime Alert::timestamp()
@@ -140,3 +151,4 @@ bool Alert::discardable()
 {
     return alert_->discardable();
 }
+

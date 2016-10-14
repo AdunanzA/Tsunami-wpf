@@ -15,6 +15,7 @@ namespace Tsunami
 		{
 		internal:
 			static Alert^ create(std::auto_ptr<libtorrent::alert> al);
+			static Alert^ Create2(libtorrent::alert * al);
 			Alert(libtorrent::alert* al);
 
 		public:
@@ -30,6 +31,7 @@ namespace Tsunami
 
 		private:
 			libtorrent::alert* alert_;
+			static Alert^ SwitchType(libtorrent::alert *a);
 		};
 	}
 }

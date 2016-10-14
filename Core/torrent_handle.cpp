@@ -16,6 +16,16 @@ TorrentHandle::TorrentHandle(libtorrent::torrent_handle& handle)
     handle_ = new libtorrent::torrent_handle(handle);
 }
 
+TorrentHandle::TorrentHandle()
+{
+	handle_ = new libtorrent::torrent_handle();
+}
+
+TorrentHandle::TorrentHandle(TorrentHandle ^ other)
+{
+	handle_ = other->handle_;
+}
+
 TorrentHandle::~TorrentHandle()
 {
     delete handle_;

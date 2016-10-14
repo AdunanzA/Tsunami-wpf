@@ -24,14 +24,19 @@ using namespace Tsunami::Core;
 
 Session::Session()
 {
+	m_alerts = new std::vector<libtorrent::alert *>();
     dispatcher_ = new SessionAlertDispatcher();
 	session_ = new libtorrent::session();
+	sd = new SessionDispatcher(*session_);
 }
 
 Session::~Session()
 {
+	delete sd;
     delete dispatcher_;
     delete session_;
+	m_alerts->clear();
+	delete m_alerts;
 }
 
 void Session::load_state(LazyEntry^ e)
@@ -259,7 +264,27 @@ void Session::set_alert_mask(AlertMask mask)
 void Session::set_alert_dispatch(System::Action<Alert^>^ dispatch)
 {
     dispatcher_->set_callback(dispatch);
-    session_->set_alert_dispatch(std::bind(&SessionAlertDispatcher::invoke_callback, *dispatcher_, std::placeholders::_1));
+}
+
+void Session::Session_SetGetAlertCallback(System::Action<Alert^>^ dispatch)
+{
+	alertCall = dispatch;
+}
+
+void Session::Session_SetCallback(System::Action ^ dispatch)
+{
+	sd->set_callback(dispatch);
+	session_->set_alert_notify(std::bind(&SessionDispatcher::invoke_callback, *sd));
+}
+
+void Session::Session_GetPendingAlert()
+{
+	m_alerts->clear();
+	session_->pop_alerts(m_alerts);
+	for each (auto a in *m_alerts)
+	{
+		alertCall->Invoke(Alert::Create2(a));
+	}
 }
 
 void Session::clear_alert_dispatch()
@@ -315,6 +340,8 @@ void Session::post_session_stats()
 	session_->post_session_stats();
 }
 
+
+
 cli::array<StatsMetrics ^> ^ Session::session_stats_metrics()
 {
 	auto m = libtorrent::session_stats_metrics();
@@ -326,5 +353,4 @@ cli::array<StatsMetrics ^> ^ Session::session_stats_metrics()
 	}
 	return metrics;
 }
-
 
