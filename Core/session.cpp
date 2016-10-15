@@ -289,8 +289,8 @@ void Session::Session_GetPendingAlert()
 
 void Session::clear_alert_dispatch()
 {
-    typedef boost::function<void(std::auto_ptr<libtorrent::alert>)> dispatch_func_t;
-    session_->set_alert_dispatch(dispatch_func_t());
+	typedef boost::function<void()> dispatch_func_t;
+	session_->set_alert_notify(dispatch_func_t());
 }
 
 void Session::stop_lsd()
