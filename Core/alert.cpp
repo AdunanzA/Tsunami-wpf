@@ -23,13 +23,13 @@ Alert::~Alert()
 }
 
 
-Alert ^ Alert::Create2(libtorrent::alert * al)
+Alert ^ Alert::create(libtorrent::alert * al)
 {
-	return SwitchType(al);
+	return switch_type(al);
 }
 
 
-Alert^ Alert::SwitchType(libtorrent::alert * a)
+Alert^ Alert::switch_type(libtorrent::alert * a)
 {
 	auto val = a->type();
 	switch (val)
@@ -113,14 +113,6 @@ Alert^ Alert::SwitchType(libtorrent::alert * a)
 
 	throw gcnew System::NotImplementedException();
 }
-
-Alert^ Alert::create(std::auto_ptr<libtorrent::alert> al)
-{
-    libtorrent::alert* a = al->clone().release();
-
-	return SwitchType(a);
-}
-
 
 System::DateTime Alert::timestamp()
 {

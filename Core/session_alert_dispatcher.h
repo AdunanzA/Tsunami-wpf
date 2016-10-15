@@ -9,19 +9,6 @@ namespace Tsunami
 {
 	namespace Core
 	{
-		ref class Alert;
-
-		class SessionAlertDispatcher
-		{
-		public:
-			void invoke_callback(libtorrent::alert & alert);
-
-			void set_callback(gcroot<System::Action<Alert^>^> callback);
-
-		private:
-			gcroot<System::Action<Alert^>^> callback_;
-		};
-
 		class SessionDispatcher
 		{
 		public:

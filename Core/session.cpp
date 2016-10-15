@@ -25,17 +25,14 @@ using namespace Tsunami::Core;
 Session::Session()
 {
 	m_alerts = new std::vector<libtorrent::alert *>();
-    dispatcher_ = new SessionAlertDispatcher();
 	session_ = new libtorrent::session();
-	sd = new SessionDispatcher(*session_);
+	sessionDispatcher_ = new SessionDispatcher(*session_);
 }
 
 Session::~Session()
 {
-	delete sd;
-    delete dispatcher_;
+	delete sessionDispatcher_;
     delete session_;
-	m_alerts->clear();
 	delete m_alerts;
 }
 
@@ -261,36 +258,32 @@ void Session::set_alert_mask(AlertMask mask)
 	session_->set_alert_mask(static_cast<uint32_t>(mask));
 }
 
-void Session::set_alert_dispatch(System::Action<Alert^>^ dispatch)
+void Session::set_alert_callback(System::Action<Alert^>^ dispatch)
 {
-    dispatcher_->set_callback(dispatch);
+	alertDispatcher = dispatch;
 }
 
-void Session::Session_SetGetAlertCallback(System::Action<Alert^>^ dispatch)
+void Session::set_session_callback(System::Action ^ dispatch)
 {
-	alertCall = dispatch;
+	sessionDispatcher_->set_callback(dispatch);
+	session_->set_alert_notify(std::bind(&SessionDispatcher::invoke_callback, *sessionDispatcher_));
 }
 
-void Session::Session_SetCallback(System::Action ^ dispatch)
-{
-	sd->set_callback(dispatch);
-	session_->set_alert_notify(std::bind(&SessionDispatcher::invoke_callback, *sd));
-}
-
-void Session::Session_GetPendingAlert()
+void Session::get_pending_alerts()
 {
 	m_alerts->clear();
 	session_->pop_alerts(m_alerts);
 	for each (auto a in *m_alerts)
 	{
-		alertCall->Invoke(Alert::Create2(a));
+		alertDispatcher->Invoke(Alert::create(a));
 	}
 }
 
-void Session::clear_alert_dispatch()
+void Session::clear_alert_callback()
 {
-	typedef boost::function<void()> dispatch_func_t;
-	session_->set_alert_notify(dispatch_func_t());
+    typedef boost::function<void()> dispatch_func_t;
+    session_->set_alert_notify(dispatch_func_t());
+	m_alerts->clear();
 }
 
 void Session::stop_lsd()

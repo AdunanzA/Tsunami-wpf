@@ -128,8 +128,7 @@ namespace Tsunami
 
 			cli::array<StatsMetrics ^> ^ session_stats_metrics();
 			void set_alert_mask(AlertMask mask);
-			void set_alert_dispatch(System::Action<Alert^>^ dispatch);
-			void clear_alert_dispatch();
+			void clear_alert_callback();
 			void stop_lsd();
 			void start_lsd();
 			void stop_upnp();
@@ -140,16 +139,15 @@ namespace Tsunami
 			void start_natpmp();
 			void post_dht_stats();
 			void post_session_stats();
-			void Session_SetGetAlertCallback(System::Action<Alert^>^ dispatch);
-			void Session_SetCallback(System::Action ^ dispatch);
-			void Session_GetPendingAlert();
+			void set_alert_callback(System::Action<Alert^>^ dispatch);
+			void set_session_callback(System::Action ^ dispatch);
+			void get_pending_alerts();
 			
 		private:
-			SessionAlertDispatcher * dispatcher_;
-			SessionDispatcher * sd;
+			SessionDispatcher * sessionDispatcher_;
 			libtorrent::session* session_;
 			std::vector<libtorrent::alert *> *m_alerts;
-			System::Action <Alert ^> ^ alertCall;
+			System::Action <Alert ^> ^ alertDispatcher;
 		};
 	}
 
