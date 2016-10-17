@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsunami.StreamingManager", "StreamingManager\Tsunami.StreamingManager.csproj", "{C12B4189-79E4-4B3C-AB8A-A0F76F55F179}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsunami", "Tsunami\Tsunami.csproj", "{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9504E5FA-6818-452A-A2E8-3B34567A6CD2} = {9504E5FA-6818-452A-A2E8-3B34567A6CD2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

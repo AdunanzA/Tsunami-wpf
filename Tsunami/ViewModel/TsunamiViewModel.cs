@@ -6,6 +6,8 @@ using NLog;
 using System.Windows.Input;
 using System.Windows;
 using Tsunami.Core;
+using System.Threading;
+using System.IO;
 
 namespace Tsunami.ViewModel
 {
@@ -13,7 +15,13 @@ namespace Tsunami.ViewModel
     {
         //private static object _listLock = new object();
         //private static object _sessionLock = new object();
+
         private Logger log = LogManager.GetLogger("VM-Tsunami");
+
+        //save_resume_variables
+        private int outstanding_resume_data = 0;
+        private AutoResetEvent no_more_data = new AutoResetEvent(false);
+        private bool no_more_resume = false;
 
         private System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
 
@@ -93,6 +101,7 @@ namespace Tsunami.ViewModel
                     _torrentSession.load_state(entry);
                 }
             }
+            LoadFastResumeData();
 
             _torrentSession.start_natpmp();
             _torrentSession.start_upnp();
@@ -116,8 +125,8 @@ namespace Tsunami.ViewModel
 
             _torrentSession.set_alert_mask(alertMask);
             //_torrentSession.set_alert_dispatch(HandleAlertCallback);
-            _torrentSession.Session_SetGetAlertCallback(HandlePendingAlertCallback);
-            _torrentSession.Session_SetCallback(HandleAlertCallback);
+            _torrentSession.set_alert_callback(HandlePendingAlertCallback);
+            _torrentSession.set_session_callback(HandleAlertCallback);
 
             _dispatcherTimer.Elapsed += new System.Timers.ElapsedEventHandler(dispatcherTimer_Tick);
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
@@ -138,7 +147,7 @@ namespace Tsunami.ViewModel
 
         private void HandleAlertCallback()
         {
-            _torrentSession.Session_GetPendingAlert();
+            _torrentSession.get_pending_alerts();
         }
 
         private void HandlePendingAlertCallback(Core.Alert a)
@@ -172,9 +181,11 @@ namespace Tsunami.ViewModel
                     break;
                 case 8: // dht_bootstrap_alert
                     break;
-                case 9: // save_resume_data_alert
+                case 9:
+                    SaveResumeDataAlert((Core.save_resume_data_alert)a);
                     break;
-                case 10: // save_resume_data_failed_alert
+                case 10:
+                    SaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
                     break;
                 case 11: // piece_finished_alert
                     break;
@@ -182,6 +193,62 @@ namespace Tsunami.ViewModel
                     break;
             }
             //}
+        }
+
+        private void SaveResumeDataAlert(Core.save_resume_data_alert a)
+        {
+            var h = a.handle;
+            string newfilePath = ("./Fastresume/" + h.info_hash().ToString() + ".fastresume");
+            var data = Core.Util.bencode(a.resume_data);
+            using (var bw = new BinaryWriter(new FileStream(newfilePath, FileMode.OpenOrCreate)))
+            {
+                bw.Write(data);
+                bw.Close();
+            }
+            Interlocked.Decrement(ref outstanding_resume_data);
+            if (outstanding_resume_data == 0 && no_more_resume)
+                no_more_data.Set();
+        }
+
+        private void SaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
+        {
+            Interlocked.Decrement(ref outstanding_resume_data);
+            if (outstanding_resume_data == 0 && no_more_resume)
+                no_more_data.Set();
+        }
+
+        public void LoadFastResumeData()
+        {
+            if (Directory.Exists("Fastresume"))
+            {
+                string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
+                foreach (string s in files)
+                {
+                    var data = File.ReadAllBytes(s);
+                    var info_hash = Path.GetFileNameWithoutExtension(s);
+                    var filename = "Fastresume/" + info_hash + ".torrent";
+                    Core.TorrentInfo ti;
+                    if (File.Exists(filename))
+                        ti = new Core.TorrentInfo(filename);
+                    else
+                        ti = new Core.TorrentInfo(new Core.Sha1Hash(info_hash));
+                    using (var atp = new Core.AddTorrentParams())
+                    using (ti)
+                    {
+                        atp.ti = ti;
+                        atp.save_path = Settings.User.PathDownload;
+                        atp.resume_data = (sbyte[])(Array)data;
+                        atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
+                        atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
+                        _torrentSession.async_add_torrent(atp);
+                    }
+                }
+
+            }
+            else
+            {
+                Directory.CreateDirectory("Fastresume");
+            }
         }
 
         public void AddClick_Dialog()
@@ -216,12 +283,11 @@ namespace Tsunami.ViewModel
                 newfilePath = "./Fastresume/" + ti.info_hash().ToString() + ".torrent";
                 if (!System.IO.File.Exists(newfilePath))
                 {
-                    // MANCA FAST RESUME DATA
-                    //using (var bw = new System.IO.BinaryWriter(new System.IO.FileStream(newfilePath, System.IO.FileMode.Create)))
-                    //{
-                    //    bw.Write(data);
-                    //    bw.Close();
-                    //}
+                    using (var bw = new System.IO.BinaryWriter(new System.IO.FileStream(newfilePath, System.IO.FileMode.Create)))
+                    {
+                        bw.Write(data);
+                        bw.Close();
+                    }
                 }
                 //lock (_sessionLock)
                 //{

@@ -260,10 +260,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="MaterialDesignColors.dll" />
-    <Content Include="MaterialDesignThemes.Wpf.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>echo f | xcopy /d /y /s  "$(ProjectDir)Resources\*.*" "$(TargetDir)Resources\"</PreBuildEvent>
