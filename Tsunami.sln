@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsunami.SessionManager", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsunami.StreamingManager", "StreamingManager\Tsunami.StreamingManager.csproj", "{C12B4189-79E4-4B3C-AB8A-A0F76F55F179}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tsunami", "Tsunami\Tsunami.csproj", "{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,14 @@ Global
 		{C12B4189-79E4-4B3C-AB8A-A0F76F55F179}.Release|x64.Build.0 = Release|x64
 		{C12B4189-79E4-4B3C-AB8A-A0F76F55F179}.Release|x86.ActiveCfg = Release|x86
 		{C12B4189-79E4-4B3C-AB8A-A0F76F55F179}.Release|x86.Build.0 = Release|x86
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Debug|x64.ActiveCfg = Debug|x64
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Debug|x64.Build.0 = Debug|x64
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Debug|x86.ActiveCfg = Debug|x86
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Debug|x86.Build.0 = Debug|x86
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Release|x64.ActiveCfg = Release|x64
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Release|x64.Build.0 = Release|x64
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Release|x86.ActiveCfg = Release|x86
+		{063D6E39-33AE-45C8-95F5-A0DD1FEE5C3A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

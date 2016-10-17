@@ -1,0 +1,35 @@
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+  <!-- String resource that can be localized -->
+    <system:String x:Key="No">No</system:String>
+    <system:String x:Key="Yes">Sì</system:String>
+    <system:String x:Key="DownList">Lista Download</system:String>
+    <system:String x:Key="Add">Aggiungi Torrent</system:String>
+    <system:String x:Key="Settings">Impostazioni</system:String>
+    <system:String x:Key="ChoseInterface">Scegli l'Interfaccia di Tsunami</system:String>
+    <system:String x:Key="Simple">Semplice</system:String>
+    <system:String x:Key="Advanced">Avanzata</system:String>
+    <system:String x:Key="Apply">Applica</system:String>
+    <system:String x:Key="Cancel">Cancella</system:String>
+    <system:String x:Key="DelTorrentMessage">Vuoi veramente eliminare</system:String>
+    <system:String x:Key="DelAffermativeButton">Sì, e cancella i file dal disco</system:String>
+    <system:String x:Key="DelFirstAuxiliary">Sì, ma mantieni i file su disco</system:String>
+    <system:String x:Key="StartWeb">Avvia L'interfaccia web all'avvio di Tsunami</system:String>
+    <system:String x:Key="DownDir">Cartella Download</system:String>
+    <system:String x:Key="WebIntAddress">Indirizzo dell'interfaccia Web</system:String>
+    <system:String x:Key="WebIntPort">Porta dell'interfaccia Web</system:String>
+    <system:String x:Key="WebAuth">Interfaccia Web: usa autorizzazione</system:String>
+    <system:String x:Key="WebUsername">Interfaccia Web: nome utente</system:String>
+    <system:String x:Key="WebPwd">Interfaccia Web: password</system:String>
+    <system:String x:Key="Name">Nome</system:String>
+    <system:String x:Key="Status">Stato</system:String>
+    <system:String x:Key="Downloaded">Scaricati</system:String>
+    <system:String x:Key="Size">Dimensione</system:String>
+    <system:String x:Key="Progress">Progresso</system:String>
+    <system:String x:Key="NotFound">non trovato!</system:String>
+    <system:String x:Key="NotAvaiable">non disponibile!</system:String>
+
+</ResourceDictionary>
