@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Tsunami.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
@@ -38,39 +39,35 @@
                 <Slider Grid.Column="2" x:Name="volumeControl" Value="{ Binding player.VolumeValue, Mode=TwoWay}" Width="100" Maximum="100" IsMoveToPointEnabled="True"/>
             </StatusBarItem>
             <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Stop" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_stopClick}" IsEnabled="{Binding player.StopEnabled}">
-                    <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{DynamicResource appbar_control_stop}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
+                <Button x:Name="Stop" Height="25" Width="25" Margin="0,0,0,0" HorizontalAlignment="Center"
+                        Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" 
+                        Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}" 
+                        Command="{Binding Path=_stopClick}" IsEnabled="{Binding player.StopEnabled}">
+                    <materialDesign:PackIcon Kind="Stop" Width="25" Height="25"/>
                 </Button>
             </StatusBarItem>
             <StatusBarItem Grid.Column="4" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Play" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_playClick}" IsEnabled="{Binding player.PlayEnabled}">
-                    <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{DynamicResource appbar_control_play}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
+                <Button x:Name="Play" Height="25" Width="25" Margin="0,0,0,0"
+                        Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" 
+                        Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}"  
+                        Command="{Binding Path=_playClick}" IsEnabled="{Binding player.PlayEnabled}">
+                    <materialDesign:PackIcon Kind="Play" Width="25" Height="25"/>
                 </Button>
             </StatusBarItem>
             <StatusBarItem Grid.Column="5" HorizontalContentAlignment="Stretch">
-                <Button x:Name="Pause" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Command="{Binding Path=_pauseClick}" IsEnabled="{Binding player.PauseEnabled}">
-                    <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{DynamicResource appbar_control_pause}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
+                <Button x:Name="Pause" Height="25" Width="25" Margin="0,0,0,0"
+                        Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" 
+                        Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}" 
+                        Command="{Binding Path=_pauseClick}" IsEnabled="{Binding player.PauseEnabled}">
+                    <materialDesign:PackIcon Kind="Pause" Width="25" Height="25"/>
                 </Button>
             </StatusBarItem>
             <StatusBarItem Grid.Column="6">
-                <Button x:Name="FullScreen" Height="35" Width="35" Margin="0,0,0,0" Style="{DynamicResource MetroCircleButtonStyle}" Click="FullScreen_Click" IsEnabled="{Binding player.FullScreenEnabled}">
-                    <Rectangle Height="15" Width="15" Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Visual="{DynamicResource appbar_fullscreen}"/>
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
+                <Button x:Name="FullScreen" Height="25" Width="25" Margin="0,0,0,0" 
+                        Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" 
+                        Style="{DynamicResource MaterialDesignFloatingActionMiniAccentButton}"       
+                        Click="FullScreen_Click" IsEnabled="{Binding player.FullScreenEnabled}">
+                    <materialDesign:PackIcon Kind="Fullscreen" Width="25" Height="25"/>
                 </Button>
             </StatusBarItem>
         </StatusBar>
