@@ -34,7 +34,7 @@ namespace Tsunami
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
-            var title = Title + " " + +verMajor + "." + verMin + verRev;
+            var title = Title + " " + verMajor + "." + verMin + verRev;
             Title = title;
 
             Closing += Window_Closing;
