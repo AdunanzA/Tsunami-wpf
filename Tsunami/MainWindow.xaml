@@ -7,8 +7,7 @@
 
         xmlns:Properties="clr-namespace:Tsunami.Properties"
         xmlns:vm="clr-namespace:Tsunami.ViewModel"
-        xmlns:streaming="clr-namespace:Tsunami.Streaming;assembly=Tsunami.StreamingManager"
-        
+                
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         
@@ -31,7 +30,7 @@
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}">
     <Window.Resources>
         <vm:TsunamiViewModel x:Key="TsunamiVM" />
-        <streaming:PlayerViewModel x:Key="PlayerDataContext" />
+        <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>

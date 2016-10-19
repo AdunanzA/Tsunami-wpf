@@ -79,26 +79,28 @@
     <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Debug;..\packages\opendht4tsunami.0.1\lib\native\x86\Debug;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Tsunami\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Debug;..\packages\opendht4tsunami.0.1\lib\native\x64\Debug;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Tsunami\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x86\Release;..\packages\opendht4tsunami.0.1\lib\native\x86\Release;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)</TargetName>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Tsunami\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>packages\boost.1.60.0.0\lib\native\include;..\packages\libtorrent4tsunami.1.0.99\include;..\packages\opendht4tsunami.0.1\include;$(IncludePath)</IncludePath>
     <LibraryPath>..\packages\libtorrent4tsunami.1.0.99\lib\x64\Release;..\packages\opendht4tsunami.0.1\lib\native\x64\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Tsunami\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -157,7 +159,7 @@
       <DisableSpecificWarnings>4267;4244;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalDependencies>libtorrent.lib</AdditionalDependencies>
       <AdditionalOptions>/ignore:4099 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>

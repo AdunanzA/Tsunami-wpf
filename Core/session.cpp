@@ -24,8 +24,8 @@ using namespace Tsunami::Core;
 
 Session::Session()
 {
-	m_alerts = new std::vector<libtorrent::alert *>();
 	session_ = new libtorrent::session();
+	m_alerts = new std::vector<libtorrent::alert *>();
 	sessionDispatcher_ = new SessionDispatcher(*session_);
 }
 

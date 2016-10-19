@@ -82,7 +82,7 @@ namespace Tsunami
             //fullScreenWindow.Dispose();
 
             // terminate streamingmanager
-            Streaming.StreamingManager.Terminate?.Invoke(this, null);
+            //Streaming.StreamingManager.Terminate?.Invoke(this, null);
 
             _addPage = null;
             _listPage = null;

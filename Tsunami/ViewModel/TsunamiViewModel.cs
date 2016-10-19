@@ -85,9 +85,10 @@ namespace Tsunami.ViewModel
 
         public TsunamiViewModel()
         {
+            _torrentSession = new Core.Session();
             _torrentList = new ObservableCollection<Models.TorrentItem>();
             _sessionStatistic = new SessionStatistics();
-            _torrentSession = new Core.Session();
+
 
             Settings.Logger.Inizialize();
             //Settings.User.readFromFile();

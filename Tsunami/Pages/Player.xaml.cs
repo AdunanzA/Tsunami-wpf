@@ -38,13 +38,13 @@ namespace Tsunami.Pages
                 //dh.Content = msg;
                 //dh.ShowDialog(msg).ContinueWith(t => t.Result);
 
-                Streaming.StreamingManager.SetPauseButtonStatus = null;
-                Streaming.StreamingManager.SetPlayButtonStatus = null;
-                Streaming.StreamingManager.SetStopButtonStatus = null;
+                //Streaming.StreamingManager.SetPauseButtonStatus = null;
+                //Streaming.StreamingManager.SetPlayButtonStatus = null;
+                //Streaming.StreamingManager.SetStopButtonStatus = null;
             }
             else
             {
-                Streaming.StreamingManager.SetSurface?.Invoke(this, playerGrid);
+                //Streaming.StreamingManager.SetSurface?.Invoke(this, playerGrid);
             }
             fullScreenWindow = new FullScreen((Tsunami.MainWindow)Application.Current.MainWindow);
 
