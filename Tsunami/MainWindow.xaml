@@ -34,12 +34,16 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" /> <!-- body -->
-            <RowDefinition Height="30" /> <!-- status bar -->
+            <RowDefinition Height="*" />
+            <!-- body -->
+            <RowDefinition Height="30" />
+            <!-- status bar -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" /> <!-- body left, menu -->
-            <ColumnDefinition Width="*" /> <!-- body right, content -->
+            <ColumnDefinition Width="100" />
+            <!-- body left, menu -->
+            <ColumnDefinition Width="*" />
+            <!-- body right, content -->
         </Grid.ColumnDefinitions>
 
         <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
@@ -73,9 +77,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Vertical">
-                
+
                 <ContentControl Name="mainContent" Margin="16" />
-                
+
             </StackPanel>
 
             <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
@@ -83,6 +87,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2.5*" />
                     <ColumnDefinition Width="2.5*" />
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- DOWNLOAD CHART -->
@@ -139,9 +144,16 @@
                         </lvc:Axis>
                     </lvc:CartesianChart.AxisY>
                 </lvc:CartesianChart>
-
+                <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="5,0,5,5" 
+                          Height="130" Width="130" 
+                          Value="{Binding SessionStatistic.AngularGaugeValue}" 
+                          FromValue="0" ToValue="100" 
+                          LabelsStep="25" TicksStep="10" Wedge="300"
+                          TicksForeground="White" Foreground="White"                                   
+                          FontWeight="Bold" FontSize="14"
+                          SectionsInnerRadius=".8">
+                </lvc:AngularGauge>
             </Grid>
-
         </Grid>
 
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
@@ -163,6 +175,5 @@
             </StatusBarItem>
         </StatusBar>
     </Grid>
-
-
+    
 </Window>
