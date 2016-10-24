@@ -26,7 +26,8 @@ namespace Tsunami.Settings
         private static string _webPassword = "admin";
         private static long _streamingBufferSize = 1048576; //1MB default size
         private static bool _isDarkTheme = true;
-        private static string _themeColor = "orange";
+        private static string _themeColor = "Orange";
+        private static string _accentColor = "Red";
 
         public static string PathDownload
         {
@@ -157,6 +158,19 @@ namespace Tsunami.Settings
             }
         }
 
+        public static string AccentColor
+        {
+            get
+            {
+                return _accentColor;
+            }
+
+            set
+            {
+                _accentColor = value;
+            }
+        }
+
         public static void readFromFile()
         {
             if (File.Exists(_fileName))
@@ -196,6 +210,9 @@ namespace Tsunami.Settings
                         case "ThemeColor":
                             _themeColor = element.Value;
                             break;
+                        case "AccentColor":
+                            _accentColor = element.Value;
+                            break;
                         default:
                             break;
                     }
@@ -220,6 +237,7 @@ namespace Tsunami.Settings
             doc.Root.Add(new XElement("StreamingBufferSize", StreamingBufferSize));
             doc.Root.Add(new XElement("IsDarkTheme", IsDarkTheme));
             doc.Root.Add(new XElement("ThemeColor", ThemeColor));
+            doc.Root.Add(new XElement("AccentColor", AccentColor));
             doc.Save(_fileName);
         }
     }

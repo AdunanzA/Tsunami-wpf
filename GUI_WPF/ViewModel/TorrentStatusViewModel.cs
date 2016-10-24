@@ -10,7 +10,7 @@ namespace Tsunami.Gui.Wpf
         private ObservableCollection<TorrentItem> _torrentList { get; set; }
         private SessionStatistics _sessionStatistics { get; set; }
 
-        private object lockObj = new object();
+        //private object lockObj = new object();
 
         public TorrentStatusViewModel()
         {

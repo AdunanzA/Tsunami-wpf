@@ -162,6 +162,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Core\TsunamiCore.vcxproj">
+      <Project>{9504e5fa-6818-452a-a2e8-3b34567a6cd2}</Project>
+      <Name>Tsunami.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="FodyWeavers.xml" />
     <Content Include="www\css\fileinput.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

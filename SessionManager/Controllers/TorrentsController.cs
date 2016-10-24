@@ -165,21 +165,7 @@ namespace Tsunami.Controllers
                 SessionManager.Instance.addTorrent(file);
             }
             JObject jret = new JObject("Torrent added");
-            //jret.Add("result", "ok");
             return jret;
-            //if (data.Fields.ContainsKey("description"))
-            //{
-            //    var description = data.Fields["description"].Value;
-            //}
-
-            //HttpResponseMessage rm = new HttpResponseMessage(HttpStatusCode.OK);
-            //rm.Content = new StringContent("Torrent added");
-            //return rm;
-
-            //return new HttpResponseMessage(HttpStatusCode.OK)
-            //{
-            //    Content = new StringContent("Torrent added")
-            //};
         }
     }
 }

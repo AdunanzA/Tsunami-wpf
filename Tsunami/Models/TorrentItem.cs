@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Humanizer;
+using System.Collections.ObjectModel;
 
 namespace Tsunami.Models
 {
@@ -23,17 +24,20 @@ namespace Tsunami.Models
         private int _Priority;
         private int _DownloadRate;
         private int _UploadRate;
-        
+        private int _NumConnections;
+
         public int QueuePosition { get { return _QueuePosition; } set { if (_QueuePosition != value) { _QueuePosition = value; CallPropertyChanged("QueuePosition"); } } }
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; CallPropertyChanged("Name"); } } }
         public string Hash { get { return _Hash; } set { if (_Hash != value) { _Hash = value; CallPropertyChanged("Hash"); } } }
         public long TotalWanted { get { return _TotalWanted; } set { if (_TotalWanted != value) { _TotalWanted = value; CallPropertyChanged("TotalWanted_ByteSize"); } } }
-        public long TotalDone { get { return _TotalDone; } set { if (_TotalDone != value) { _TotalDone = value; CallPropertyChanged("TotalDone_ByteSize"); CallPropertyChanged("Remaining"); } } }
+        public long TotalDone { get { return _TotalDone; } set { if (_TotalDone != value) { _TotalDone = value; CallPropertyChanged("TotalDone_ByteSize"); CallPropertyChanged("Remaining"); CallPropertyChanged("Remaining_ByteSize"); } } }
         public string State { get { return _State; } set { if (_State != value) { _State = value; CallPropertyChanged("State"); CallPropertyChanged("IsPauseButtonVisible"); CallPropertyChanged("IsResumeButtonVisible"); } } }
         public float Progress { get { return _Progress; } set { if (_Progress != value) { _Progress = value; CallPropertyChanged("Progress_String"); CallPropertyChanged("Progress_Number"); CallPropertyChanged("Progress_Color"); } } }
         public int Priority { get { return _Priority; } set { if (_Priority != value) { _Priority = value; CallPropertyChanged("Priority_String"); } } }
         public int DownloadRate { get { return _DownloadRate; } set { if (_DownloadRate != value) { _DownloadRate = value; CallPropertyChanged("DownloadRate_ByteSize"); } } }
         public int UploadRate { get { return _UploadRate; } set { if (_UploadRate != value) { _UploadRate = value; CallPropertyChanged("UploadRate_ByteSize"); } } }
+        public int NumConnections { get { return _NumConnections; } set { if (_NumConnections != value) { _NumConnections = value; CallPropertyChanged("NumConnections"); } } }
+        public ObservableCollection<Models.FileEntry> FileList { get; set; }
 
         public bool IsSelected { get { return false; } set { } }
 
@@ -69,7 +73,7 @@ namespace Tsunami.Models
         {
             get
             {
-                return (Progress * 100).ToString("0.##") + "%";
+                return (Progress * 100).ToString("0.00") + "%";
             }
         }
         public float Progress_Number
@@ -85,7 +89,7 @@ namespace Tsunami.Models
             get
             {
                 //return Utils.StrFormatByteSize(_TotalWanted);
-                return _TotalWanted.Bytes().ToString("#.##");
+                return _TotalWanted.Bytes().ToString("0.00");
             }
         }
         public string TotalDone_ByteSize
@@ -93,7 +97,7 @@ namespace Tsunami.Models
             get
             {
                 //return Utils.StrFormatByteSize(_TotalDone);
-                return _TotalDone.Bytes().ToString("#.##");
+                return _TotalDone.Bytes().ToString("0.00");
             }
         }
         public string DownloadRate_ByteSize
@@ -101,7 +105,7 @@ namespace Tsunami.Models
             get
             {
                 //return Utils.StrFormatByteSize(_DownloadRate) + @"/s";
-                return _DownloadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("#.##");
+                return _DownloadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("0.00");
             }
         }
         public string UploadRate_ByteSize
@@ -109,7 +113,7 @@ namespace Tsunami.Models
             get
             {
                 //return Utils.StrFormatByteSize(_UploadRate) + @"/s";
-                return _UploadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("#.##");
+                return _UploadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("0.00");
             }
         }
         public string Priority_String
@@ -135,7 +139,23 @@ namespace Tsunami.Models
             get
             {
                 if (DownloadRate == 0) return null;
-                return TimeSpan.FromSeconds((TotalWanted - TotalDone) / DownloadRate).Humanize(3);
+                //return TimeSpan.FromSeconds((TotalWanted - TotalDone) / DownloadRate).Humanize(3, maxUnit: Humanizer.Localisation.TimeUnit.Hour);
+                return string.Format("{0:hh\\:mm\\:ss}", TimeSpan.FromSeconds((TotalWanted - TotalDone) / DownloadRate));
+            }
+        }
+        public string Remaining_ByteSize
+        {
+            get
+            {
+                return (TotalWanted - TotalDone).Bytes().ToString("0.00");
+            }
+        }
+
+        public string ShortName
+        {
+            get
+            {
+                return _Name.Truncate(18);
             }
         }
 
@@ -167,7 +187,7 @@ namespace Tsunami.Models
                 //    scb = new SolidColorBrush(Colors.Black);
                 //}
                 //return scb.Color;
-                return new SolidColorBrush(Colors.Gray).Color;
+                return new SolidColorBrush(Colors.Red).Color;
             }
         }
 
@@ -178,7 +198,7 @@ namespace Tsunami.Models
                 //Tuple<MahApps.Metro.AppTheme, MahApps.Metro.Accent> appStyle = MahApps.Metro.ThemeManager.DetectAppStyle(System.Windows.Application.Current);
                 //SolidColorBrush scb = (SolidColorBrush)appStyle.Item2.Resources["HighlightBrush"];
                 //return scb.Color;
-                return new SolidColorBrush(Colors.DarkGreen).Color;
+                return new SolidColorBrush(Colors.LimeGreen).Color;
             }
         }
 
@@ -199,7 +219,6 @@ namespace Tsunami.Models
             Priority = priority;
             DownloadRate = down_rate;
             UploadRate = up_rate;
-            //Formatter = x => x.ToString("0.##") + "%";
             Formatter = x => ((int)x).ToString() + "%";
         }
 

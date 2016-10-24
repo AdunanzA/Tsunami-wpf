@@ -49,5 +49,6 @@ namespace Tsunami.Pages
             TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
             res.RemoveTorrent(ti.Hash);
         }
+
     }
 }

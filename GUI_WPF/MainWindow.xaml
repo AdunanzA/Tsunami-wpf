@@ -322,7 +322,8 @@
                             </lvc:CartesianChart.AxisX>
                             <lvc:CartesianChart.AxisY>
                                 <lvc:Axis Title="DOWNLOAD" Position="LeftBottom" MinValue="0" LabelFormatter="{Binding SessionStat.SizeFormatter, Source={StaticResource TorrentStatusViewModel}}"
-                                          MaxValue="{Binding SessionStat.YAxisMax, Source={StaticResource TorrentStatusViewModel}}">
+                                          MaxValue="{Binding SessionStat.YAxisMax, Source={StaticResource TorrentStatusViewModel}}"
+                                          DisableAnimations="True" >
                                     <lvc:Axis.Separator>
                                         <lvc:Separator Stroke="DarkGray" Step="{Binding SessionStat.YSeparatorStep, Source={StaticResource TorrentStatusViewModel}}"></lvc:Separator>
                                     </lvc:Axis.Separator>
@@ -350,7 +351,7 @@
                             </lvc:CartesianChart.AxisX>
                             <lvc:CartesianChart.AxisY>
                                 <lvc:Axis Title="UPLOAD" Position="RightTop" MinValue="0" LabelFormatter="{Binding SessionStat.SizeFormatter, Source={StaticResource TorrentStatusViewModel}}"
-                                          >
+                                          DisableAnimations="True" >
                                     <lvc:Axis.Separator>
                                         <lvc:Separator Stroke="DarkGray"></lvc:Separator>
                                     </lvc:Axis.Separator>
@@ -449,16 +450,16 @@
                     <TextBlock Text="{Binding SessionStat.DownloadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
                     <TextBlock Text=")"></TextBlock>
                     <!--<StackPanel Orientation="Horizontal" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}">-->
-                        <TextBlock Text="/" Margin="15,0"></TextBlock>
-                        <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
-                            <Rectangle.OpacityMask>
-                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_up}" />
-                            </Rectangle.OpacityMask>
-                        </Rectangle>
-                        <TextBlock Text="{Binding SessionStat.TotalUpload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
-                        <TextBlock Text="("></TextBlock>
-                        <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
-                        <TextBlock Text=")"></TextBlock>
+                    <TextBlock Text="/" Margin="15,0"></TextBlock>
+                    <Rectangle Width="10" Height="10" Fill="{Binding RelativeSource={RelativeSource AncestorType=StatusBar}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_arrow_up}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Text="{Binding SessionStat.TotalUpload_ByteSize, Source={StaticResource TorrentStatusViewModel}}" Margin="10,0"></TextBlock>
+                    <TextBlock Text="("></TextBlock>
+                    <TextBlock Text="{Binding SessionStat.UploadRate_ByteSize, Source={StaticResource TorrentStatusViewModel}}"></TextBlock>
+                    <TextBlock Text=")"></TextBlock>
                     <!--</StackPanel>-->
                     <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
                 </StackPanel>

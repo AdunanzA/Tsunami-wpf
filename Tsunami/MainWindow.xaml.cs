@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MaterialDesignThemes.Wpf;
+using Hardcodet.Wpf.TaskbarNotification;
 
 namespace Tsunami
 {
@@ -26,10 +27,14 @@ namespace Tsunami
         public static UserControl _playerPage;
         public static UserControl _settingsPage;
 
+        ViewModel.TsunamiViewModel tvm;
+
         public MainWindow()
         {
             InitializeComponent();
             SetLanguageDictionary();
+
+            tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
 
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
@@ -42,10 +47,17 @@ namespace Tsunami
             _addPage = new Pages.Add();
             _listPage = new Pages.List();
             _playerPage = new Pages.Player();
-            _settingsPage = new SettingsPage();
+            _settingsPage = new Pages.SettingsPage();
 
             Classes.Switcher.pageSwitcher = this;
             Classes.Switcher.Switch(_addPage);
+
+            if (!tvm.IsTsunamiEnabled)
+            {
+                // we are resuming, switch to download list
+                mainContent.Content = _listPage;
+                menuListBox.SelectedIndex = 1;
+            }
 
         }
 
@@ -89,6 +101,11 @@ namespace Tsunami
             _playerPage = null;
             _settingsPage = null;
 
+            //ViewModel.TsunamiViewModel tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
+            tvm.Terminate();
+
+            tsunamiNotifyIcon.Dispose();
+
             Environment.Exit(0);
         }
 
@@ -104,6 +121,10 @@ namespace Tsunami
 
         private void ListPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            string title = "Tsunami";
+            string text = "You are seeing Tsunami list!";
+            tsunamiNotifyIcon.ShowBalloonTip(title, text, tsunamiNotifyIcon.Icon, true);
+
             mainContent.Content = _listPage;
         }
 

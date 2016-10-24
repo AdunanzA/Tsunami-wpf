@@ -8,20 +8,25 @@ using System.Windows;
 using Tsunami.Core;
 using System.Threading;
 using System.IO;
+using System.ComponentModel;
 
 namespace Tsunami.ViewModel
 {
-    class TsunamiViewModel
+    class TsunamiViewModel : INotifyPropertyChanged
     {
-        //private static object _listLock = new object();
-        //private static object _sessionLock = new object();
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void CallPropertyChanged(string prop)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
 
         private Logger log = LogManager.GetLogger("VM-Tsunami");
 
         //save_resume_variables
-        private int outstanding_resume_data = 0;
-        private AutoResetEvent no_more_data = new AutoResetEvent(false);
-        private bool no_more_resume = false;
+        //private int outstanding_resume_data = 0;
+        //private AutoResetEvent no_more_data = new AutoResetEvent(false);
+        //private bool no_more_resume = false;
+        private DateTime _lastSaveResumeExecution = DateTime.Now;
 
         private System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
 
@@ -30,9 +35,6 @@ namespace Tsunami.ViewModel
         {
             get
             {
-                //lock (_listLock)
-                //{
-                //}
                 return _torrentList;
             }
         }
@@ -53,6 +55,13 @@ namespace Tsunami.ViewModel
             {
                 return _preference;
             }
+        }
+
+        private bool _isTsunamiEnabled { get; set; }
+        public bool IsTsunamiEnabled
+        {
+            get { return _isTsunamiEnabled; }
+            set { if (_isTsunamiEnabled != value) { _isTsunamiEnabled = value; CallPropertyChanged("IsTsunamiEnabled"); } }
         }
 
         private static Core.Session _torrentSession;
@@ -85,14 +94,16 @@ namespace Tsunami.ViewModel
 
         public TsunamiViewModel()
         {
-            _torrentSession = new Core.Session();
+            Settings.Logger.Inizialize();
+
             _torrentList = new ObservableCollection<Models.TorrentItem>();
             _sessionStatistic = new SessionStatistics();
-
-
-            Settings.Logger.Inizialize();
-            //Settings.User.readFromFile();
+            _torrentSession = new Core.Session();
             _preference = new Models.Preferences();
+            IsTsunamiEnabled = true;
+            //_notifyIcon = new Models.NotifyIcon();
+
+            _torrentSession.pause();
 
             if (System.IO.File.Exists(".session_state"))
             {
@@ -102,15 +113,25 @@ namespace Tsunami.ViewModel
                     _torrentSession.load_state(entry);
                 }
             }
-            LoadFastResumeData();
 
-            _torrentSession.start_natpmp();
-            _torrentSession.start_upnp();
-
+            Core.SessionSettings ss = _torrentSession.settings();
+            ss.connections_limit = 4000; // 200
+            ss.tick_interval = 250;     // 500
+            ss.torrent_connect_boost = 20; // 10
+            ss.connection_speed = -1; // -1 = 200 ; default 10
+            ss.num_want = 400; // 200
+            ss.cache_size = -1; // -1 = 1/8 RAM; default 1024
+            ss.coalesce_reads = true; // false
+            ss.coalesce_writes = true; // false
+            ss.user_agent = Tsunami.Settings.Application.TSUNAMI_USER_AGENT;
+            _torrentSession.set_settings(ss);
+            
             Core.DhtSettings dhts = _torrentSession.get_dht_settings();
             dhts.aggressive_lookups = true;
             _torrentSession.set_dht_settings(dhts);
 
+            _torrentSession.start_natpmp();
+            _torrentSession.start_upnp();
             _torrentSession.start_dht();
 
             var alertMask = Core.AlertMask.error_notification
@@ -133,17 +154,40 @@ namespace Tsunami.ViewModel
             _dispatcherTimer.Interval = Settings.Application.DISPATCHER_INTERVAL;
             _dispatcherTimer.Start();
 
+            LoadFastResumeData();
+
+            _torrentSession.resume();
+
             log.Debug("created");
         }
 
         private void dispatcherTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            //lock (_sessionLock)
-            //{
-                _torrentSession.post_torrent_updates();
-                _torrentSession.post_dht_stats();
-                //_torrentSession.post_session_stats();
-            //}
+            if (!IsTsunamiEnabled) { return; }
+
+            _torrentSession.post_torrent_updates();
+            _torrentSession.post_dht_stats();
+
+            TimeSpan difference = DateTime.Now - _lastSaveResumeExecution;
+            if ( difference.TotalSeconds >= 10 )
+            {
+                int totConnex = 0;
+                _lastSaveResumeExecution = DateTime.Now;
+                foreach (Models.TorrentItem item in TorrentList)
+                {
+                    using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
+                    using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+                    using (Core.TorrentStatus ts = th.status())
+                    {
+                        if (ts.has_metadata && ts.need_save_resume)
+                        {
+                            th.save_resume_data(1 | 2 | 4);
+                        }
+                    }
+                    totConnex += item.NumConnections;
+                }
+                SessionStatistic.NumConnections = totConnex;
+            }
         }
 
         private void HandleAlertCallback()
@@ -153,8 +197,6 @@ namespace Tsunami.ViewModel
 
         private void HandlePendingAlertCallback(Core.Alert a)
         {
-            //using (a)
-            //{
             log.Trace("libtorrent event {0}: {1}", a.what(), a.message());
             if (!alertType.ContainsKey(a.GetType()))
             {
@@ -193,38 +235,53 @@ namespace Tsunami.ViewModel
                 default:
                     break;
             }
-            //}
         }
 
         private void SaveResumeDataAlert(Core.save_resume_data_alert a)
         {
-            var h = a.handle;
-            string newfilePath = ("./Fastresume/" + h.info_hash().ToString() + ".fastresume");
-            var data = Core.Util.bencode(a.resume_data);
-            using (var bw = new BinaryWriter(new FileStream(newfilePath, FileMode.OpenOrCreate)))
+            //var h = a.handle;
+            using (Core.TorrentHandle h = a.handle)
             {
-                bw.Write(data);
-                bw.Close();
+                string newfilePath = ("./Fastresume/" + h.info_hash().ToString() + ".fastresume");
+                var data = Core.Util.bencode(a.resume_data);
+                using (var bw = new BinaryWriter(new FileStream(newfilePath, FileMode.OpenOrCreate)))
+                {
+                    bw.Write(data);
+                    bw.Close();
+                }
             }
-            Interlocked.Decrement(ref outstanding_resume_data);
-            if (outstanding_resume_data == 0 && no_more_resume)
-                no_more_data.Set();
+            //Interlocked.Decrement(ref outstanding_resume_data);
+            //if (outstanding_resume_data == 0 && no_more_resume)
+            //    no_more_data.Set();
         }
 
         private void SaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
         {
-            Interlocked.Decrement(ref outstanding_resume_data);
-            if (outstanding_resume_data == 0 && no_more_resume)
-                no_more_data.Set();
+            //Interlocked.Decrement(ref outstanding_resume_data);
+            //if (outstanding_resume_data == 0 && no_more_resume)
+            //    no_more_data.Set();
         }
 
-        public void LoadFastResumeData()
+        public async void LoadFastResumeData()
         {
             if (Directory.Exists("Fastresume"))
             {
+                IsTsunamiEnabled = false;
+                Window loading = new Pages.Loading();
+                loading.Show();
+                System.Windows.Controls.Label lb = (System.Windows.Controls.Label)loading.FindName("txtLoading");
+                System.Windows.Controls.ProgressBar pb = (System.Windows.Controls.ProgressBar)loading.FindName("progressLoading");
+
                 string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
+                int i = 0;
+                pb.Maximum = files.Length+0.01;
+
                 foreach (string s in files)
                 {
+                    i++;
+                    lb.Content = "Loading "+i+" of "+files.Length+" torrents";
+                    pb.Value = i;
+                    loading.InvalidateVisual();
                     var data = File.ReadAllBytes(s);
                     var info_hash = Path.GetFileNameWithoutExtension(s);
                     var filename = "Fastresume/" + info_hash + ".torrent";
@@ -241,10 +298,11 @@ namespace Tsunami.ViewModel
                         atp.resume_data = (sbyte[])(Array)data;
                         atp.flags &= ~Core.ATPFlags.flag_auto_managed; // remove auto managed flag
                         atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
-                        _torrentSession.async_add_torrent(atp);
+                        await System.Threading.Tasks.Task.Run(() =>  _torrentSession.add_torrent(atp));
                     }
                 }
-
+                IsTsunamiEnabled = true;
+                loading.Close();
             }
             else
             {
@@ -290,41 +348,32 @@ namespace Tsunami.ViewModel
                         bw.Close();
                     }
                 }
-                //lock (_sessionLock)
-                //{
-                    _torrentSession.async_add_torrent(atp);
-                //}
+                _torrentSession.async_add_torrent(atp);
             }
         }
 
         public void PauseTorrent(string hash)
         {
-            //lock (_sessionLock)
-            //{
-                using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(hash))
-                using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+            using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(hash))
+            using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+            {
+                if (th != null  && th.is_valid())
                 {
-                    if (th != null  && th.is_valid())
-                    {
-                        th.pause();
-                    }
+                    th.pause();
                 }
-            //}
+            }
         }
 
         public void ResumeTorrent(string hash)
         {
-            //lock (_sessionLock)
-           // {
-                using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(hash))
-                using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+            using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(hash))
+            using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+            {
+                if (th != null && th.is_valid())
                 {
-                    if (th != null && th.is_valid())
-                    {
-                        th.resume();
-                    }
+                    th.resume();
                 }
-           // }
+            }
         }
 
         public void RemoveTorrent(string hash, bool deleteFileToo = false)
@@ -354,6 +403,32 @@ namespace Tsunami.ViewModel
                 {
                     stat = Classes.Utils.GiveMeStateFromEnum(ts.state);
                 }
+
+                ObservableCollection<Models.FileEntry> feList = new ObservableCollection<Models.FileEntry>();
+                using (Core.TorrentInfo tinf = th.torrent_file())
+                {
+                    Models.FileEntry fe;
+                    if (tinf == null)
+                    {
+                        // non ci sono file nel torrent
+                        fe = new Models.FileEntry();
+                        fe.FileName = th.ToString();
+                        feList.Add(fe);
+                    }
+                    else
+                    {
+                        for (int i = 0; i <= tinf.num_files() - 1; i++)
+                        {
+                            fe = new Models.FileEntry(tinf.files().at(i));
+                            fe.FileName = tinf.files().file_name(i);
+                            fe.IsValid = tinf.files().is_valid();
+                            fe.PieceSize = tinf.piece_size(i);
+                            //ti.trackers();
+                            feList.Add(fe);
+                        }
+                    }
+                }
+
                 Models.TorrentItem ti = new Models.TorrentItem()
                 {
                     Name = ts.name,
@@ -365,61 +440,90 @@ namespace Tsunami.ViewModel
                     TotalDone = ts.total_done,
                     Progress = ts.progress,
                     DownloadRate = ts.download_rate,
-                    UploadRate = ts.upload_rate
+                    UploadRate = ts.upload_rate,
+                    FileList = feList
                 };
-                //App.Current.Dispatcher.Invoke((Action)delegate
-                //{
-                //    TorrentList.Add(ti);
-                //});
-                System.Windows.Application.Current.Dispatcher.BeginInvoke(
+
+                Application.Current.Dispatcher.BeginInvoke(
                     System.Windows.Threading.DispatcherPriority.Normal,
                     (Action)delegate ()
                     {
-                        //lock (_listLock)
-                        //{
-                            TorrentList.Add(ti);
-                        //}
+                        TorrentList.Add(ti);
+                        //Hardcodet.Wpf.TaskbarNotification.TaskbarIcon tbi = (Hardcodet.Wpf.TaskbarNotification.TaskbarIcon)App.Current.MainWindow.FindName("tsunamiNotifyIcon");
+                        //string title = "Tsunami";
+                        //string text = "New torrent added!";
+                        //tbi.ShowBalloonTip(title, text, tbi.Icon, true);
                     });
             }
         }
 
         private void StateUpdateAlert(Core.state_update_alert a)
         {
-           // lock (_sessionLock)
-           // {
-                Core.TorrentStatus[] statuses = (Core.TorrentStatus[])a.status.Clone();
-                //foreach (Core.TorrentStatus ts in a.status)
-                foreach (Core.TorrentStatus ts in statuses)
-                using (ts)
-                using (Core.Sha1Hash hash = ts.info_hash)
+            Core.TorrentStatus[] statuses = (Core.TorrentStatus[])a.status.Clone();
+            foreach (Core.TorrentStatus ts in statuses)
+            using (ts)
+            using (Core.Sha1Hash hash = ts.info_hash)
+            {
+                var stat = "Paused";
+                if (!ts.paused)
                 {
-                    var stat = "Paused";
-                    if (!ts.paused)
+                    stat = Classes.Utils.GiveMeStateFromEnum(ts.state);
+                }
+                if (TorrentList.Count(z => z.Hash == hash.ToString()) == 1)
+                {
+                    Models.TorrentItem ti = TorrentList.First(e => e.Hash == hash.ToString());
+                    ti.DownloadRate = ts.download_rate;
+                    ti.Priority = ts.priority;
+                    ti.Progress = ts.progress;
+                    ti.QueuePosition = ts.queue_position;
+                    ti.State = stat;
+                    ti.TotalDone = ts.total_done;
+                    ti.UploadRate = ts.upload_rate;
+                    ti.NumConnections = ts.num_connections;
+                }
+            }
+            using (Core.SessionStatus ss = _torrentSession.status())
+            {
+                SessionStatistic.Update(ss);
+            }
+        }
+        public void Terminate()
+        {
+            IsTsunamiEnabled = false;
+            _torrentSession.pause();
+
+            _dispatcherTimer.Stop();
+            _dispatcherTimer.Enabled = false;
+            //stopWeb();
+
+            foreach (Models.TorrentItem item in TorrentList)
+            {
+                using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
+                using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+                using (Core.TorrentStatus ts = th.status())
+                {
+                    if (ts.has_metadata && ts.need_save_resume)
                     {
-                        stat = Classes.Utils.GiveMeStateFromEnum(ts.state);
+                        th.save_resume_data(1 | 2 | 4);
                     }
-                   // lock (_listLock)
-                   // {
-                        if (TorrentList.Count(z => z.Hash == hash.ToString()) == 1)
-                        {
-                            Models.TorrentItem ti = TorrentList.First(e => e.Hash == hash.ToString());
-                            ti.DownloadRate = ts.download_rate;
-                            ti.Priority = ts.priority;
-                            ti.Progress = ts.progress;
-                            ti.QueuePosition = ts.queue_position;
-                            ti.State = stat;
-                            ti.TotalDone = ts.total_done;
-                            ti.UploadRate = ts.upload_rate; 
-                        }
-                   // }
                 }
-                using (Core.SessionStatus ss = _torrentSession.status())
-                {
-                    SessionStatistic.Update(ss);
-                }
-           // }
+            }
+            TerminateSaveResume();
+        }
+
+        private void TerminateSaveResume()
+        {
+            _torrentSession.clear_alert_callback();
+            using (var entry = _torrentSession.save_state(0xfffffff))
+            {
+                var data = Core.Util.bencode(entry);
+                File.WriteAllBytes(".session_state", data);
+            }
+            _torrentSession?.Dispose();
+            _torrentSession = null;
         }
     }
+
 
     public class CommandHandler : ICommand
     {

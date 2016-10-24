@@ -57,6 +57,7 @@ namespace Tsunami
         private int _upBandwidthQueue;
         private int _maxDownloadRate;
         private double _angularGaugeValue;
+        private int _numConnections;
         #endregion
 
         #region public
@@ -101,7 +102,7 @@ namespace Tsunami
         public int UpBandwidthBytesQueue { get { return _upBandwidthBytesQueue; } set { if (_upBandwidthBytesQueue != value) { _upBandwidthBytesQueue = value; CallPropertyChanged("UpBandwidthBytesQueue"); } } }
         public int UpBandwidthQueue { get { return _upBandwidthQueue; } set { if (_upBandwidthQueue != value) { _upBandwidthQueue = value; CallPropertyChanged("UpBandwidthQueue"); } } }
         public int MaxDownloadRate { get { return _maxDownloadRate; } set { if (_maxDownloadRate != value && value > _maxDownloadRate) { _maxDownloadRate = value; CallPropertyChanged("MaxDownloadRate"); } } }
-        
+        public int NumConnections { get { return _numConnections; } set { if (_numConnections != value) { _numConnections = value; CallPropertyChanged("NumConnections"); } } }
 
 
         public double AngularGaugeValue
@@ -122,7 +123,7 @@ namespace Tsunami
             get
             {
                 //return Utils.StrFormatByteSize(_totalDownload);
-                return _totalDownload.Bytes().ToString("#.##");
+                return _totalDownload.Bytes().ToString("0.00");
                 
             }
         }
@@ -141,7 +142,7 @@ namespace Tsunami
             get
             {
                 //return Utils.StrFormatByteSize(_downloadRate) + @"/s";
-                return _downloadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("#.##");
+                return _downloadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("0.00");
             }
         }
 
@@ -191,6 +192,7 @@ namespace Tsunami
             SetAxisLimits(DateTime.Now);
 
             MaxDownloadRate = 1;
+            NumConnections = 0;
         }
 
         public void Update(Core.SessionStatus ss)

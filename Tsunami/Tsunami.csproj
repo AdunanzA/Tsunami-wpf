@@ -83,6 +83,10 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -95,8 +99,8 @@
       <HintPath>..\packages\LiveCharts.Wpf.0.7.17\lib\net452\LiveCharts.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MaterialDesignColors, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignColors.1.1.2\lib\net45\MaterialDesignColors.dll</HintPath>
+    <Reference Include="MaterialDesignColors, Version=1.1.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.1.0.657, Culture=neutral, processorArchitecture=MSIL">
@@ -109,6 +113,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -139,11 +144,11 @@
     <Compile Include="EventsArgs\OnTorrentRemovedEventArgs.cs" />
     <Compile Include="EventsArgs\OnTorrentUpdatedEventArgs.cs" />
     <Compile Include="Models\AnnounceEntry.cs" />
-    <Compile Include="Models\AnotherCommandImplementation.cs" />
     <Compile Include="Models\BitField.cs" />
     <Compile Include="Models\ErrorCode.cs" />
     <Compile Include="Models\FileEntry.cs" />
     <Compile Include="Models\FileSlice.cs" />
+    <Compile Include="Models\NotifyIcon.cs" />
     <Compile Include="Pages\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
@@ -154,17 +159,23 @@
     <Compile Include="Models\PeerRequest.cs" />
     <Compile Include="Models\TorrentInfo.cs" />
     <Compile Include="Models\TorrentStatus.cs" />
-    <Compile Include="List.xaml.cs">
+    <Compile Include="Pages\List.xaml.cs">
       <DependentUpon>List.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsPage.xaml.cs">
+    <Compile Include="Pages\Loading.xaml.cs">
+      <DependentUpon>Loading.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\TSUCard.xaml.cs">
+      <DependentUpon>TSUCard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\Application.cs" />
     <Compile Include="Settings\Logger.cs" />
     <Compile Include="Settings\User.cs" />
     <Compile Include="Classes\Utils.cs" />
-    <Compile Include="ViewModel\PaletteSelectorViewModel.cs" />
+    <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\TsunamiViewModel.cs" />
     <Compile Include="Pages\Player.xaml.cs">
       <DependentUpon>Player.xaml</DependentUpon>
@@ -185,11 +196,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="List.xaml">
+    <Page Include="Pages\List.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SettingsPage.xaml">
+    <Page Include="Pages\Loading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\TSUCard.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -242,12 +261,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\logo_tsunami_big.ico" />
+    <Resource Include="Resources\logo_tsunami_big.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 e x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

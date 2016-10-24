@@ -8,6 +8,7 @@ using System.Windows;
 using MaterialDesignThemes.Wpf;
 using MaterialDesignColors;
 using NLog;
+using Humanizer;
 
 namespace Tsunami.Models
 {
@@ -17,16 +18,17 @@ namespace Tsunami.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private static string _pathDownload;
-        private static bool _startWebOnAppLoad;
-        private static string _webAddress;
-        private static string _webPort;
-        private static bool _webUseAuth;
-        private static string _webUser;
-        private static string _webPassword;
-        private static long _streamingBufferSize;
-        private static bool _isDarkTheme;
-        private static string _themeColor;
+        private string _pathDownload;
+        private bool _startWebOnAppLoad;
+        private string _webAddress;
+        private string _webPort;
+        private bool _webUseAuth;
+        private string _webUser;
+        private string _webPassword;
+        private long _streamingBufferSize;
+        private bool _isDarkTheme;
+        private string _themeColor;
+        private string _accentColor;
 
         public string PathDownload { get { return _pathDownload; } set { if (_pathDownload != value) { _pathDownload = value; CallPropertyChanged("PathDownload"); } } }
 
@@ -44,7 +46,8 @@ namespace Tsunami.Models
 
         public long StreamingBufferSize { get { return _streamingBufferSize; } set { if (_streamingBufferSize != value) { _streamingBufferSize = value; CallPropertyChanged("streamingBufferSize"); } } }
 
-        public IEnumerable<Swatch> Swatches { get; }
+        public List<ColorItem> ColorItems { get; }
+        public List<ColorItem> AccentItems { get; }
 
         public bool IsDarkTheme {
             get { return _isDarkTheme; }
@@ -52,16 +55,7 @@ namespace Tsunami.Models
                 if (_isDarkTheme != value)
                 {
                     _isDarkTheme = value;
-                    //string stheme = "BaseLight";
-                    //if (_isDarkTheme)
-                    //{
-                    //    stheme = "BaseDark";
-                    //}
-                    //var theme = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
-                    //MahApps.Metro.ThemeManager.ChangeAppStyle(Application.Current, theme.Item2, MahApps.Metro.ThemeManager.GetAppTheme(stheme));
-
                     new PaletteHelper().SetLightDark(_isDarkTheme);
-
                     CallPropertyChanged("IsDarkTheme");
                 }
             }
@@ -75,19 +69,46 @@ namespace Tsunami.Models
                 if (_themeColor != value)
                 {
                     _themeColor = value;
-                    //var theme = MahApps.Metro.ThemeManager.DetectAppStyle(Application.Current);
-                    //MahApps.Metro.ThemeManager.ChangeAppStyle(Application.Current, MahApps.Metro.ThemeManager.GetAccent(value), theme.Item1);
-
-                    Swatch sw = new SwatchesProvider().Swatches.FirstOrDefault(e => e.Name == _themeColor);
+                    Swatch sw = ColorItems.First(e => e.Name == _themeColor).Swatch;
                     new PaletteHelper().ReplacePrimaryColor(sw);
-
                     CallPropertyChanged("ThemeColor");
+                }
+            }
+        }
+
+        public string AccentColor
+        {
+            get { return _accentColor; }
+            set
+            {
+                if (_accentColor != value)
+                {
+                    _accentColor = value;
+                    Swatch sw = AccentItems.First(e => e.Name == _accentColor).Swatch;
+                    new PaletteHelper().ReplaceAccentColor(sw);
+                    CallPropertyChanged("AccentColor");
                 }
             }
         }
 
         public Preferences()
         {
+            ColorItems = new List<ColorItem>();
+            AccentItems = new List<ColorItem>();
+
+            foreach (Swatch item in new SwatchesProvider().Swatches)
+            {
+                System.Windows.Media.SolidColorBrush res = new System.Windows.Media.SolidColorBrush(item.ExemplarHue.Color);
+                ColorItem ci = new ColorItem(res, item, item.Name.Humanize());
+                ColorItems.Add(ci);
+
+                if (item.IsAccented)
+                {
+                    System.Windows.Media.SolidColorBrush resA = new System.Windows.Media.SolidColorBrush(item.AccentExemplarHue.Color);
+                    ColorItem cia = new ColorItem(resA, item, item.Name.Humanize());
+                    AccentItems.Add(cia);
+                }
+            }
             reloadPreferenceFromFile();
         }
 
@@ -106,6 +127,7 @@ namespace Tsunami.Models
             StreamingBufferSize = Settings.User.StreamingBufferSize;
             IsDarkTheme = Settings.User.IsDarkTheme;
             ThemeColor = Settings.User.ThemeColor;
+            AccentColor = Settings.User.AccentColor;
 
             log.Debug("loaded");
         }
@@ -123,6 +145,7 @@ namespace Tsunami.Models
             Settings.User.StreamingBufferSize = StreamingBufferSize;
             Settings.User.IsDarkTheme = IsDarkTheme;
             Settings.User.ThemeColor = ThemeColor;
+            Settings.User.AccentColor = AccentColor;
 
             Settings.User.writeToFile();
             log.Debug("saved");
@@ -133,5 +156,18 @@ namespace Tsunami.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
+        public class ColorItem
+        {
+            public System.Windows.Media.SolidColorBrush Color { get; set; }
+            public Swatch Swatch { get; set; }
+            public string Name { get; set; }
+
+            public ColorItem(System.Windows.Media.SolidColorBrush color, Swatch swatch, string name)
+            {
+                Color = color;
+                Swatch = swatch;
+                Name = name;
+            }
+        }
     }
 }

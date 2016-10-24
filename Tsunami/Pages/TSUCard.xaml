@@ -1,0 +1,100 @@
+﻿<UserControl x:Name="userControl" x:Class="Tsunami.Pages.TSUCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tsunami.Pages"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             mc:Ignorable="d" Height="190" Width="140"
+             d:DesignHeight="190" d:DesignWidth="140">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Border CornerRadius="15" Background="#333333">
+            <StackPanel Orientation="Vertical" Margin="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="18" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" TextWrapping="NoWrap" Text="{Binding ShortName}" VerticalAlignment="Top" Margin="6,4,0,0" Width="110"
+                                FontSize="12" FontWeight="Regular" Cursor="Hand" ToolTip="{Binding Name}"
+                                PreviewMouseDown="torrentFile_PreviewMouseDown" HorizontalAlignment="Left">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="TextDecorations" Value="Underline"></Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <materialDesign:PackIcon Grid.Column="1" Kind="CloseCircle" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                Foreground="Red" Margin="0,2,3,0" MouseLeftButtonUp="btnCancel_Click" Cursor="Hand"/>
+                </Grid>
+                <Rectangle HorizontalAlignment="Stretch" Fill="#4D4D4D" Height="1" Margin="2,4,2,0"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1.5*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <materialDesign:PackIcon Grid.Column="0" Grid.RowSpan="3" Kind="PresentationPlay" Width="30" Height="30" 
+                                             HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                                             Cursor="Hand"/>
+                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Totale" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="9" Foreground="#3FB24A" Text="{Binding TotalWanted_ByteSize}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Scaricati" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="9" Foreground="#E0C164" Text="{Binding TotalDone_ByteSize}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Restanti" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="9" Foreground="#216CA6" Text="{Binding Remaining_ByteSize}"></TextBlock>
+                    </StackPanel>
+                </Grid>
+                <!--<Label Width="Auto" Height="Auto">
+                    <StackPanel Orientation="Horizontal" Height="55">
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="{Binding State}" FontStyle="Italic"></Label>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
+                                <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="btnPause_Click">
+                                </Button>
+                                <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10">
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Label>-->
+                <Viewbox  Width="90" Height="90">
+                    <lvc:Gauge Uses360Mode="True" From="0" To="100" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                           Value="{Binding Progress_Number, Mode=OneWay}" InnerRadius="17"
+                           TextElement.Foreground="{Binding Progress_Color}" 
+                           LabelFormatter="{Binding Formatter}"
+                           FromColor="{Binding ColorFrom}"
+                           ToColor="{Binding ColorTo}"
+                           HighFontSize="14" TextElement.FontStretch="Condensed">
+                    </lvc:Gauge>
+                </Viewbox>
+                <Viewbox Width="Auto" Height="20" Margin="0,-10,0,0" HorizontalAlignment="Center">
+                    <Label FontWeight="Bold" Content="{Binding Remaining}"></Label>
+                </Viewbox>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

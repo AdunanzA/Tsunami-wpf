@@ -20,7 +20,7 @@ namespace Tsunami.Classes
                 case "Tsunami.Pages.Player":
                     lbi = (ListBoxItem)pageSwitcher.menuListBox.Items[2];
                     break;
-                case "Tsunami.SettingsPage":
+                case "Tsunami.Pages.SettingsPage":
                     lbi = (ListBoxItem)pageSwitcher.menuListBox.Items[3];
                     break;
                 default:

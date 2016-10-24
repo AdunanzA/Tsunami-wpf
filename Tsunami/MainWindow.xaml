@@ -6,11 +6,12 @@
         xmlns:local="clr-namespace:Tsunami"
 
         xmlns:Properties="clr-namespace:Tsunami.Properties"
-        xmlns:vm="clr-namespace:Tsunami.ViewModel"
-                
+        xmlns:streaming="clr-namespace:Tsunami.Streaming;assembly=Tsunami.StreamingManager"
+        
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        
+        xmlns:ni="http://www.hardcodet.net/taskbar"
+
         mc:Ignorable="d"
         Title="Tsunami" Icon="Resources/logo_tsunami_big.ico" BorderThickness="1" ResizeMode="CanResizeWithGrip"
         MinHeight="600" MinWidth="800"
@@ -21,7 +22,7 @@
         
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         
-        DataContext="{DynamicResource TsunamiVM}"
+        DataContext="{StaticResource TsunamiVM}"
 
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
@@ -29,22 +30,20 @@
         Left="{Binding WindowLeft, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}">
     <Window.Resources>
-        <vm:TsunamiViewModel x:Key="TsunamiVM" />
-        <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
+        <streaming:PlayerViewModel x:Key="PlayerDataContext" />
     </Window.Resources>
-    <Grid>
+    <Grid IsEnabled="{Binding IsTsunamiEnabled}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <!-- body -->
-            <RowDefinition Height="30" />
-            <!-- status bar -->
+            <RowDefinition Height="*" /> <!-- body -->
+            <RowDefinition Height="30" /> <!-- status bar -->
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" />
-            <!-- body left, menu -->
-            <ColumnDefinition Width="*" />
-            <!-- body right, content -->
+            <ColumnDefinition Width="100" /> <!-- body left, menu -->
+            <ColumnDefinition Width="*" /> <!-- body right, content -->
         </Grid.ColumnDefinitions>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
+        </Grid.Background>
 
         <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
             <ListBox.Items>
@@ -77,9 +76,9 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Vertical">
-
+                
                 <ContentControl Name="mainContent" Margin="16" />
-
+                
             </StackPanel>
 
             <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
@@ -159,6 +158,8 @@
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Connections: "></TextBlock>
+                    <TextBlock Text="{Binding SessionStatistic.NumConnections}" Margin="0,0,20,0"></TextBlock>
                     <materialDesign:PackIcon Kind="Download" />
                     <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>
                     <TextBlock Text="("></TextBlock>
@@ -174,6 +175,13 @@
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
+
+        <ni:TaskbarIcon
+            x:Name="tsunamiNotifyIcon"
+            ToolTipText="Tsunami"
+            IconSource="Resources/logo_tsunami_big.ico">
+        </ni:TaskbarIcon>
+
     </Grid>
-    
+
 </Window>
