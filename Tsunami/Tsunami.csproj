@@ -175,7 +175,6 @@
     <Compile Include="Settings\Logger.cs" />
     <Compile Include="Settings\User.cs" />
     <Compile Include="Classes\Utils.cs" />
-    <Compile Include="ViewModel\LoadingViewModel.cs" />
     <Compile Include="ViewModel\TsunamiViewModel.cs" />
     <Compile Include="Pages\Player.xaml.cs">
       <DependentUpon>Player.xaml</DependentUpon>
