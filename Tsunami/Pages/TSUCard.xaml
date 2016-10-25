@@ -15,6 +15,37 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+    <UserControl.Triggers> 
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard Name="FormFade">
+                    <DoubleAnimation  Name="FormFadeAnimation"
+                                  Storyboard.TargetName="userControl"
+                                  Storyboard.TargetProperty="(Window.Opacity)"
+                                  From="0.0"
+                                  To="1.0"
+                                  Duration="0:0:0.5"
+                                  AutoReverse="False"
+                                  RepeatBehavior="1x" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Window.Unloaded">
+            <BeginStoryboard>
+                <Storyboard Name="FormFadeOut"
+                        Completed="FormFadeOut_Completed">
+                    <DoubleAnimation  Name="FormFadeOutAnimation"
+                                  Storyboard.TargetName="userControl"
+                                  Storyboard.TargetProperty="(Window.Opacity)"
+                                  From="1.0"
+                                  To="0.0"
+                                  Duration="0:0:0.5"
+                                  AutoReverse="False"
+                                  RepeatBehavior="1x" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
     <Grid>
         <Border CornerRadius="15" Background="#333333">
             <StackPanel Orientation="Vertical" Margin="1">

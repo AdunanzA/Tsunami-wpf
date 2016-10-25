@@ -23,5 +23,24 @@ namespace Tsunami.Pages
         {
             InitializeComponent();
         }
+
+        private bool closeCompleted = false;
+
+
+        private void FormFadeOut_Completed(object sender, EventArgs e)
+        {
+            closeCompleted = true;
+            this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            if (!closeCompleted)
+            {
+                FormFadeOut.Begin();
+                e.Cancel = true;
+            }
+        }
     }
 }

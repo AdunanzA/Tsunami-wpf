@@ -139,6 +139,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\Switcher.cs" />
+    <Compile Include="Classes\VisibilityAnimation.cs" />
     <Compile Include="EventsArgs\OnSessionStatisticsEventArgs.cs" />
     <Compile Include="EventsArgs\OnTorrentAddedEventArgs.cs" />
     <Compile Include="EventsArgs\OnTorrentRemovedEventArgs.cs" />

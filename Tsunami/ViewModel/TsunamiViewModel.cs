@@ -23,9 +23,9 @@ namespace Tsunami.ViewModel
         private Logger log = LogManager.GetLogger("VM-Tsunami");
 
         //save_resume_variables
-        //private int outstanding_resume_data = 0;
-        //private AutoResetEvent no_more_data = new AutoResetEvent(false);
-        //private bool no_more_resume = false;
+        private int outstanding_resume_data = 0;
+        private AutoResetEvent no_more_data = new AutoResetEvent(false);
+        private bool no_more_resume = false;
         private DateTime _lastSaveResumeExecution = DateTime.Now;
 
         private System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
@@ -130,9 +130,6 @@ namespace Tsunami.ViewModel
             dhts.aggressive_lookups = true;
             _torrentSession.set_dht_settings(dhts);
 
-            _torrentSession.start_natpmp();
-            _torrentSession.start_upnp();
-            _torrentSession.start_dht();
 
             var alertMask = Core.AlertMask.error_notification
                             | Core.AlertMask.peer_notification
@@ -156,6 +153,9 @@ namespace Tsunami.ViewModel
 
             LoadFastResumeData();
 
+            _torrentSession.start_natpmp();
+            _torrentSession.start_upnp();
+            _torrentSession.start_dht();
             _torrentSession.resume();
 
             log.Debug("created");
@@ -163,13 +163,13 @@ namespace Tsunami.ViewModel
 
         private void dispatcherTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (!IsTsunamiEnabled) { return; }
+            //if (!IsTsunamiEnabled) { return; }
 
             _torrentSession.post_torrent_updates();
             _torrentSession.post_dht_stats();
 
             TimeSpan difference = DateTime.Now - _lastSaveResumeExecution;
-            if ( difference.TotalSeconds >= 10 )
+            if ( difference.TotalSeconds >= 2 && IsTsunamiEnabled)
             {
                 int totConnex = 0;
                 _lastSaveResumeExecution = DateTime.Now;
@@ -250,16 +250,16 @@ namespace Tsunami.ViewModel
                     bw.Close();
                 }
             }
-            //Interlocked.Decrement(ref outstanding_resume_data);
-            //if (outstanding_resume_data == 0 && no_more_resume)
-            //    no_more_data.Set();
+            Interlocked.Decrement(ref outstanding_resume_data);
+            if (outstanding_resume_data == 0 && no_more_resume)
+                no_more_data.Set();
         }
 
         private void SaveResumeDataFailedAlert(Core.save_resume_data_failed_alert a)
         {
-            //Interlocked.Decrement(ref outstanding_resume_data);
-            //if (outstanding_resume_data == 0 && no_more_resume)
-            //    no_more_data.Set();
+            Interlocked.Decrement(ref outstanding_resume_data);
+            if (outstanding_resume_data == 0 && no_more_resume)
+                no_more_data.Set();
         }
 
         public async void LoadFastResumeData()
@@ -390,6 +390,14 @@ namespace Tsunami.ViewModel
                     }
                 }
             }
+            if (File.Exists("./Fastresume/" + hash + ".fastresume"))
+            {
+                File.Delete("./Fastresume/" + hash + ".fastresume");
+            }
+            if (File.Exists("./Fastresume/" + hash + ".torrent"))
+            {
+                File.Delete("./Fastresume/" + hash + ".torrent");
+            }
         }
 
         private void TorrentAddedAlert(Core.torrent_added_alert a)
@@ -496,6 +504,7 @@ namespace Tsunami.ViewModel
             _dispatcherTimer.Enabled = false;
             //stopWeb();
 
+            outstanding_resume_data = 0;
             foreach (Models.TorrentItem item in TorrentList)
             {
                 using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
@@ -504,10 +513,16 @@ namespace Tsunami.ViewModel
                 {
                     if (ts.has_metadata && ts.need_save_resume)
                     {
+                        ++outstanding_resume_data;
                         th.save_resume_data(1 | 2 | 4);
                     }
                 }
             }
+            no_more_resume = true;
+            //if (outstanding_resume_data != 0)
+            if (outstanding_resume_data > 0)
+                no_more_data.WaitOne();
+
             TerminateSaveResume();
         }
 

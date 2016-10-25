@@ -38,12 +38,22 @@ namespace Tsunami.Pages
 
         private void btnCancel_Click(object sender, MouseButtonEventArgs e)
         {
+            FormFadeOut.Begin();
             //Button os = (Button)e.OriginalSource;
-            MaterialDesignThemes.Wpf.PackIcon os = (MaterialDesignThemes.Wpf.PackIcon)e.Source;
-            Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
-            TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
-            res.RemoveTorrent(ti.Hash);
+            //MaterialDesignThemes.Wpf.PackIcon os = (MaterialDesignThemes.Wpf.PackIcon)e.Source;
+            //Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
+            //TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
+            //res.RemoveTorrent(ti.Hash);
+        }
 
+        private void FormFadeOut_Completed(object sender, EventArgs e)
+        {
+            if (DataContext is Models.TorrentItem)
+            {
+                Models.TorrentItem ti = (Models.TorrentItem)DataContext;
+                TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
+                res.RemoveTorrent(ti.Hash);
+            }
         }
     }
 }

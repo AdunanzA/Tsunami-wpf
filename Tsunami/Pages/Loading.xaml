@@ -3,11 +3,48 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
         xmlns:local="clr-namespace:Tsunami.Pages" Background="Transparent" AllowsTransparency="True"
         mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None"
-        Title="Loading" Height="300" Width="300">
-    <materialDesign:Card VerticalAlignment="Center" HorizontalAlignment="Center" UniformCornerRadius="5" Width="Auto">
+        Closing="Window_Closing" x:Name="tsunamiLoadingPage"
+        Title="Loading" Height="320" Width="320">
+    <Window.Topmost>
+        true
+    </Window.Topmost>
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard Name="FormFade">
+                    <DoubleAnimation  Name="FormFadeAnimation"
+                                  Storyboard.TargetName="tsunamiLoadingPage"
+                                  Storyboard.TargetProperty="(Window.Opacity)"
+                                  From="0.0"
+                                  To="1.0"
+                                  Duration="0:0:0.5"
+                                  AutoReverse="False"
+                                  RepeatBehavior="1x" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="Window.Unloaded">
+            <BeginStoryboard>
+                <Storyboard Name="FormFadeOut"
+                        Completed="FormFadeOut_Completed">
+                    <DoubleAnimation  Name="FormFadeOutAnimation"
+                                  Storyboard.TargetName="tsunamiLoadingPage"
+                                  Storyboard.TargetProperty="(Window.Opacity)"
+                                  From="1.0"
+                                  To="0.0"
+                                  Duration="0:0:0.5"
+                                  AutoReverse="False"
+                                  RepeatBehavior="1x" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    <materialDesign:Card VerticalAlignment="Center" HorizontalAlignment="Center" UniformCornerRadius="5"
+                         Width="300" Height="300"
+                         materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -22,7 +59,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
-                                x:Name="progressLoading" Grid.Column="0"
+                                x:Name="progressLoading" Grid.Column="0" Value="0"
                                 VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Label Name="txtLoading" Grid.Column="1" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
                             Margin="10,0,20,0" FontWeight="Bold" Height="30" />

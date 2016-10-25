@@ -20,10 +20,10 @@
     </UserControl.Resources>-->
 
     <Grid>
-    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical">
             <!--<DataGrid Name="dataGridx" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch"
-                          VerticalContentAlignment="Center" Width="Auto" Margin="10"
-                          ItemsSource="{Binding TorrentList}">
+                            VerticalContentAlignment="Center" Width="Auto" Margin="10"
+                            ItemsSource="{Binding TorrentList}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" IsReadOnly="True" Visibility="Hidden" Binding="{Binding QueuePosition}" />
                     <DataGridTemplateColumn CanUserResize="False">
