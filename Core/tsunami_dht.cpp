@@ -56,3 +56,25 @@ void Dht::bootstrap(const std::string & host, const std::string & service)
 {
 	dht_->node.bootstrap(host.c_str(), service.c_str());
 }
+
+void Dht::put(const std::string & key, const std::vector<char> & data)
+{
+	dht::InfoHash id{ key };
+	dht_->node.put(id, dht::Value{
+		dht::ValueType::USER_DATA.id,
+		std::vector<uint8_t> {data.begin(), data.end()}
+	});
+}
+
+std::vector<std::vector<uint8_t>> Dht::get(const std::string & key)
+{
+	std::vector<std::vector<uint8_t>> data_;
+	dht::InfoHash id{ key };
+	dht_->node.get(id, [& data_](std::shared_ptr<Value> value) {
+		
+		data_.push_back((*value).data);
+		return true;
+	}, [](bool ok) {
+	});
+	return data_;
+}
