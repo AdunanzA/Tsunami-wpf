@@ -9,7 +9,7 @@
     <system:String x:Key="DownList">Lista Download</system:String>
     <system:String x:Key="Add">Aggiungi Torrent</system:String>
     <system:String x:Key="Settings">Impostazioni</system:String>
-    <system:String x:Key="ChoseInterface">Scegli l'Interfaccia di Tsunami</system:String>
+    <system:String x:Key="DarkTheme">Usa tema scuro</system:String>
     <system:String x:Key="Simple">Semplice</system:String>
     <system:String x:Key="Advanced">Avanzata</system:String>
     <system:String x:Key="Apply">Applica</system:String>
@@ -27,9 +27,16 @@
     <system:String x:Key="Name">Nome</system:String>
     <system:String x:Key="Status">Stato</system:String>
     <system:String x:Key="Downloaded">Scaricati</system:String>
+    <system:String x:Key="Total">Totale</system:String>
     <system:String x:Key="Size">Dimensione</system:String>
     <system:String x:Key="Progress">Progresso</system:String>
     <system:String x:Key="NotFound">non trovato!</system:String>
-    <system:String x:Key="NotAvaiable">non disponibile!</system:String>
-
+    <system:String x:Key="NotAvailable">non disponibile!</system:String>
+    <system:String x:Key="Connections">Connessioni</system:String>
+    <system:String x:Key="Remaining">Restanti</system:String>
+    <system:String x:Key="Search">Cerca</system:String>
+    <system:String x:Key="SearchText">Inserisci testo per la ricerca...</system:String>
+    <system:String x:Key="Loading">Caricamento</system:String>
+    <system:String x:Key="Theme">Tema</system:String>
+    <system:String x:Key="Accent">Tonalità</system:String>
 </ResourceDictionary>

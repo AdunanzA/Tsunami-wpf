@@ -32,10 +32,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignDisplay3TextBlock}" Margin="10">Settings</TextBlock>
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource MaterialDesignDisplay3TextBlock}" Text="{DynamicResource Settings}" Margin="10"/>
 
         <materialDesign:PackIcon Grid.Row="1" Grid.Column="0" Kind="Folder" Margin="10"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10">Downalod path</TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="1" Margin="10" Text="{DynamicResource DownDir}"/>
         <TextBox Grid.Row="1" Grid.Column="2" Name="txtPathDownload" Margin="10" Text="{Binding Preference.PathDownload, Mode=TwoWay}" />
         <Button Grid.Row="1" Grid.Column="3" ToolTip="select folder" Margin="10" Cursor="Hand" Width="18" Height="18" Click="selectFolder_Click" 
                 Style="{StaticResource MaterialDesignFloatingActionMiniDarkButton}">
@@ -43,13 +43,13 @@
         </Button>
 
         <materialDesign:PackIcon Grid.Row="2" Grid.Column="0" Kind="Web" Margin="10"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10">Start Web with Tsunami</TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="1" Margin="10" Text="{DynamicResource StartWeb}"/>
         <ToggleButton Grid.Row="2" Grid.Column="2" Margin="10" IsChecked="{Binding Preference.StartWebOnAppLoad, Mode=TwoWay}" HorizontalAlignment="Left"></ToggleButton>
 
-        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10">Web Address</TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="1" Margin="10" Text="{DynamicResource WebIntAddress}"/>
         <TextBox Grid.Row="3" Grid.Column="2" Margin="10" Text="{Binding Preference.WebAddress, Mode=TwoWay}"></TextBox>
 
-        <TextBlock Grid.Row="4" Grid.Column="1" Margin="10">Web Port</TextBlock>
+        <TextBlock Grid.Row="4" Grid.Column="1" Margin="10" Text="{DynamicResource WebIntPort}"/>
         <TextBox Grid.Row="4" Grid.Column="2" Margin="10" Text="{Binding Preference.WebPort, Mode=TwoWay}"/>
 
             <!--<Label Margin="0,5,0,0" Content="{DynamicResource WebAuth}" Visibility="{Binding ElementName=toggleAdvanced, Path=IsChecked, Converter={StaticResource boolConverter}}"/>
@@ -69,11 +69,11 @@
 
 
         <materialDesign:PackIcon Grid.Row="5" Grid.Column="0" Kind="ThemeLightDark" Margin="10"/>
-        <TextBlock Grid.Row="5" Grid.Column="1" Margin="10">Use Dark Theme</TextBlock>
+        <TextBlock Grid.Row="5" Grid.Column="1" Margin="10" Text="{DynamicResource DarkTheme}"/>
         <ToggleButton Grid.Row="5" Grid.Column="2" Margin="10" IsChecked="{Binding Preference.IsDarkTheme, Mode=TwoWay}" HorizontalAlignment="Left"></ToggleButton>
 
         <materialDesign:PackIcon Grid.Row="6" Grid.Column="0" Kind="FormatColorFill" Margin="10"/>
-        <TextBlock Grid.Row="6" Grid.Column="1" Margin="10">Theme</TextBlock>
+        <TextBlock Grid.Row="6" Grid.Column="1" Margin="10" Text="{DynamicResource Theme}"/>
         <ComboBox Grid.Row="6" Grid.Column="2" x:Name="cmbColor" Margin="10" SelectionChanged="cmbColor_SelectionChanged" ItemsSource="{Binding Preference.ColorItems}"
                   Loaded="cmbColor_Loaded">
             <ComboBox.ItemTemplate>
@@ -86,7 +86,7 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
-        <TextBlock Grid.Row="7" Grid.Column="1" Margin="10">Accent</TextBlock>
+        <TextBlock Grid.Row="7" Grid.Column="1" Margin="10" Text="{DynamicResource Accent}"/> 
         <ComboBox Grid.Row="7" Grid.Column="2" x:Name="cmbAccent" Margin="10" SelectionChanged="cmbAccent_SelectionChanged" ItemsSource="{Binding Preference.AccentItems}"
                   Loaded="cmbAccent_Loaded">
             <ComboBox.ItemTemplate>
@@ -103,10 +103,10 @@
         <UniformGrid Columns="2" Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2">
             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                 Margin="10"
-                                Content="ACCEPT" Click="confApply_Click"/>
+                                Content="{DynamicResource Apply}" Click="confApply_Click"/>
             <Button Style="{DynamicResource MaterialDesignFlatButton}"
                                 Margin="10"
-                                Content="CANCEL" Click="confCancel_Click"/>
+                                Content="{DynamicResource Cancel}" Click="confCancel_Click"/>
         </UniformGrid>
 
     </Grid>

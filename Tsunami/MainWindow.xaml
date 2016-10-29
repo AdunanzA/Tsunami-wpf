@@ -142,11 +142,11 @@
                         </lvc:Axis>
                     </lvc:CartesianChart.AxisY>
                 </lvc:CartesianChart>
-                <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="5,0,5,5" 
-                          Height="130" Width="130" 
+                <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="0,0,0,-40"
+                          Height="Auto" Width="Auto" 
                           Value="{Binding SessionStatistic.AngularGaugeValue}" 
                           FromValue="0" ToValue="100" 
-                          LabelsStep="25" TicksStep="10" Wedge="300"
+                          LabelsStep="25" TicksStep="10" Wedge="200"
                           TicksForeground="White" Foreground="White"                                   
                           FontWeight="Bold" FontSize="14"
                           SectionsInnerRadius=".8">
@@ -157,7 +157,7 @@
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Connections: "></TextBlock>
+                    <TextBlock Text="{DynamicResource Connections}" Margin="0,0,5,0"></TextBlock>
                     <TextBlock Text="{Binding SessionStatistic.NumConnections}" Margin="0,0,20,0"></TextBlock>
                     <materialDesign:PackIcon Kind="Download" />
                     <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>

@@ -8,9 +8,9 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <StackPanel Orientation="Vertical">
-            <Button Command="{Binding AddClick}" Width="200" Margin="0, 20, 0, 0">ADD TORRENT FROM FILE</Button>
-            <TextBox Width="200" Margin="0, 20, 0, 0" IsEnabled="False" BorderBrush="DarkGray">Enter text to search...</TextBox>
-            <Button Width="200" IsEnabled="False">SEARCH</Button>
+            <Button Command="{Binding AddClick}" Width="200" Content="{DynamicResource Add}" Margin="0, 20, 0, 0"/>
+            <TextBox Width="200" Margin="0, 20, 0, 0" IsEnabled="False" Text="{DynamicResource SearchText}"  BorderBrush="DarkGray"/>
+            <Button Width="200" IsEnabled="False" Content="{DynamicResource Search}"/>
         </StackPanel>
     </Grid>
 </UserControl>

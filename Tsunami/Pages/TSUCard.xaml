@@ -85,15 +85,15 @@
                                              HorizontalAlignment="Center" VerticalAlignment="Bottom" 
                                              Cursor="Hand"/>
                     <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Totale" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Total}" Margin="0,1,4,0"></TextBlock>
                         <TextBlock FontSize="9" Foreground="#3FB24A" Text="{Binding TotalWanted_ByteSize}"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Scaricati" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Downloaded}" Margin="0,1,4,0"></TextBlock>
                         <TextBlock FontSize="9" Foreground="#E0C164" Text="{Binding TotalDone_ByteSize}"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Restanti" Margin="0,1,4,0"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Remaining}" Margin="0,1,4,0"></TextBlock>
                         <TextBlock FontSize="9" Foreground="#216CA6" Text="{Binding Remaining_ByteSize}"></TextBlock>
                     </StackPanel>
                 </Grid>
