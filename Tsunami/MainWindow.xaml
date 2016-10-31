@@ -30,8 +30,16 @@
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}">
     <Window.Resources>
         <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
     </Window.Resources>
-    <Grid IsEnabled="{Binding IsTsunamiEnabled}">
+    <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" /> <!-- body -->
             <RowDefinition Height="30" /> <!-- status bar -->
@@ -74,11 +82,13 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Vertical">
+            <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                <StackPanel Name="stackContent" Orientation="Vertical">
+
+                    <ContentControl Name="mainContent" Margin="16" />
                 
-                <ContentControl Name="mainContent" Margin="16" />
-                
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
 
             <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
             <Grid Grid.Row="1">
@@ -158,7 +168,7 @@
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{DynamicResource Connections}" Margin="0,0,5,0"></TextBlock>
-                    <TextBlock Text="{Binding SessionStatistic.NumConnections}" Margin="0,0,20,0"></TextBlock>
+                    <TextBlock Text="{Binding SessionStatistic.NumPeers}" Margin="0,0,20,0"></TextBlock>
                     <materialDesign:PackIcon Kind="Download" />
                     <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>
                     <TextBlock Text="("></TextBlock>

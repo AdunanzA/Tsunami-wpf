@@ -6,7 +6,7 @@ namespace Tsunami
 	{
 		class Dht;
 
-		ref class AdunanzaDht
+		public ref class AdunanzaDht
 		{
 		public:
 			AdunanzaDht();

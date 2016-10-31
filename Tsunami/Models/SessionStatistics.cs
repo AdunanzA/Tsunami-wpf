@@ -85,7 +85,7 @@ namespace Tsunami
         public int PeerlistSize { get { return _peerlistSize; } set { if (_peerlistSize != value) { _peerlistSize = value; CallPropertyChanged("PeerlistSize"); } } }
         public long TotalDhtDownload { get { return _totalDhtDownload; } set { if (_totalDhtDownload != value) { _totalDhtDownload = value; CallPropertyChanged("TotalDhtDownload"); } } }
         public long TotalDhtUpload { get { return _totalDhtUpload; } set { if (_totalDhtUpload != value) { _totalDhtUpload = value; CallPropertyChanged("TotalDhtUpload"); } } }
-        public long TotalDownload { get { return _totalDownload; } set { if (_totalDownload != value) { _totalDownload = value; CallPropertyChanged("TotalDownload"); ; CallPropertyChanged("TotalDownload_ByteSize"); } } }
+        public long TotalDownload { get { return _totalDownload; } set { if (_totalDownload != value) { _totalDownload = value; CallPropertyChanged("TotalDownload"); CallPropertyChanged("TotalDownload_ByteSize"); } } }
         public long TotalFailedBytes { get { return _totalFailedBytes; } set { if (_totalFailedBytes != value) { _totalFailedBytes = value; CallPropertyChanged("TotalFailedBytes"); } } }
         public long TotalIpOverheadDownload { get { return _totalIpOverheadDownload; } set { if (_totalIpOverheadDownload != value) { _totalIpOverheadDownload = value; CallPropertyChanged("TotalIpOverheadDownload"); } } }
         public long TotalIpOverheadUpload { get { return _totalIpOverheadUpload; } set { if (_totalIpOverheadUpload != value) { _totalIpOverheadUpload = value; CallPropertyChanged("TotalIpOverheadUpload"); } } }
@@ -94,7 +94,7 @@ namespace Tsunami
         public long TotalRedundantBytes { get { return _totalRedundantBytes; } set { if (_totalRedundantBytes != value) { _totalRedundantBytes = value; CallPropertyChanged("TotalRedundantBytes"); } } }
         public long TotalTrackerDownload { get { return _totalTrackerDownload; } set { if (_totalTrackerDownload != value) { _totalTrackerDownload = value; CallPropertyChanged("TotalTrackerDownload"); } } }
         public long TotalTrackerUpload { get { return _totalTrackerUpload; } set { if (_totalTrackerUpload != value) { _totalTrackerUpload = value; CallPropertyChanged("TotalTrackerUpload"); } } }
-        public long TotalUpload { get { return _totalUpload; } set { if (_totalUpload != value) { _totalUpload = value; CallPropertyChanged("TotalUpload"); ; CallPropertyChanged("TotalUpload_ByteSize"); } } }
+        public long TotalUpload { get { return _totalUpload; } set { if (_totalUpload != value) { _totalUpload = value; CallPropertyChanged("TotalUpload"); CallPropertyChanged("TotalUpload_ByteSize"); } } }
         public int TrackerDownloadRate { get { return _trackerDownloadRate; } set { if (_trackerDownloadRate != value) { _trackerDownloadRate = value; CallPropertyChanged("TrackerDownloadRate"); } } }
         public int TrackerUploadRate { get { return _trackerUploadRate; } set { if (_trackerUploadRate != value) { _trackerUploadRate = value; CallPropertyChanged("TrackerUploadRate"); } } }
         public int UnchokeCounter { get { return _unchokeCounter; } set { if (_unchokeCounter != value) { _unchokeCounter = value; CallPropertyChanged("UnchokeCounter"); } } }
@@ -104,13 +104,15 @@ namespace Tsunami
         public int MaxDownloadRate { get { return _maxDownloadRate; } set { if (_maxDownloadRate != value && value > _maxDownloadRate) { _maxDownloadRate = value; CallPropertyChanged("MaxDownloadRate"); } } }
         public int NumConnections { get { return _numConnections; } set { if (_numConnections != value) { _numConnections = value; CallPropertyChanged("NumConnections"); } } }
 
-
+        /* Floating point numbers should not be tested for equality
+         * https://www.misra.org.uk/forum/viewtopic.php?t=294 */
         public double AngularGaugeValue
         {
             get { return _angularGaugeValue; }
             set
             {
-                if (_angularGaugeValue!= value)
+                double tolerance = 0.001;
+                if ((value >= (_angularGaugeValue - tolerance) && (value <= (_angularGaugeValue + tolerance))))
                 { 
                     _angularGaugeValue = value;
                     CallPropertyChanged("AngularGaugeValue");
@@ -133,7 +135,7 @@ namespace Tsunami
             get
             {
                 //return Utils.StrFormatByteSize(_totalUpload);
-                return _totalUpload.Bytes().ToString("#.##");
+                return _totalUpload.Bytes().ToString("0.00");
             }
         }
 
@@ -151,7 +153,7 @@ namespace Tsunami
             get
             {
                 //return Utils.StrFormatByteSize(_uploadRate) + @"/s";
-                return _uploadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("#.##");
+                return _uploadRate.Bytes().Per(TimeSpan.FromSeconds(1)).Humanize("0.00");
             }
         }
         #endregion

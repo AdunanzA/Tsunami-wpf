@@ -80,13 +80,12 @@ namespace Tsunami.Classes
 
         public static string GetWinVlcPath()
         {
-            RegistryKey localMachine = Registry.LocalMachine;
             return (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\VideoLAN\VLC", "InstallDir", null);
         }
 
         public static string GiveMeStateFromEnum(Enum stateFromCore)
         {
-            string res = "";
+            string res;
             switch (stateFromCore.ToString())
             {
                 case "queued_for_checking":
@@ -122,14 +121,11 @@ namespace Tsunami.Classes
 
         public static string GiveMeStorageModeFromEnum(Enum smFromCore)
         {
-            string sRes = "";
+            string sRes;
             switch (smFromCore.ToString())
             {
                 case "storage_mode_allocate":
                     sRes = "Allocate";
-                    break;
-                case "storage_mode_sparse":
-                    sRes = "Sparse";
                     break;
                 default:
                     sRes = "Sparse";
@@ -140,16 +136,11 @@ namespace Tsunami.Classes
 
         public static string RetrieveDirectory()
         {
-            string ret = "";
+            string ret;
             System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
             fbd.ShowNewFolderButton = true;
-            System.Windows.Forms.DialogResult result = fbd.ShowDialog();
+            fbd.ShowDialog();
             ret = fbd.SelectedPath;
-            //if (!string.IsNullOrWhiteSpace(fbd.SelectedPath))
-            //{
-            //    Preferences res = (Preferences)this.FindResource("Preferences");
-            //    res.PathDownload = fbd.SelectedPath;
-            //}
             return ret;
         }
 

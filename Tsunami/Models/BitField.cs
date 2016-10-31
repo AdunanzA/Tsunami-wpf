@@ -25,25 +25,5 @@ namespace Tsunami.Models
             Size = bf.size;
         }
 
-        //public void ClearBit(int index)
-        //{
-        //    _bf.clear_bit(index);
-        //}
-
-        //public bool GetBit(int index)
-        //{
-        //    return _bf.get_bit(index);
-        //}
-
-        //public bool OpSubscript(int index)
-        //{
-        //    return _bf.op_Subscript(index);
-        //}
-
-        //public void SetBit(int index)
-        //{
-        //    _bf.set_bit(index);
-        //}
-
     }
 }

@@ -25,6 +25,7 @@ namespace Tsunami.Models
         private int _DownloadRate;
         private int _UploadRate;
         private int _NumConnections;
+        private bool _isSelected;
 
         public int QueuePosition { get { return _QueuePosition; } set { if (_QueuePosition != value) { _QueuePosition = value; CallPropertyChanged("QueuePosition"); } } }
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; CallPropertyChanged("Name"); } } }
@@ -32,14 +33,29 @@ namespace Tsunami.Models
         public long TotalWanted { get { return _TotalWanted; } set { if (_TotalWanted != value) { _TotalWanted = value; CallPropertyChanged("TotalWanted_ByteSize"); } } }
         public long TotalDone { get { return _TotalDone; } set { if (_TotalDone != value) { _TotalDone = value; CallPropertyChanged("TotalDone_ByteSize"); CallPropertyChanged("Remaining"); CallPropertyChanged("Remaining_ByteSize"); } } }
         public string State { get { return _State; } set { if (_State != value) { _State = value; CallPropertyChanged("State"); CallPropertyChanged("IsPauseButtonVisible"); CallPropertyChanged("IsResumeButtonVisible"); } } }
-        public float Progress { get { return _Progress; } set { if (_Progress != value) { _Progress = value; CallPropertyChanged("Progress_String"); CallPropertyChanged("Progress_Number"); CallPropertyChanged("Progress_Color"); } } }
+
+        /* Floating point numbers should not be tested for equality
+         * https://www.misra.org.uk/forum/viewtopic.php?t=294 */
+        public float Progress {
+            get { return _Progress; }
+            set {
+                double tolerance = 0.001;
+                if ((value >= (_Progress - tolerance) && (value <= (_Progress + tolerance))))
+                {
+                    _Progress = value;
+                    CallPropertyChanged("Progress_String");
+                    CallPropertyChanged("Progress_Number");
+                    CallPropertyChanged("Progress_Color");
+                }
+            }
+        }
         public int Priority { get { return _Priority; } set { if (_Priority != value) { _Priority = value; CallPropertyChanged("Priority_String"); } } }
         public int DownloadRate { get { return _DownloadRate; } set { if (_DownloadRate != value) { _DownloadRate = value; CallPropertyChanged("DownloadRate_ByteSize"); } } }
         public int UploadRate { get { return _UploadRate; } set { if (_UploadRate != value) { _UploadRate = value; CallPropertyChanged("UploadRate_ByteSize"); } } }
         public int NumConnections { get { return _NumConnections; } set { if (_NumConnections != value) { _NumConnections = value; CallPropertyChanged("NumConnections"); } } }
         public ObservableCollection<Models.FileEntry> FileList { get; set; }
 
-        public bool IsSelected { get { return false; } set { } }
+        public bool IsSelected { get { return _isSelected; } set { if (_isSelected != value) { _isSelected = value; CallPropertyChanged("IsSelected"); } } }
 
         public System.Windows.Visibility IsPauseButtonVisible {
             get

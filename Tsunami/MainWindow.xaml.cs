@@ -22,10 +22,10 @@ namespace Tsunami
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static UserControl _addPage;
-        public static UserControl _listPage;
-        public static UserControl _playerPage;
-        public static UserControl _settingsPage;
+        public static readonly UserControl _addPage = new Pages.Add();
+        public static readonly UserControl _listPage = new Pages.List();
+        public static readonly UserControl _playerPage = new Pages.Player();
+        public static readonly UserControl _settingsPage = new Pages.SettingsPage();
 
         ViewModel.TsunamiViewModel tvm;
 
@@ -44,12 +44,7 @@ namespace Tsunami
 
             Closing += Window_Closing;
 
-            _addPage = new Pages.Add();
-            _listPage = new Pages.List();
-            _playerPage = new Pages.Player();
-            _settingsPage = new Pages.SettingsPage();
-
-            Classes.Switcher.pageSwitcher = this;
+            Classes.Switcher.PageSwitcher = this;
             Classes.Switcher.Switch(_addPage);
 
             if (!tvm.IsTsunamiEnabled)
@@ -66,13 +61,9 @@ namespace Tsunami
             ResourceDictionary dict = new ResourceDictionary();
             switch (System.Threading.Thread.CurrentThread.CurrentCulture.ToString())
             {
-                case "en-US":
-                    dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
-                    break;
                 case "it-IT":
                     dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/italian.xaml", UriKind.RelativeOrAbsolute);
                     break;
-
                 default:
                     dict.Source = new Uri(Environment.CurrentDirectory + "/Resources/english.xaml", UriKind.RelativeOrAbsolute);
                     break;
@@ -96,10 +87,10 @@ namespace Tsunami
             // terminate streamingmanager
             //Streaming.StreamingManager.Terminate?.Invoke(this, null);
 
-            _addPage = null;
-            _listPage = null;
-            _playerPage = null;
-            _settingsPage = null;
+            //_addPage = null;
+            //_listPage = null;
+            //_playerPage = null;
+            //_settingsPage = null;
 
             //ViewModel.TsunamiViewModel tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
             tvm.Terminate();
@@ -136,6 +127,14 @@ namespace Tsunami
         private void SettingsPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             mainContent.Content = _settingsPage;
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // vertical scroll with mouse wheel
+            ScrollViewer scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
         }
     }
 }
