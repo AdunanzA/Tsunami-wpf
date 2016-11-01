@@ -12,18 +12,25 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Tsunami.ViewModel;
 
 namespace Tsunami.Pages
 {
     /// <summary>
-    /// Interaction logic for List.xaml
+    /// Interaction logic for FileList.xaml
     /// </summary>
-    public partial class List : UserControl
+    public partial class FileList : UserControl
     {
-        public List()
+        public FileList()
         {
             InitializeComponent();
+        }
+
+        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // vertical scroll with mouse wheel
+            ScrollViewer scv = (ScrollViewer)sender;
+            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+            e.Handled = true;
         }
     }
 }

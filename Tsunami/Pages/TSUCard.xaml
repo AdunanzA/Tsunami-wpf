@@ -15,7 +15,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <UserControl.Triggers> 
+    <UserControl.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
                 <Storyboard Name="FormFade">
@@ -47,7 +47,29 @@
         </EventTrigger>
     </UserControl.Triggers>
     <Grid>
-        <Border CornerRadius="15" Background="#333333">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="11*"/>
+            <ColumnDefinition Width="68*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="26*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="89*"/>
+            <RowDefinition Height="14*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="15*"/>
+            <RowDefinition Height="22*"/>
+            <RowDefinition Height="40*"/>
+        </Grid.RowDefinitions>
+        <Border CornerRadius="15" Grid.RowSpan="6" Grid.ColumnSpan="5">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="#555555" Offset="0.0" />
+                    <GradientStop Color="#333333" Offset="0.1" />
+                    <GradientStop Color="#333333" Offset="1.0" />
+                </LinearGradientBrush>
+            </Border.Background>
             <StackPanel Orientation="Vertical" Margin="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -67,10 +89,10 @@
                             </Style>
                         </TextBlock.Style>
                     </TextBlock>
-                    <materialDesign:PackIcon Grid.Column="1" Kind="CloseCircle" Width="12" Height="12" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                                Foreground="Red" Margin="0,2,3,0" MouseLeftButtonUp="btnCancel_Click" Cursor="Hand"/>
+                    <Image Grid.Column="1" Source="/Resources/x.png" Width="12" Height="12" Cursor="Hand" Margin="0,0,2,0"
+                           MouseLeftButtonUp="btnCancel_Click" ToolTip="Remove torrent"></Image>
                 </Grid>
-                <Rectangle HorizontalAlignment="Stretch" Fill="#4D4D4D" Height="1" Margin="2,4,2,0"/>
+                <Rectangle HorizontalAlignment="Stretch" Fill="#525252" Height="1" Margin="2,4,2,0"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -81,51 +103,107 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <materialDesign:PackIcon Grid.Column="0" Grid.RowSpan="3" Kind="PresentationPlay" Width="30" Height="30" 
-                                             HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                                             Cursor="Hand"/>
-                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Total}" Margin="0,1,4,0"></TextBlock>
-                        <TextBlock FontSize="9" Foreground="#3FB24A" Text="{Binding TotalWanted_ByteSize}"></TextBlock>
+                    <Image Grid.Column="0" Grid.RowSpan="3" Source="/Resources/streaming_off.png" Width="30" Height="30"
+                           Cursor="Hand" ToolTip="Play video"></Image>
+                    <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Totale" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="10" Foreground="#3FB24A" Text="{Binding TotalWanted_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="Bold">
+                            <TextBlock.LayoutTransform>
+                                <ScaleTransform ScaleX="0.8"></ScaleTransform>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Downloaded}" Margin="0,1,4,0"></TextBlock>
-                        <TextBlock FontSize="9" Foreground="#E0C164" Text="{Binding TotalDone_ByteSize}"></TextBlock>
+                    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Scaricati" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="10" Foreground="#E0C164" Text="{Binding TotalDone_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="Bold">
+                            <TextBlock.LayoutTransform>
+                                <ScaleTransform ScaleX="0.8"></ScaleTransform>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
                     </StackPanel>
-                    <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="{DynamicResource Remaining}" Margin="0,1,4,0"></TextBlock>
-                        <TextBlock FontSize="9" Foreground="#216CA6" Text="{Binding Remaining_ByteSize}"></TextBlock>
+                    <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
+                        <TextBlock FontSize="8" Foreground="#888888" Text="Restanti" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="10" Foreground="#216CA6" Text="{Binding Remaining_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="ExtraBold">
+                            <TextBlock.LayoutTransform>
+                                <ScaleTransform ScaleX="0.8"></ScaleTransform>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
                     </StackPanel>
                 </Grid>
-                <!--<Label Width="Auto" Height="Auto">
-                    <StackPanel Orientation="Horizontal" Height="55">
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel Orientation="Horizontal">
-                                <Label Content="{Binding State}" FontStyle="Italic"></Label>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal" Width="100" HorizontalAlignment="Left">
-                                <Button Name="btnPause" Width="30" Height="30" Margin="0,0,0,10" Click="btnPause_Click">
-                                </Button>
-                                <Button Name="bntStream" Width="30" Height="30" Margin="20,0,0,10">
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
-                    </StackPanel>
-                </Label>-->
-                <Viewbox  Width="90" Height="90">
-                    <lvc:Gauge Uses360Mode="True" From="0" To="100" materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                           Value="{Binding Progress_Number, Mode=OneWay}" InnerRadius="17"
-                           TextElement.Foreground="{Binding Progress_Color}" 
-                           LabelFormatter="{Binding Formatter}"
-                           FromColor="{Binding ColorFrom}"
-                           ToColor="{Binding ColorTo}"
-                           HighFontSize="14" TextElement.FontStretch="Condensed">
-                    </lvc:Gauge>
-                </Viewbox>
-                <Viewbox Width="Auto" Height="20" Margin="0,-10,0,0" HorizontalAlignment="Center">
-                    <Label FontWeight="Bold" Content="{Binding Remaining}"></Label>
-                </Viewbox>
+                <Border Margin="0,-10,0,0">
+                    <Border.Background>
+                        <ImageBrush ImageSource="/Resources/bkg1.png"/>
+                    </Border.Background>
+                    <Viewbox  Width="90" Height="90">
+                        <Border>
+                            <Border.Background>
+                                <ImageBrush ImageSource="/Resources/progress_bar.png" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
+                            </Border.Background>
+                            <lvc:Gauge Uses360Mode="True" From="0" To="100" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                                       Value="{Binding Progress_Number, Mode=OneWay}" InnerRadius="16"
+                                       TextElement.Foreground="{Binding Progress_Color}" 
+                                       LabelFormatter="{Binding Formatter}" 
+                                       FromColor="{Binding ColorFrom}"
+                                       ToColor="{Binding ColorTo}" Opacity="0.8"
+                                       HighFontSize="14" TextElement.FontStretch="ExtraCondensed">
+                            </lvc:Gauge>
+                        </Border>
+                    </Viewbox>
+                </Border>
             </StackPanel>
+        </Border>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding UploadRate_Symbol}" HorizontalAlignment="Center" Foreground="#0686EB" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Top"/>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding UploadRate_Short}" Grid.ColumnSpan="2" HorizontalAlignment="Center" Foreground="#888888" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Top"></TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding DownloadRate_Symbol}" HorizontalAlignment="Center" Foreground="#0686EB" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"></TextBlock>
+        <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding DownloadRate_Short}" Grid.ColumnSpan="2" HorizontalAlignment="Center" Foreground="#E0C164" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"></TextBlock>
+        <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding RemainingTime}" Grid.RowSpan="2" Visibility="{Binding IsDownloadVisible}" VerticalAlignment="Bottom"
+            FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" ToolTip="{Binding RemainingVerbose}">
+        </TextBlock>
+        <Border Visibility="{Binding IsDownloadVisible}" Grid.Row="5" Grid.ColumnSpan="3" Margin="2,0,0,2" Width="62" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <Border.Background>
+                <ImageBrush ImageSource="/Resources/bkg2.png"/>
+            </Border.Background>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="14*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="9*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{Binding State_Image}" Margin="1,0,0,1" ToolTip="{Binding State}"></Image>
+                <Image Grid.Column="1" Source="/Resources/pause.png" Width="12" Height="12" Cursor="Hand" MouseLeftButtonUp="btnPause_Click" ToolTip="Pause download">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="0" Color="Yellow" Opacity="1" BlurRadius="10"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <Image Grid.Column="2" Source="/Resources/resume.png" Width="12" Height="11" Cursor="Hand" MouseLeftButtonUp="btnResume_Click" ToolTip="Resume download" >
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="0" Color="Yellow" Opacity="1" BlurRadius="10"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </Grid>
+        </Border>
+        <Border Visibility="{Binding IsFinishedVisible}" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3">
+            <Image Grid.Column="1" Source="/Resources/finished.png" Width="39" Height="33" Margin="-10, 0, 0, 0" ToolTip="Download finished! YAY!"></Image>
         </Border>
     </Grid>
 </UserControl>

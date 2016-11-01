@@ -87,6 +87,10 @@
       <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="HashLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HashLib.2.0.1\lib\net40\HashLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -153,6 +157,9 @@
     <Compile Include="Pages\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\FileList.xaml.cs">
+      <DependentUpon>FileList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\FullScreen.xaml.cs">
       <DependentUpon>FullScreen.xaml</DependentUpon>
     </Compile>
@@ -193,6 +200,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\Add.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FileList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -282,6 +293,35 @@
       <Project>{9504e5fa-6818-452a-a2e8-3b34567a6cd2}</Project>
       <Name>Tsunami.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\progress_bar.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bkg1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\streaming_off.png" />
+    <Resource Include="Resources\streaming_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bkg2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\state_download.png" />
+    <Resource Include="Resources\state_loading.png" />
+    <Resource Include="Resources\state_pause.png" />
+    <Resource Include="Resources\state_warning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\pause.png" />
+    <Resource Include="Resources\resume.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\finished.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

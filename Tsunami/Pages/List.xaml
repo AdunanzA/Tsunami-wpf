@@ -9,85 +9,8 @@
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
-
-    <!--<UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                --><!-- you only need bring this resource in if you want to specify the circular style statically --><!--
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ProgressBar.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>-->
-
     <Grid>
         <StackPanel Orientation="Vertical">
-            <!--<DataGrid Name="dataGridx" AutoGenerateColumns="False" IsReadOnly="True" HorizontalAlignment="Stretch"
-                            VerticalContentAlignment="Center" Width="Auto" Margin="10"
-                            ItemsSource="{Binding TorrentList}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" IsReadOnly="True" Visibility="Hidden" Binding="{Binding QueuePosition}" />
-                    <DataGridTemplateColumn CanUserResize="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <Button Click="btnCancel_Click" Visibility="Visible" ToolTip="Cancel download" Margin="10,0,10,0" Cursor="Hand" 
-                                                Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Width="21" Height="21"
-                                                Style="{DynamicResource MaterialDesignFloatingActionMiniButton}">
-                                        <materialDesign:PackIcon Kind="CloseCircle" Width="21" Height="21" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Name" IsReadOnly="True" Binding="{Binding Name}" MaxWidth="300" />
-                    <DataGridTextColumn Header="Size" IsReadOnly="True" Binding="{Binding TotalWanted_ByteSize}" />
-                    <DataGridTextColumn Header="Downloaded" IsReadOnly="True" Binding="{Binding TotalDone_ByteSize}" />
-                    <DataGridTextColumn Header="Connections" IsReadOnly="True" Binding="{Binding NumConnections}" />
-                    <DataGridTextColumn Header="Remaining" IsReadOnly="True" Binding="{Binding Remaining}" />
-                    <DataGridTextColumn Header="Status" IsReadOnly="True" Binding="{Binding State}" />
-                    <DataGridTemplateColumn Header="Progress" CanUserResize="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Viewbox  Width="30" Height="20">
-                                    <lvc:Gauge Uses360Mode="True" From="0" To="100" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                        Value="{Binding Progress_Number, Mode=OneWay}" Padding="0" InnerRadius="40"
-                                        TextElement.Foreground="{DynamicResource {x:Static SystemColors.WindowTextBrush}}" 
-                                        LabelFormatter="{Binding Formatter}" 
-                                        FromColor="{DynamicResource {x:Static SystemColors.WindowColorKey}}"
-                                        ToColor="{DynamicResource {x:Static SystemColors.ActiveCaptionColor}}"
-                                        GaugeBackground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
-                                        HighFontSize="30">
-                                    </lvc:Gauge>
-                                    </Viewbox>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Priority" IsReadOnly="True" Binding="{Binding Priority_String}" />
-                    <DataGridTextColumn Header="Download Speed" IsReadOnly="True" Binding="{Binding DownloadRate_ByteSize}" />
-                    <DataGridTextColumn Header="Upload Speed" IsReadOnly="True" Binding="{Binding UploadRate_ByteSize}" />
-                    <DataGridTemplateColumn CanUserResize="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel>
-                                    <Button Click="btnPause_Click" Visibility="{Binding IsPauseButtonVisible}" ToolTip="Pause download"
-                                                Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"  Margin="10,0,10,0" Cursor="Hand" 
-                                                Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Width="21" Height="21">
-                                        <materialDesign:PackIcon Kind="PauseCircle" Width="21" Height="21" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Button>
-                                    <Button Click="btnResume_Click" Visibility="{Binding IsResumeButtonVisible}" ToolTip="Resume download"
-                                                Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Margin="10,0,10,0" Cursor="Hand" 
-                                                Style="{DynamicResource MaterialDesignFloatingActionMiniButton}" Width="21" Height="21">
-                                        <materialDesign:PackIcon Kind="PlayCircle" Width="21" Height="21" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-            <DataGrid Name="gridFiles" AutoGenerateColumns="True" IsReadOnly="True" Width="Auto" Margin="10" ItemsSource="{Binding SelectedItem.FileList, ElementName=dataGridx, Mode=OneWay}">
-
-            </DataGrid>-->
             <ListBox Grid.Row="1" Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
                         ItemsSource="{Binding TorrentList}" Background="Transparent">
                 <ListBox.ItemsPanel>

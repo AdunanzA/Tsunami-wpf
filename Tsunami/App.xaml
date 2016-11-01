@@ -1,6 +1,6 @@
 ﻿<Application x:Class="Tsunami.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"             
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:Tsunami.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>

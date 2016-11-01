@@ -30,167 +30,170 @@
         Top="{Binding WindowTop, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}">
     <Window.Resources>
         <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Shadows.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ToggleButton.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-
     </Window.Resources>
-    <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" /> <!-- body -->
-            <RowDefinition Height="30" /> <!-- status bar -->
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100" /> <!-- body left, menu -->
-            <ColumnDefinition Width="*" /> <!-- body right, content -->
-        </Grid.ColumnDefinitions>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
-        </Grid.Background>
-
-        <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
-            <ListBox.Items>
-                <ListBoxItem Name="AddPage" IsSelected="True" MouseLeftButtonUp="AddPage_MouseLeftButtonUp">
-                    <ListBoxItem.Content>
-                        <materialDesign:PackIcon Kind="FileFind" Height="50" Width="50" Margin="18 10 10 10" />
-                    </ListBoxItem.Content>
-                </ListBoxItem>
-                <ListBoxItem Name="ListPage" MouseLeftButtonUp="ListPage_MouseLeftButtonUp">
-                    <ListBoxItem.Content>
-                        <materialDesign:PackIcon Kind="ViewList" Height="50" Width="50" Margin="18 10 10 10"/>
-                    </ListBoxItem.Content>
-                </ListBoxItem>
-                <ListBoxItem Name="PlayerPage" MouseLeftButtonUp="PlayerPage_MouseLeftButtonUp">
-                    <ListBoxItem.Content>
-                        <materialDesign:PackIcon Kind="Play" Height="50" Width="50" Margin="18 10 10 10"/>
-                    </ListBoxItem.Content>
-                </ListBoxItem>
-                <ListBoxItem Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
-                    <ListBoxItem.Content>
-                        <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
-                    </ListBoxItem.Content>
-                </ListBoxItem>
-            </ListBox.Items>
-        </ListBox>
-
-        <Grid Grid.Row="0" Grid.Column="1">
+    <materialDesign:DialogHost Identifier="RootDialog">
+        <Grid IsEnabled="{Binding IsTsunamiEnabled}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
+                <!-- body -->
+                <RowDefinition Height="30" />
+                <!-- status bar -->
             </Grid.RowDefinitions>
-            <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-                <StackPanel Name="stackContent" Orientation="Vertical">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <!-- body left, menu -->
+                <ColumnDefinition Width="*" />
+                <!-- body right, content -->
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
+            </Grid.Background>
 
-                    <ContentControl Name="mainContent" Margin="16" />
+            <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                <ListBox.Items>
+                    <ListBoxItem Name="AddPage" IsSelected="True" MouseLeftButtonUp="AddPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="FileFind" Height="50" Width="50" Margin="18 10 10 10" />
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
+                    <ListBoxItem Name="ListPage" MouseLeftButtonUp="ListPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="ViewList" Height="50" Width="50" Margin="18 10 10 10"/>
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
+                    <ListBoxItem Name="PlayerPage" MouseLeftButtonUp="PlayerPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="Play" Height="50" Width="50" Margin="18 10 10 10"/>
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
+                    <ListBoxItem Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
+                </ListBox.Items>
+            </ListBox>
+
+            <Grid Grid.Row="0" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+
+                        <ContentControl Name="mainContent" Margin="16" />
+
+                    </StackPanel>
+                </ScrollViewer>
                 
-                </StackPanel>
-            </ScrollViewer>
+                <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2.5*" />
+                        <ColumnDefinition Width="2.5*" />
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="2.5*" />
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <!-- DOWNLOAD CHART -->
-                <lvc:CartesianChart Grid.Column="0" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding SessionStatistic.DownloadChartValues}" PointGeometrySize="1" 
+                    <!-- DOWNLOAD CHART -->
+                    <lvc:CartesianChart Grid.Column="0" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding SessionStatistic.DownloadChartValues}" PointGeometrySize="1" 
                                                 StrokeThickness="2" Fill="{DynamicResource SecondaryAccentBrush}" 
                                                 Stroke="#FF1FA225"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
                                           MaxValue="{Binding SessionStatistic.DownloadXAxisMax}" 
                                           MinValue="{Binding SessionStatistic.DownloadXAxisMin}"
                                           DisableAnimations="True" ShowLabels="False">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Visibility="Hidden" Stroke="LightGray" Step="{Binding SessionStatistic.XAxisStep}"></lvc:Separator>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="DOWNLOAD" Position="LeftBottom" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Visibility="Hidden" Stroke="LightGray" Step="{Binding SessionStatistic.XAxisStep}"></lvc:Separator>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="DOWNLOAD" Position="LeftBottom" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
                                           MaxValue="{Binding SessionStatistic.YAxisMax}"
                                           DisableAnimations="True" >
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Stroke="DarkGray" Step="{Binding SessionStatistic.YSeparatorStep}"></lvc:Separator>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Stroke="DarkGray" Step="{Binding SessionStatistic.YSeparatorStep}"></lvc:Separator>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
 
-                <!-- UPLOAD CHART -->
-                <lvc:CartesianChart Grid.Column="1" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
-                    <lvc:CartesianChart.Series>
-                        <lvc:LineSeries Values="{Binding SessionStatistic.UploadChartValues}" PointGeometrySize="1"
+                    <!-- UPLOAD CHART -->
+                    <lvc:CartesianChart Grid.Column="1" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding SessionStatistic.UploadChartValues}" PointGeometrySize="1"
                                                 StrokeThickness="2"  Fill="{DynamicResource PrimaryHueLightBrush}" 
                                                 Stroke="#FFA42828"/>
-                    </lvc:CartesianChart.Series>
-                    <lvc:CartesianChart.AxisX>
-                        <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
                                       MaxValue="{Binding SessionStatistic.UploadXAxisMax}" 
                                       MinValue="{Binding SessionStatistic.UploadXAxisMin}"
                                       DisableAnimations="True" ShowLabels="False">
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Visibility="Hidden" Stroke="LightGray"></lvc:Separator>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisX>
-                    <lvc:CartesianChart.AxisY>
-                        <lvc:Axis Title="UPLOAD" Position="RightTop" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Visibility="Hidden" Stroke="LightGray"></lvc:Separator>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="UPLOAD" Position="RightTop" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
                                           DisableAnimations="True" >
-                            <lvc:Axis.Separator>
-                                <lvc:Separator Stroke="DarkGray"></lvc:Separator>
-                            </lvc:Axis.Separator>
-                        </lvc:Axis>
-                    </lvc:CartesianChart.AxisY>
-                </lvc:CartesianChart>
+                                <lvc:Axis.Separator>
+                                    <lvc:Separator Stroke="DarkGray"></lvc:Separator>
+                                </lvc:Axis.Separator>
+                            </lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
                 <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="0,0,0,-40"
                           Height="Auto" Width="Auto" 
                           Value="{Binding SessionStatistic.AngularGaugeValue}" 
-                          FromValue="0" ToValue="100" 
-                          LabelsStep="25" TicksStep="10" Wedge="200"
+                          FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
+                          LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
                           TicksForeground="White" Foreground="White"                                   
                           FontWeight="Bold" FontSize="14"
                           SectionsInnerRadius=".8">
-                </lvc:AngularGauge>
+                        <lvc:AngularGauge.Sections>
+                            <lvc:AngularSection FromValue="0" ToValue="10" Fill="#FF3939" />
+                            <lvc:AngularSection FromValue="10" ToValue="25" Fill="#F8A725" />
+                            <lvc:AngularSection FromValue="25" ToValue="75" Fill="#39AA39" />
+                            <lvc:AngularSection FromValue="75" ToValue="100" Fill="#00FF00" />
+                        </lvc:AngularGauge.Sections>
+                    </lvc:AngularGauge>
+                </Grid>
             </Grid>
-        </Grid>
 
-        <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-            <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="{DynamicResource Connections}" Margin="0,0,5,0"></TextBlock>
-                    <TextBlock Text="{Binding SessionStatistic.NumPeers}" Margin="0,0,20,0"></TextBlock>
-                    <materialDesign:PackIcon Kind="Download" />
-                    <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>
-                    <TextBlock Text="("></TextBlock>
-                    <TextBlock Text="{Binding SessionStatistic.TotalDownload_ByteSize}"></TextBlock>
-                    <TextBlock Text=")"></TextBlock>
-                    <TextBlock Text="/" Margin="15,0"></TextBlock>
-                    <materialDesign:PackIcon Kind="Upload" />
-                    <TextBlock Text="{Binding SessionStatistic.TotalUploadRate_ByteSize}" Margin="10,0"></TextBlock>
-                    <TextBlock Text="("></TextBlock>
-                    <TextBlock Text="{Binding SessionStatistic.TotalUpload_ByteSize}"></TextBlock>
-                    <TextBlock Text=")"></TextBlock>
-                    <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
-                </StackPanel>
-            </StatusBarItem>
-        </StatusBar>
+            <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                <StatusBarItem HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="NumPeers: "></TextBlock>
+                        <TextBlock Text="{Binding SessionStatistic.NumPeers}" Margin="0,0,20,0"></TextBlock>
+                        <materialDesign:PackIcon Kind="Download" />
+                        <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>
+                        <TextBlock Text="("></TextBlock>
+                        <TextBlock Text="{Binding SessionStatistic.TotalDownload_ByteSize}"></TextBlock>
+                        <TextBlock Text=")"></TextBlock>
+                        <TextBlock Text="/" Margin="15,0"></TextBlock>
+                        <materialDesign:PackIcon Kind="Upload" />
+                        <TextBlock Text="{Binding SessionStatistic.TotalUploadRate_ByteSize}" Margin="10,0"></TextBlock>
+                        <TextBlock Text="("></TextBlock>
+                        <TextBlock Text="{Binding SessionStatistic.TotalUpload_ByteSize}"></TextBlock>
+                        <TextBlock Text=")"></TextBlock>
+                        <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
+                    </StackPanel>
+                </StatusBarItem>
+            </StatusBar>
 
-        <ni:TaskbarIcon
+            <ni:TaskbarIcon
             x:Name="tsunamiNotifyIcon"
             ToolTipText="Tsunami"
             IconSource="Resources/logo_tsunami_big.ico">
-        </ni:TaskbarIcon>
+            </ni:TaskbarIcon>
 
-    </Grid>
-
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>

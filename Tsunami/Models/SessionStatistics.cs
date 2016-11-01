@@ -111,12 +111,12 @@ namespace Tsunami
             get { return _angularGaugeValue; }
             set
             {
-                double tolerance = 0.001;
-                if ((value >= (_angularGaugeValue - tolerance) && (value <= (_angularGaugeValue + tolerance))))
-                { 
+                //double tolerance = 0.001F;
+                //if ((value >= (_angularGaugeValue - tolerance) && (value <= (_angularGaugeValue + tolerance))))
+                //{ 
                     _angularGaugeValue = value;
                     CallPropertyChanged("AngularGaugeValue");
-                }
+                //}
             }
         }
 

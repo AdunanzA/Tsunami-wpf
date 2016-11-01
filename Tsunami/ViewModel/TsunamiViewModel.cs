@@ -66,6 +66,8 @@ namespace Tsunami.ViewModel
 
         private static Core.Session _torrentSession;
 
+        public static Core.AdunanzaDht Dht;
+        
         public ICommand AddClick
         {
             get
@@ -97,11 +99,11 @@ namespace Tsunami.ViewModel
 
             _torrentList = new ObservableCollection<Models.TorrentItem>();
             _sessionStatistic = new SessionStatistics();
-            _torrentSession = new Core.Session();
             _preference = new Models.Preferences();
             IsTsunamiEnabled = true;
             //_notifyIcon = new Models.NotifyIcon();
 
+            _torrentSession = new Core.Session();
             _torrentSession.pause();
 
             if (System.IO.File.Exists(".session_state"))
@@ -128,7 +130,6 @@ namespace Tsunami.ViewModel
             Core.DhtSettings dhts = _torrentSession.get_dht_settings();
             dhts.aggressive_lookups = true;
             _torrentSession.set_dht_settings(dhts);
-
 
             var alertMask = Core.AlertMask.error_notification
                             | Core.AlertMask.peer_notification
@@ -157,21 +158,34 @@ namespace Tsunami.ViewModel
             _torrentSession.resume();
 
             log.Debug("created");
+
+            //Dht = new Core.AdunanzaDht();
+            //Dht.start();
+            //Dht.bootstrap("bootstrap.ring.cx", "4222");
+
         }
 
         private void dispatcherTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (!IsTsunamiEnabled) { return; }
+            //if (!IsTsunamiEnabled) { return; }
 
             _torrentSession.post_torrent_updates();
             _torrentSession.post_dht_stats();
 
+            using (Core.SessionStatus ss = _torrentSession.status())
+            {
+                SessionStatistic.Update(ss);
+            }
+
             TimeSpan difference = DateTime.Now - _lastSaveResumeExecution;
-            if ( difference.TotalMinutes >= 10 && IsTsunamiEnabled)
+            if ( difference.TotalMinutes >= Settings.Application.SAVE_RESUME_INTERVAL && IsTsunamiEnabled)
             {
                 //int totConnex = 0;
                 _lastSaveResumeExecution = DateTime.Now;
-                foreach (Models.TorrentItem item in TorrentList)
+
+                List<Models.TorrentItem> myList = new List<Models.TorrentItem>(TorrentList);
+                
+                foreach (Models.TorrentItem item in myList)
                 {
                     using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
                     using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
@@ -212,7 +226,8 @@ namespace Tsunami.ViewModel
                     break;
                 case 3: // torrent_resumed_alert
                     break;
-                case 4: // torrent_removed_alert
+                case 4:
+                    TorrentRemovedAlert((Core.torrent_removed_alert)a);
                     break;
                 case 5: // torrent_deleted_alert
                     break;
@@ -232,6 +247,31 @@ namespace Tsunami.ViewModel
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void TorrentRemovedAlert(Core.torrent_removed_alert a)
+        {
+            using (Core.Sha1Hash sha1hash = a.info_hash)
+            {
+                string hash = sha1hash.ToString();
+                if (TorrentList.Count(e => e.Hash == hash) > 0)
+                {
+                    Application.Current.Dispatcher.BeginInvoke(
+                    System.Windows.Threading.DispatcherPriority.Normal,
+                    (Action)delegate ()
+                    {
+                        TorrentList.Remove(TorrentList.First(f => f.Hash == hash));
+                    });
+                }
+                if (File.Exists("./Fastresume/" + hash + ".fastresume"))
+                {
+                    File.Delete("./Fastresume/" + hash + ".fastresume");
+                }
+                if (File.Exists("./Fastresume/" + hash + ".torrent"))
+                {
+                    File.Delete("./Fastresume/" + hash + ".torrent");
+                }
             }
         }
 
@@ -409,19 +449,7 @@ namespace Tsunami.ViewModel
                 if (th != null && th.is_valid())
                 {
                     _torrentSession.remove_torrent(th, Convert.ToInt32(deleteFileToo));
-                    if (TorrentList.Count(e => e.Hash == hash) > 0)
-                    {
-                        TorrentList.Remove(TorrentList.First(f => f.Hash == hash));
-                    }
                 }
-            }
-            if (File.Exists("./Fastresume/" + hash + ".fastresume"))
-            {
-                File.Delete("./Fastresume/" + hash + ".fastresume");
-            }
-            if (File.Exists("./Fastresume/" + hash + ".torrent"))
-            {
-                File.Delete("./Fastresume/" + hash + ".torrent");
             }
         }
 
@@ -462,18 +490,10 @@ namespace Tsunami.ViewModel
                     }
                 }
 
-                Models.TorrentItem ti = new Models.TorrentItem()
+                Models.TorrentItem ti = new Models.TorrentItem(ts)
                 {
-                    Name = ts.name,
                     Hash = hash.ToString(),
-                    Priority = ts.priority,
-                    QueuePosition = ts.queue_position,
                     State = stat,
-                    TotalWanted = ts.total_wanted,
-                    TotalDone = ts.total_done,
-                    Progress = ts.progress,
-                    DownloadRate = ts.download_rate,
-                    UploadRate = ts.upload_rate,
                     FileList = feList
                 };
 
@@ -515,10 +535,10 @@ namespace Tsunami.ViewModel
                     ti.NumConnections = ts.num_connections;
                 }
             }
-            using (Core.SessionStatus ss = _torrentSession.status())
-            {
-                SessionStatistic.Update(ss);
-            }
+            //using (Core.SessionStatus ss = _torrentSession.status())
+            //{
+            //    SessionStatistic.Update(ss);
+            //}
         }
 
         public void Terminate()
@@ -568,32 +588,38 @@ namespace Tsunami.ViewModel
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
-        protected virtual void DisposeMe(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
+                    _dispatcherTimer?.Dispose();
+                    no_more_data?.Dispose();
                 }
 
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
                 _torrentSession?.Dispose();
-                no_more_data?.Dispose();
-                _dispatcherTimer?.Dispose();
+                Dht?.Dispose();
 
                 disposedValue = true;
             }
         }
 
-         ~TsunamiViewModel() {
-           // Do not change this code. Put cleanup code in DisposeMe(bool disposing) above.
-           DisposeMe(false);
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        ~TsunamiViewModel()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
         }
 
+        // This code added to correctly implement the disposable pattern.
         void IDisposable.Dispose()
         {
-            // Do not change this code. Put cleanup code in DisposeMe(bool disposing) above.
-            DisposeMe(true);
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
             GC.SuppressFinalize(this);
         }
         #endregion

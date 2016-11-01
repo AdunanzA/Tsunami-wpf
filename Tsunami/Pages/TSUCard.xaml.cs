@@ -26,14 +26,31 @@ namespace Tsunami.Pages
             InitializeComponent();
         }
 
-        private void torrentFile_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private async void torrentFile_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-
+            TextBlock or = (TextBlock)e.OriginalSource;
+            Models.TorrentItem ti = (Models.TorrentItem)or.DataContext;
+            var sampleMessageDialog = new FileList
+            {
+                DataContext = ti
+            };
+            await MaterialDesignThemes.Wpf.DialogHost.Show(sampleMessageDialog, "RootDialog");
         }
 
         private void btnPause_Click(object sender, RoutedEventArgs e)
         {
+            Image os = (Image)e.OriginalSource;
+            Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
+            TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
+            res.PauseTorrent(ti.Hash);
+        }
 
+        private void btnResume_Click(object sender, RoutedEventArgs e)
+        {
+            Image os = (Image)e.OriginalSource;
+            Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
+            TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
+            res.ResumeTorrent(ti.Hash);
         }
 
         private void btnCancel_Click(object sender, MouseButtonEventArgs e)
