@@ -6,11 +6,8 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
         xmlns:local="clr-namespace:Tsunami.Pages" Background="Transparent" AllowsTransparency="True"
         mc:Ignorable="d" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" WindowStyle="None"
-        Closing="Window_Closing" x:Name="tsunamiLoadingPage"
-        Title="{DynamicResource Loading}" Height="320" Width="320">
-    <Window.Topmost>
-        true
-    </Window.Topmost>
+        Closing="Window_Closing" x:Name="tsunamiLoadingPage" Topmost="True"
+        Height="165" Width="476" DataContext="{StaticResource TsunamiVM}">
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
             <BeginStoryboard>
@@ -43,26 +40,26 @@
         </EventTrigger>
     </Window.Triggers>
     <materialDesign:Card VerticalAlignment="Center" HorizontalAlignment="Center" UniformCornerRadius="5"
-                         Width="300" Height="300"
+                         Width="456" Height="145"
                          materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
-            <Image Grid.Row="0" Source="/Tsunami;component/Resources/logo_tsunami_big.ico"
+            <Image Grid.Row="0" Source="/Tsunami;component/Resources/adunanza.jpg"
                     Width="{Binding Source.PixelWidth, RelativeSource={RelativeSource Self}}"
                     Height="{Binding Source.PixelHeight, RelativeSource={RelativeSource Self}}"/>
-            <Grid Grid.Row="1" Width="300" HorizontalAlignment="Center">
+            <Grid Grid.Row="1" Width="456" HorizontalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
-                                x:Name="progressLoading" Grid.Column="0" Value="0"
+                                x:Name="progressLoading" Grid.Column="0" Value="{Binding FileLoading}" Maximum="{Binding FileToLoad}"
                                 VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Label Name="txtLoading" Grid.Column="1" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
-                            Margin="10,0,20,0" FontWeight="Bold" Height="30" />
+                            Margin="10,0,20,0" FontWeight="Bold" Height="30" Content="{Binding StringLoading}"/>
             </Grid>
         </Grid>
     </materialDesign:Card>

@@ -41,19 +41,19 @@ namespace Tsunami
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
             var title = Title + " " + verMajor + "." + verMin + verRev;
             Title = title;
-
+            
             Closing += Window_Closing;
 
             Classes.Switcher.PageSwitcher = this;
-            Classes.Switcher.Switch(_addPage);
 
-            if (!tvm.IsTsunamiEnabled)
+            if (tvm.TorrentList.Count > 0)
             {
-                // we are resuming, switch to download list
-                mainContent.Content = _listPage;
-                menuListBox.SelectedIndex = 1;
+                // we have torrent, switch to download list
+                Classes.Switcher.Switch(_listPage);
+            } else
+            {
+                Classes.Switcher.Switch(_addPage);
             }
-
         }
 
         private void SetLanguageDictionary()
@@ -92,7 +92,6 @@ namespace Tsunami
             //_playerPage = null;
             //_settingsPage = null;
 
-            //ViewModel.TsunamiViewModel tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
             tvm.Terminate();
 
             tsunamiNotifyIcon.Dispose();
@@ -107,26 +106,25 @@ namespace Tsunami
 
         private void AddPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            mainContent.Content = _addPage;
+            Classes.Switcher.Switch(_addPage);
         }
 
         private void ListPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            string title = "Tsunami";
-            string text = "You are seeing Tsunami list!";
-            tsunamiNotifyIcon.ShowBalloonTip(title, text, tsunamiNotifyIcon.Icon, true);
-
-            mainContent.Content = _listPage;
+            //string title = "Tsunami";
+            //string text = "You are seeing Tsunami list!";
+            //tsunamiNotifyIcon.ShowBalloonTip(title, text, tsunamiNotifyIcon.Icon, true);
+            Classes.Switcher.Switch(_listPage);
         }
 
         private void PlayerPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            mainContent.Content = _playerPage;
+            Classes.Switcher.Switch(_playerPage);
         }
 
         private void SettingsPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            mainContent.Content = _settingsPage;
+            Classes.Switcher.Switch(_settingsPage);
         }
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

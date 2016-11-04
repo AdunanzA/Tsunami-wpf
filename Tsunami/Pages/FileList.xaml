@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Tsunami.Pages"
              xmlns:Properties="clr-namespace:Tsunami.Properties"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" materialDesign:ShadowAssist.Darken="True" materialDesign:ShadowAssist.ShadowDepth="Depth3"
              MaxHeight="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=OneWay}"
              MaxWidth="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -15,10 +15,29 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="{Binding Name}" Style="{StaticResource MaterialDesignDisplay1TextBlock}" Margin="0 4 0 4" TextWrapping="Wrap"/>
-        <ScrollViewer Grid.Row="1" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-            <ListBox Grid.Row="1" ItemsSource="{Binding FileList}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="5" Text="{Binding Name}" Style="{StaticResource MaterialDesignDisplay1TextBlock}" Margin="0 4 0 0" TextWrapping="Wrap"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="Pieces size" Margin="0,4,4,0" HorizontalAlignment="Right"/>
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Pieces.Size}" Margin="4,4,0,0"></TextBlock>
+        <TextBlock Grid.Row="1" Grid.Column="3" Text="Pieces num words" Margin="0,4,4,0" HorizontalAlignment="Right"/>
+        <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Pieces.NumWords}" Margin="4,4,0,0"></TextBlock>
+        <ScrollViewer Grid.Row="9" Grid.ColumnSpan="5" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <ListBox ItemsSource="{Binding FileList}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding FileName}" TextWrapping="Wrap"></TextBlock>
@@ -26,7 +45,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <Button Grid.Row="10" 
+        <Button Grid.Row="10" Grid.ColumnSpan="5"
                 IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
                 HorizontalAlignment="Right"
                 Margin="16 16 16 0"

@@ -64,6 +64,14 @@ namespace Tsunami.ViewModel
             set { if (_isTsunamiEnabled != value) { _isTsunamiEnabled = value; CallPropertyChanged("IsTsunamiEnabled"); } }
         }
 
+        private double fileToLoad { get; set; }
+        private double fileLoading { get; set; }
+        private string stringLoading { get; set; }
+
+        public double FileToLoad { get { return fileToLoad; } set { fileToLoad = value; CallPropertyChanged("FileToLoad"); } }
+        public double FileLoading { get { return fileLoading; } set { fileLoading = value; CallPropertyChanged("FileLoading"); } }
+        public string StringLoading { get { return stringLoading; } set { stringLoading = value; CallPropertyChanged("StringLoading"); } }
+
         private static Core.Session _torrentSession;
 
         public static Core.AdunanzaDht Dht;
@@ -255,7 +263,7 @@ namespace Tsunami.ViewModel
             using (Core.Sha1Hash sha1hash = a.info_hash)
             {
                 string hash = sha1hash.ToString();
-                if (TorrentList.Count(e => e.Hash == hash) > 0)
+                if (TorrentList.Any(e => e.Hash == hash))
                 {
                     Application.Current.Dispatcher.BeginInvoke(
                     System.Windows.Threading.DispatcherPriority.Normal,
@@ -311,30 +319,33 @@ namespace Tsunami.ViewModel
 
         public async System.Threading.Tasks.Task LoadFastResumeData()
         {
+            IsTsunamiEnabled = false;
             if (Directory.Exists("Fastresume"))
             {
                 // FARE TRY CATCH FINALLY
-                IsTsunamiEnabled = false;
 
-                Window loading = new Pages.Loading();
-                loading.Show();
-                System.Windows.Controls.Label lb = (System.Windows.Controls.Label)loading.FindName("txtLoading");
-                System.Windows.Controls.ProgressBar pb = (System.Windows.Controls.ProgressBar)loading.FindName("progressLoading");
+                //Window loading = new Pages.Loading();
+                //loading.Show();
+                //System.Windows.Controls.Label lb = (System.Windows.Controls.Label)loading.FindName("txtLoading");
+                //System.Windows.Controls.ProgressBar pb = (System.Windows.Controls.ProgressBar)loading.FindName("progressLoading");
 
                 string[] files = Directory.GetFiles("Fastresume", "*.fastresume");
 
-                int i = 0;
+                //int i = 0;
 
                 if (files.Length > 0)
                 {
                     // fast resuming
-                    pb.Maximum = files.Length+0.01;
+                    //pb.Maximum = files.Length+0.01;
+                    FileToLoad = files.Length + 0.01;
 
                     foreach (string s in files)
                     {
-                        i++;
-                        lb.Content = "Loading "+i+" of "+files.Length+" torrents";
-                        pb.Value = i;
+                        //i++;
+                        FileLoading++;
+                        //lb.Content = "Loading "+i+" of "+files.Length+" torrents";
+                        StringLoading = "Loading " + FileLoading + " of " + files.Length + " torrents";
+                        //pb.Value = i;
                         var data = File.ReadAllBytes(s);
                         var info_hash = Path.GetFileNameWithoutExtension(s);
                         var filename = "Fastresume/" + info_hash + ".torrent";
@@ -357,26 +368,37 @@ namespace Tsunami.ViewModel
                 } else
                 {
                     // nothing to fast resume, sleep
-                    lb.Content = "Tsunami is loading...";
-                    pb.Maximum = 10.001;
-                    while (i < 10)
+                    //lb.Content = "Tsunami is loading...";
+                    StringLoading = "Tsunami is loading...";
+                    //pb.Maximum = 10.001;
+                    FileToLoad = 10.001;
+                    while (FileLoading < 10)
                     {
-                        i++;
-                        pb.Value = i;
+                        //    i++;
+                        FileLoading++;
+                        //    pb.Value = i;
                         await System.Threading.Tasks.Task.Delay(250);
                     }
                 }
-                IsTsunamiEnabled = true;
-                loading.Close();
+                //loading.Close();
             }
             else
             {
                 Directory.CreateDirectory("Fastresume");
+                StringLoading = "Tsunami is loading...";
+                FileToLoad = 10.001;
+                while (FileLoading < 10)
+                {
+                    FileLoading++;
+                    await System.Threading.Tasks.Task.Delay(250);
+                }
             }
+            IsTsunamiEnabled = true;
         }
 
         public void AddClick_Dialog()
         {
+            bool atLeastOneFileSelected = false;
             Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
             ofd.Filter = "Torrent|*.torrent";
             ofd.Multiselect = true;
@@ -386,9 +408,13 @@ namespace Tsunami.ViewModel
             ofd.ShowDialog();
             foreach (string file in ofd.FileNames)
             {
+                atLeastOneFileSelected = true;
                 AddTorrent(file);
             }
-            Classes.Switcher.Switch(MainWindow._listPage);
+            if (atLeastOneFileSelected)
+            {
+                Classes.Switcher.Switch(MainWindow._listPage);
+            }
         }
 
         public void AddTorrent(string filename)
@@ -525,20 +551,9 @@ namespace Tsunami.ViewModel
                 if (TorrentList.Count(z => z.Hash == hash.ToString()) == 1)
                 {
                     Models.TorrentItem ti = TorrentList.First(e => e.Hash == hash.ToString());
-                    ti.DownloadRate = ts.download_rate;
-                    ti.Priority = ts.priority;
-                    ti.Progress = ts.progress;
-                    ti.QueuePosition = ts.queue_position;
-                    ti.State = stat;
-                    ti.TotalDone = ts.total_done;
-                    ti.UploadRate = ts.upload_rate;
-                    ti.NumConnections = ts.num_connections;
+                    ti.Update(ts);
                 }
             }
-            //using (Core.SessionStatus ss = _torrentSession.status())
-            //{
-            //    SessionStatistic.Update(ss);
-            //}
         }
 
         public void Terminate()

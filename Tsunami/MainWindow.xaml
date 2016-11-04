@@ -32,23 +32,18 @@
         <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
     </Window.Resources>
     <materialDesign:DialogHost Identifier="RootDialog">
-        <Grid IsEnabled="{Binding IsTsunamiEnabled}">
+        <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <!-- body -->
-                <RowDefinition Height="30" />
-                <!-- status bar -->
+                <RowDefinition Height="*" /><!-- body -->
+                <RowDefinition Height="30" /><!-- status bar -->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <!-- body left, menu -->
-                <ColumnDefinition Width="*" />
-                <!-- body right, content -->
+                <ColumnDefinition Width="100" /><!-- body left, menu -->
+                <ColumnDefinition Width="*" /><!-- body right, content -->
             </Grid.ColumnDefinitions>
             <Grid.Background>
                 <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
             </Grid.Background>
-
             <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
                 <ListBox.Items>
                     <ListBoxItem Name="AddPage" IsSelected="True" MouseLeftButtonUp="AddPage_MouseLeftButtonUp">
