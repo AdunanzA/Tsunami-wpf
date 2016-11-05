@@ -23,6 +23,9 @@ namespace Tsunami.Classes
                 case "Tsunami.Pages.SettingsPage":
                     lbi = (ListBoxItem)PageSwitcher.menuListBox.Items[3];
                     break;
+                case "Tsunami.Pages.GraphicsPage":
+                    lbi = (ListBoxItem)PageSwitcher.menuListBox.Items[4];
+                    break;
                 default:
                     throw new System.Exception("Requested "+newPage.ToString()+" to Switcher but not included in pages!");
             }

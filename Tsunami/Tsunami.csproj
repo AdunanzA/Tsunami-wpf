@@ -167,6 +167,9 @@
     <Compile Include="Models\PeerRequest.cs" />
     <Compile Include="Models\TorrentInfo.cs" />
     <Compile Include="Models\TorrentStatus.cs" />
+    <Compile Include="Pages\GraphicsPage.xaml.cs">
+      <DependentUpon>GraphicsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\List.xaml.cs">
       <DependentUpon>List.xaml</DependentUpon>
     </Compile>
@@ -206,6 +209,10 @@
     <Page Include="Pages\FileList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\GraphicsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\List.xaml">
       <SubType>Designer</SubType>

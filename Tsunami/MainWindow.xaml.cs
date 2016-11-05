@@ -26,6 +26,7 @@ namespace Tsunami
         public static readonly UserControl _listPage = new Pages.List();
         public static readonly UserControl _playerPage = new Pages.Player();
         public static readonly UserControl _settingsPage = new Pages.SettingsPage();
+        public static readonly UserControl _graphicsPage = new Pages.GraphicsPage();
 
         ViewModel.TsunamiViewModel tvm;
 
@@ -125,6 +126,11 @@ namespace Tsunami
         private void SettingsPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             Classes.Switcher.Switch(_settingsPage);
+        }
+
+        private void GraphicsPage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            Classes.Switcher.Switch(_graphicsPage);
         }
 
         private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)

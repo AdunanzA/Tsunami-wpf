@@ -66,6 +66,11 @@
                             <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
                         </ListBoxItem.Content>
                     </ListBoxItem>
+                    <ListBoxItem Name="GraphicsPage" MouseLeftButtonUp="GraphicsPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="ChartAreaspline" Height="50" Width="50" Margin="18 10 10 10" />
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
                 </ListBox.Items>
             </ListBox>
 
@@ -90,62 +95,8 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- DOWNLOAD CHART -->
-                    <lvc:CartesianChart Grid.Column="0" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
-                        <lvc:CartesianChart.Series>
-                            <lvc:LineSeries Values="{Binding SessionStatistic.DownloadChartValues}" PointGeometrySize="1" 
-                                                StrokeThickness="2" Fill="{DynamicResource SecondaryAccentBrush}" 
-                                                Stroke="#FF1FA225"/>
-                        </lvc:CartesianChart.Series>
-                        <lvc:CartesianChart.AxisX>
-                            <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
-                                          MaxValue="{Binding SessionStatistic.DownloadXAxisMax}" 
-                                          MinValue="{Binding SessionStatistic.DownloadXAxisMin}"
-                                          DisableAnimations="True" ShowLabels="False">
-                                <lvc:Axis.Separator>
-                                    <lvc:Separator Visibility="Hidden" Stroke="LightGray" Step="{Binding SessionStatistic.XAxisStep}"></lvc:Separator>
-                                </lvc:Axis.Separator>
-                            </lvc:Axis>
-                        </lvc:CartesianChart.AxisX>
-                        <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="DOWNLOAD" Position="LeftBottom" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
-                                          MaxValue="{Binding SessionStatistic.YAxisMax}"
-                                          DisableAnimations="True" >
-                                <lvc:Axis.Separator>
-                                    <lvc:Separator Stroke="DarkGray" Step="{Binding SessionStatistic.YSeparatorStep}"></lvc:Separator>
-                                </lvc:Axis.Separator>
-                            </lvc:Axis>
-                        </lvc:CartesianChart.AxisY>
-                    </lvc:CartesianChart>
-
-                    <!-- UPLOAD CHART -->
-                    <lvc:CartesianChart Grid.Column="1" Width="Auto" Height="100" Margin="5,5,5,5" BorderBrush="{DynamicResource PrimaryHueMidBrush}" BorderThickness="1">
-                        <lvc:CartesianChart.Series>
-                            <lvc:LineSeries Values="{Binding SessionStatistic.UploadChartValues}" PointGeometrySize="1"
-                                                StrokeThickness="2"  Fill="{DynamicResource PrimaryHueLightBrush}" 
-                                                Stroke="#FFA42828"/>
-                        </lvc:CartesianChart.Series>
-                        <lvc:CartesianChart.AxisX>
-                            <lvc:Axis LabelFormatter="{Binding SessionStatistic.DateTimeFormatter}" 
-                                      MaxValue="{Binding SessionStatistic.UploadXAxisMax}" 
-                                      MinValue="{Binding SessionStatistic.UploadXAxisMin}"
-                                      DisableAnimations="True" ShowLabels="False">
-                                <lvc:Axis.Separator>
-                                    <lvc:Separator Visibility="Hidden" Stroke="LightGray"></lvc:Separator>
-                                </lvc:Axis.Separator>
-                            </lvc:Axis>
-                        </lvc:CartesianChart.AxisX>
-                        <lvc:CartesianChart.AxisY>
-                            <lvc:Axis Title="UPLOAD" Position="RightTop" MinValue="0" LabelFormatter="{Binding SessionStatistic.SizeFormatter}"
-                                          DisableAnimations="True" >
-                                <lvc:Axis.Separator>
-                                    <lvc:Separator Stroke="DarkGray"></lvc:Separator>
-                                </lvc:Axis.Separator>
-                            </lvc:Axis>
-                        </lvc:CartesianChart.AxisY>
-                    </lvc:CartesianChart>
-                <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="0,0,0,-40"
-                          Height="Auto" Width="Auto" 
+                    <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="0,0,0,-40"
+                          Height="130" Width="150" 
                           Value="{Binding SessionStatistic.AngularGaugeValue}" 
                           FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
                           LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
