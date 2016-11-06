@@ -58,6 +58,7 @@ namespace Tsunami
         private int _maxDownloadRate;
         private double _angularGaugeValue;
         private int _numConnections;
+        private bool _isRefreshable;
         #endregion
 
         #region public
@@ -103,6 +104,7 @@ namespace Tsunami
         public int UpBandwidthQueue { get { return _upBandwidthQueue; } set { if (_upBandwidthQueue != value) { _upBandwidthQueue = value; CallPropertyChanged("UpBandwidthQueue"); } } }
         public int MaxDownloadRate { get { return _maxDownloadRate; } set { if (_maxDownloadRate != value && value > _maxDownloadRate) { _maxDownloadRate = value; CallPropertyChanged("MaxDownloadRate"); } } }
         public int NumConnections { get { return _numConnections; } set { if (_numConnections != value) { _numConnections = value; CallPropertyChanged("NumConnections"); } } }
+        public bool IsRefreshable { get { return _isRefreshable; } set { if (_isRefreshable != value) { _isRefreshable = value; CallPropertyChanged("IsRefreshable"); } } }
 
         /* Floating point numbers should not be tested for equality
          * https://www.misra.org.uk/forum/viewtopic.php?t=294 */
@@ -195,6 +197,13 @@ namespace Tsunami
 
             MaxDownloadRate = 1;
             NumConnections = 0;
+
+            //Update graphics
+            IsRefreshable = true;
+            System.Windows.Forms.Timer chartTimer = new System.Windows.Forms.Timer();
+            chartTimer.Interval = 5000; //5 seconds
+            chartTimer.Tick += new EventHandler(RefreshTimer);
+            chartTimer.Start();
         }
 
         public void Update(Core.SessionStatus ss)
@@ -240,30 +249,35 @@ namespace Tsunami
             UpBandwidthBytesQueue = ss.up_bandwidth_bytes_queue;
             UpBandwidthQueue = ss.up_bandwidth_queue;
             MaxDownloadRate = ss.download_rate;
-            AngularGaugeValue = (ss.download_rate.Megabytes().Megabytes/1000000)*8;
+            AngularGaugeValue = (ss.download_rate.Megabytes().Megabytes/Math.Pow(10,6))*8;
 
-            var now = DateTime.Now;
-
-            DownloadChartValues.Add(new MeasureModel
+            if (IsRefreshable)
             {
-                DateTime = now,
-                Value = DownloadRate
-            });
+                var now = DateTime.Now;
 
-            UploadChartValues.Add(new MeasureModel
-            {
-                DateTime = now,
-                Value = UploadRate
-            });
+                DownloadChartValues.Add(new MeasureModel
+                {
+                    DateTime = now,
+                    Value = DownloadRate
+                });
 
-            SetAxisLimits(now);
+                UploadChartValues.Add(new MeasureModel
+                {
+                    DateTime = now,
+                    Value = UploadRate
+                });
 
-            //lets only use the last 30 values
-            if (DownloadChartValues.Count > 61) DownloadChartValues.RemoveAt(0);
-            if (UploadChartValues.Count > 61) UploadChartValues.RemoveAt(0);
+                SetAxisLimits(now);
 
-            DownloadXAxisMin = DownloadChartValues.Last().DateTime.Ticks - TimeSpan.FromSeconds(6).Ticks;
-            UploadXAxisMin = UploadChartValues.Last().DateTime.Ticks - TimeSpan.FromSeconds(6).Ticks;
+                //lets only use the last 30 values (61)
+                if (DownloadChartValues.Count > 361) DownloadChartValues.RemoveAt(0);
+                if (UploadChartValues.Count > 361) UploadChartValues.RemoveAt(0);
+
+                DownloadXAxisMin = DownloadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;// TimeSpan.FromSeconds(6).Ticks;
+                UploadXAxisMin = UploadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;//TimeSpan.FromSeconds(6).Ticks;
+
+                IsRefreshable = false;
+            }
         }
 
         private void CallPropertyChanged(string prop)
@@ -385,6 +399,11 @@ namespace Tsunami
                 YSeparatorStep = 500000;
             }
         }
+
+        private void RefreshTimer(object sender, EventArgs e)
+        {
+            IsRefreshable = true;
+        }
     }
 
     public class MeasureModel
@@ -392,4 +411,5 @@ namespace Tsunami
         public DateTime DateTime { get; set; }
         public double Value { get; set; }
     }
+
 }
