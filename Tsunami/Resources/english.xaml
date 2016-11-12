@@ -39,4 +39,7 @@
     <system:String x:Key="Loading">Loading</system:String>
     <system:String x:Key="Theme">Theme</system:String>
     <system:String x:Key="Accent">Accent</system:String>
+    <system:String x:Key="General">General</system:String>
+    <system:String x:Key="Aspect">Aspect</system:String>
+    <system:String x:Key="Web">Web</system:String>
 </ResourceDictionary>
