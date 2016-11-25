@@ -124,19 +124,19 @@ namespace Tsunami.ViewModel
             }
 
             Core.SessionSettings ss = _torrentSession.settings();
-            ss.connections_limit = 400; // 200
-            ss.tick_interval = 500;     // 500
-            ss.torrent_connect_boost = 20; // 10
-            ss.connection_speed = -1; // -1 = 200 ; default 10
-            ss.num_want = 400; // 200
-            ss.cache_size = -1; // -1 = 1/8 RAM; default 1024
-            ss.coalesce_reads = true; // false
-            ss.coalesce_writes = true; // false
+            //ss.connections_limit = 400; // 200
+            //ss.tick_interval = 500;     // 500
+            //ss.torrent_connect_boost = 20; // 10
+            //ss.connection_speed = -1; // -1 = 200 ; default 10
+            //ss.num_want = 400; // 200
+            //ss.cache_size = -1; // -1 = 1/8 RAM; default 1024
+            //ss.coalesce_reads = true; // false
+            //ss.coalesce_writes = true; // false
             ss.user_agent = Tsunami.Settings.Application.TSUNAMI_USER_AGENT;
             _torrentSession.set_settings(ss);
             
             Core.DhtSettings dhts = _torrentSession.get_dht_settings();
-            dhts.aggressive_lookups = true;
+            //dhts.aggressive_lookups = true;
             _torrentSession.set_dht_settings(dhts);
 
             var alertMask = Core.AlertMask.error_notification
