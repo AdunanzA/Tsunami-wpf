@@ -58,7 +58,7 @@ namespace Tsunami
         private int _maxDownloadRate;
         private double _angularGaugeValue;
         private int _numConnections;
-        private bool _isRefreshable;
+        private DateTime _lastUpdate;
         #endregion
 
         #region public
@@ -104,7 +104,7 @@ namespace Tsunami
         public int UpBandwidthQueue { get { return _upBandwidthQueue; } set { if (_upBandwidthQueue != value) { _upBandwidthQueue = value; CallPropertyChanged("UpBandwidthQueue"); } } }
         public int MaxDownloadRate { get { return _maxDownloadRate; } set { if (_maxDownloadRate != value && value > _maxDownloadRate) { _maxDownloadRate = value; CallPropertyChanged("MaxDownloadRate"); } } }
         public int NumConnections { get { return _numConnections; } set { if (_numConnections != value) { _numConnections = value; CallPropertyChanged("NumConnections"); } } }
-        public bool IsRefreshable { get { return _isRefreshable; } set { if (_isRefreshable != value) { _isRefreshable = value; CallPropertyChanged("IsRefreshable"); } } }
+        public DateTime LastUpdate { get { return _lastUpdate; } set { if (_lastUpdate != value) { _lastUpdate = value; CallPropertyChanged("LastUpdate"); } } } 
 
         /* Floating point numbers should not be tested for equality
          * https://www.misra.org.uk/forum/viewtopic.php?t=294 */
@@ -198,12 +198,6 @@ namespace Tsunami
             MaxDownloadRate = 1;
             NumConnections = 0;
 
-            //Update graphics
-            IsRefreshable = true;
-            System.Windows.Forms.Timer chartTimer = new System.Windows.Forms.Timer();
-            chartTimer.Interval = 5000; //5 seconds
-            chartTimer.Tick += new EventHandler(RefreshTimer);
-            chartTimer.Start();
         }
 
         public void Update(Core.SessionStatus ss)
@@ -251,10 +245,11 @@ namespace Tsunami
             MaxDownloadRate = ss.download_rate;
             AngularGaugeValue = (ss.download_rate.Megabytes().Megabytes/Math.Pow(10,6))*8;
 
-            if (IsRefreshable)
+            var now = DateTime.Now;
+            
+            if ( (now - LastUpdate).Seconds > 5)
             {
-                var now = DateTime.Now;
-
+                
                 DownloadChartValues.Add(new MeasureModel
                 {
                     DateTime = now,
@@ -276,7 +271,7 @@ namespace Tsunami
                 DownloadXAxisMin = DownloadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;// TimeSpan.FromSeconds(6).Ticks;
                 UploadXAxisMin = UploadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;//TimeSpan.FromSeconds(6).Ticks;
 
-                IsRefreshable = false;
+                LastUpdate = now;
             }
         }
 
@@ -398,11 +393,6 @@ namespace Tsunami
             {
                 YSeparatorStep = 500000;
             }
-        }
-
-        private void RefreshTimer(object sender, EventArgs e)
-        {
-            IsRefreshable = true;
         }
     }
 
