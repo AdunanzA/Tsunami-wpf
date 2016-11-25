@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Tsunami.Pages;
 using Tsunami.ViewModel;
 
 namespace Tsunami.Pages
@@ -21,6 +22,8 @@ namespace Tsunami.Pages
     /// </summary>
     public partial class TSUCard : UserControl
     {
+        private bool _deleteFileToo = false;
+
         public TSUCard()
         {
             InitializeComponent();
@@ -53,9 +56,23 @@ namespace Tsunami.Pages
             res.ResumeTorrent(ti.Hash);
         }
 
-        private void btnCancel_Click(object sender, MouseButtonEventArgs e)
+        private async void btnCancel_Click(object sender, MouseButtonEventArgs e)
         {
-            FormFadeOut.Begin();
+            var deleteMessageDialog = new DelDialog();
+            
+            await MaterialDesignThemes.Wpf.DialogHost.Show(deleteMessageDialog, "RootDialog");
+
+            if (deleteMessageDialog.DeleteTorrent && deleteMessageDialog.DeleteFile)
+            {
+                _deleteFileToo = true;
+                FormFadeOut.Begin();
+            }
+            if (deleteMessageDialog.DeleteTorrent && !deleteMessageDialog.DeleteFile)
+            {
+                _deleteFileToo = false;
+                FormFadeOut.Begin();
+            }
+
             //Button os = (Button)e.OriginalSource;
             //MaterialDesignThemes.Wpf.PackIcon os = (MaterialDesignThemes.Wpf.PackIcon)e.Source;
             //Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
@@ -69,8 +86,13 @@ namespace Tsunami.Pages
             {
                 Models.TorrentItem ti = (Models.TorrentItem)DataContext;
                 TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
-                res.RemoveTorrent(ti.Hash);
+
+                if (_deleteFileToo) res.RemoveTorrent(ti.Hash, true);
+                else res.RemoveTorrent(ti.Hash, false);
+
+                _deleteFileToo = false;
             }
         }
+
     }
 }
