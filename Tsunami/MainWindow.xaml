@@ -12,7 +12,8 @@
         xmlns:ni="http://www.hardcodet.net/taskbar"
 
         mc:Ignorable="d"
-        Title="Tsunami" Icon="Resources/logo_tsunami_big.ico" BorderThickness="1" ResizeMode="CanResizeWithGrip"
+        Title="Tsunami" Icon="Resources/logo_tsunami_big.ico" ResizeMode="CanResizeWithGrip"
+        WindowStyle="None" AllowsTransparency="True"  
         MinHeight="600" MinWidth="800"
 
         TextElement.FontWeight="Regular" TextElement.FontSize="13" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto"
@@ -22,7 +23,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         
         DataContext="{StaticResource TsunamiVM}"
-
+              
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
@@ -31,20 +32,51 @@
     <Window.Resources>
         <!--<streaming:PlayerViewModel x:Key="PlayerDataContext" />-->
     </Window.Resources>
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
+    </WindowChrome.WindowChrome>
+
     <materialDesign:DialogHost Identifier="RootDialog">
-        <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}">
+        <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}" Margin="0,0,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" /><!-- body -->
-                <RowDefinition Height="30" /><!-- status bar -->
+                <RowDefinition Height="*" />
+                    <!-- body -->
+                <RowDefinition Height="30" />
+                <!-- status bar -->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" /><!-- body left, menu -->
-                <ColumnDefinition Width="*" /><!-- body right, content -->
+                <ColumnDefinition Width="100" />
+                <!-- body left, menu -->
+                <ColumnDefinition Width="*" />
+                <!-- body right, content -->
             </Grid.ColumnDefinitions>
             <Grid.Background>
                 <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
             </Grid.Background>
-            <ListBox Grid.Row="0" Grid.Column="0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+
+            <materialDesign:ColorZone Grid.Row="0" Height="40" materialDesign:ShadowAssist.ShadowDepth="Depth0" DockPanel.Dock="Top" 
+                                      VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
+                <ContentControl MouseDown="ContentControl_MouseDown" MouseDoubleClick="ContentControl_MouseDoubleClick">
+                    <DockPanel>
+                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedButton}"
+                            ToolTip="Resource name: MaterialDesignRaisedButton" Click="OnCloseButton_Click">
+                            <materialDesign:PackIcon Kind="Close" Height="25" Width="25"/>
+                        </Button>
+                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
+                            ToolTip="MaterialDesignFlatButton"  Click="OnResizeButton_Click">
+                            <materialDesign:PackIcon Kind="WindowMaximize" Height="25" Width="25"/>
+                        </Button>
+                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
+                            ToolTip="MaterialDesignFlatButton" Click="OnMinimizeButton_Click">
+                            <materialDesign:PackIcon Kind="WindowMinimize" Height="25" Width="25"/>
+                        </Button>
+                        <Image Source="/Resources/logo_tsunami_big.ico" Margin="5,5,0,0" Height="30" Width="30" DockPanel.Dock="Left"/>
+                        <TextBlock x:Name="titleBlock" Margin="5,10,0,0" Foreground="{DynamicResource PrimaryHueMidBrush}" DockPanel.Dock="Left" FontSize="16"/>
+                    </DockPanel>
+                </ContentControl>
+            </materialDesign:ColorZone>
+
+            <ListBox Grid.Row="0" Grid.Column="0" Margin="0,40,0,0" x:Name="menuListBox" materialDesign:ShadowAssist.ShadowDepth="Depth2">
                 <ListBox.Items>
                     <ListBoxItem Name="AddPage" IsSelected="True" MouseLeftButtonUp="AddPage_MouseLeftButtonUp">
                         <ListBoxItem.Content>
@@ -61,14 +93,14 @@
                             <materialDesign:PackIcon Kind="Play" Height="50" Width="50" Margin="18 10 10 10"/>
                         </ListBoxItem.Content>
                     </ListBoxItem>
-                    <ListBoxItem Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
-                        <ListBoxItem.Content>
-                            <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
-                        </ListBoxItem.Content>
-                    </ListBoxItem>
                     <ListBoxItem Name="GraphicsPage" MouseLeftButtonUp="GraphicsPage_MouseLeftButtonUp">
                         <ListBoxItem.Content>
                             <materialDesign:PackIcon Kind="ChartAreaspline" Height="50" Width="50" Margin="18 10 10 10" />
+                        </ListBoxItem.Content>
+                    </ListBoxItem>
+                    <ListBoxItem VerticalAlignment="Bottom" Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
+                        <ListBoxItem.Content>
+                            <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
                         </ListBoxItem.Content>
                     </ListBoxItem>
                 </ListBox.Items>
@@ -76,17 +108,19 @@
 
             <Grid Grid.Row="0" Grid.Column="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
-                    <StackPanel Grid.Row="0" Orientation="Vertical">
+
+                <ScrollViewer Grid.Row="1" Margin="0,40,0,0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel">
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
 
                         <ContentControl Name="mainContent" Margin="16" />
 
                     </StackPanel>
                 </ScrollViewer>
-                
+
                 <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
@@ -94,52 +128,52 @@
                         <ColumnDefinition Width="2.5*" />
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
-                    <lvc:AngularGauge Grid.Row="1" Grid.Column="2" Margin="0,0,0,-40"
-                          Height="130" Width="150" 
-                          Value="{Binding SessionStatistic.AngularGaugeValue}" 
-                          FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
-                          LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                          TicksForeground="White" Foreground="White"                                   
-                          FontWeight="Bold" FontSize="14"
-                          SectionsInnerRadius=".8">
-                        <lvc:AngularGauge.Sections>
-                            <lvc:AngularSection FromValue="0" ToValue="10" Fill="#FF3939" />
-                            <lvc:AngularSection FromValue="10" ToValue="25" Fill="#F8A725" />
-                            <lvc:AngularSection FromValue="25" ToValue="75" Fill="#39AA39" />
-                            <lvc:AngularSection FromValue="75" ToValue="100" Fill="#00FF00" />
-                        </lvc:AngularGauge.Sections>
-                    </lvc:AngularGauge>
                 </Grid>
+
+           <lvc:AngularGauge Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                Height="130" Width="130" Margin="0,0,20,-40"
+                Value="{Binding SessionStatistic.AngularGaugeValue}" 
+                FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
+                LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                TicksForeground="White" Foreground="White"                                   
+                FontWeight="Bold" FontSize="14"
+                SectionsInnerRadius=".8" Grid.ColumnSpan="2">
+                <lvc:AngularGauge.Sections>
+                    <lvc:AngularSection FromValue="0" ToValue="10" Fill="#FF3939" />
+                    <lvc:AngularSection FromValue="10" ToValue="25" Fill="#F8A725" />
+                    <lvc:AngularSection FromValue="25" ToValue="75" Fill="#39AA39" />
+                    <lvc:AngularSection FromValue="75" ToValue="100" Fill="#00FF00" />
+                </lvc:AngularGauge.Sections>
+           </lvc:AngularGauge>
             </Grid>
-
-            <StatusBar Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
-                <StatusBarItem HorizontalAlignment="Right">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="NumPeers: "></TextBlock>
-                        <TextBlock Text="{Binding SessionStatistic.NumPeers}" Margin="0,0,20,0"></TextBlock>
-                        <materialDesign:PackIcon Kind="Download" />
-                        <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" Margin="10,0"></TextBlock>
-                        <TextBlock Text="("></TextBlock>
-                        <TextBlock Text="{Binding SessionStatistic.TotalDownload_ByteSize}"></TextBlock>
-                        <TextBlock Text=")"></TextBlock>
-                        <TextBlock Text="/" Margin="15,0"></TextBlock>
-                        <materialDesign:PackIcon Kind="Upload" />
-                        <TextBlock Text="{Binding SessionStatistic.TotalUploadRate_ByteSize}" Margin="10,0"></TextBlock>
-                        <TextBlock Text="("></TextBlock>
-                        <TextBlock Text="{Binding SessionStatistic.TotalUpload_ByteSize}"></TextBlock>
-                        <TextBlock Text=")"></TextBlock>
-                        <TextBlock Text=" " Margin="0,0,20,0"></TextBlock>
-                    </StackPanel>
-                </StatusBarItem>
-            </StatusBar>
-
+            
+            <materialDesign:ColorZone Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" 
+                                      VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0">
+                <DockPanel Height="25" Margin="0,8,0,0">
+                    <TextBlock Text=" " Margin="0,0,20,0" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text=")" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.TotalUpload_ByteSize}" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="(" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.TotalUploadRate_ByteSize}" Margin="10,0" DockPanel.Dock="Right" FontSize="13"/>
+                    <materialDesign:PackIcon Kind="Upload" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="/" Margin="15,0" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text=")" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.TotalDownload_ByteSize}" DockPanel.Dock="Right" FontSize="13"></TextBlock>
+                    <TextBlock Text="(" DockPanel.Dock="Right" FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" DockPanel.Dock="Right" Margin="10,0"  FontSize="13"/>
+                    <materialDesign:PackIcon DockPanel.Dock="Right" Kind="Download"  FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.NumPeers}" DockPanel.Dock="Right" Margin="0,0,20,0"  FontSize="13"/>
+                    <TextBlock Text="NumPeers: " DockPanel.Dock="Right"  FontSize="13"/>
+                    <TextBlock Text=" " DockPanel.Dock="Right" FontSize="13"/>
+                    <!--Black TextBlock fills the remaining space -->
+                </DockPanel>
+            </materialDesign:ColorZone>
             <ni:TaskbarIcon
             x:Name="tsunamiNotifyIcon"
             ToolTipText="Tsunami"
             IconSource="Resources/logo_tsunami_big.ico">
             </ni:TaskbarIcon>
 
-        </Grid>
+        </Grid>           
     </materialDesign:DialogHost>
 </Window>

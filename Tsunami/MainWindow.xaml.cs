@@ -40,8 +40,7 @@ namespace Tsunami
             var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
-            var title = Title + " " + verMajor + "." + verMin + verRev;
-            Title = title;
+            titleBlock.Text = Title + " " + verMajor + "." + verMin + verRev;
             
             Closing += Window_Closing;
 
@@ -139,6 +138,37 @@ namespace Tsunami
             ScrollViewer scv = (ScrollViewer)sender;
             scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
             e.Handled = true;
+        }
+
+        private void OnCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void OnResizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+                this.WindowState = WindowState.Normal;
+            else
+                this.WindowState = WindowState.Maximized;
+        }
+
+        private void OnMinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void ContentControl_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        private void ContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+                this.WindowState = WindowState.Normal;
+            else
+                this.WindowState = WindowState.Maximized;
         }
     }
 }
