@@ -271,12 +271,17 @@ void Session::set_session_callback(System::Action ^ dispatch)
 
 void Session::get_pending_alerts()
 {
-	m_alerts->clear();
 	session_->pop_alerts(m_alerts);
 	for each (auto a in *m_alerts)
 	{
 		alertDispatcher->Invoke(Alert::create(a));
 	}
+	m_alerts->clear();
+}
+
+bool Session::alerts_empty()
+{
+	return m_alerts->empty();
 }
 
 void Session::clear_alert_callback()

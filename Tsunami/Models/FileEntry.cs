@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -23,10 +24,11 @@ namespace Tsunami.Models
         private bool _symlinkAttribute { get; set; }
         private string _symlinkPath { get; set; }
 
-        public string _fileName { get; set; }
-        public bool _isValid { get; set; }
-        public int _pieceSize { get; set; }
+        private string _fileName { get; set; }
+        private bool _isValid { get; set; }
+        private int _pieceSize { get; set; }
 
+        private ObservableCollection<bool> _pieces { get; set; }
 
         public bool ExecutableAttribute { get { return _executableAttribute; } set { if (_executableAttribute != value) { _executableAttribute = value; CallPropertyChanged("ExecutableAttribute"); } } }
         public string Filehash  { get { return _filehash; } set { if (_filehash != value) { _filehash = value; CallPropertyChanged("Filehash"); } } }
@@ -44,13 +46,25 @@ namespace Tsunami.Models
         public bool IsValid  { get { return _isValid; } set { if (_isValid != value) { _isValid = value; CallPropertyChanged("IsValid"); } } }
         public int PieceSize  { get { return _pieceSize; } set { if (_pieceSize != value) { _pieceSize = value; CallPropertyChanged("PieceSize"); } } }
 
+        public ObservableCollection<bool> Pieces { get { return _pieces; } }
+
         public FileEntry() {
+            _pieces = new ObservableCollection<bool>();
         }
 
         public FileEntry(Core.FileEntry fe)
         {
+            _pieces = new ObservableCollection<bool>();
+            Update(fe);
+        }
+
+        public void Update(Core.FileEntry fe)
+        {
+            using (Core.Sha1Hash hash = fe.filehash)
+            {
+                Filehash = hash.ToString();
+            }
             ExecutableAttribute = fe.executable_attribute;
-            Filehash = fe.filehash.ToString();
             FileBase = fe.file_base;
             HiddenAttribute = fe.hidden_attribute;
             Mtime = fe.mtime;
@@ -60,6 +74,7 @@ namespace Tsunami.Models
             Size = fe.size;
             SymlinkAttribute = fe.symlink_attribute;
             SymlinkPath = fe.symlink_path;
+            
         }
 
         public void CallPropertyChanged(string prop)

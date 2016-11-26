@@ -46,7 +46,7 @@ namespace Tsunami
 
             Classes.Switcher.PageSwitcher = this;
 
-            if (tvm.TorrentList.Count > 0)
+            if (ViewModel.TsunamiViewModel.TorrentList.Count > 0)
             {
                 // we have torrent, switch to download list
                 Classes.Switcher.Switch(_listPage);

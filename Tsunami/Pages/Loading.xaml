@@ -58,8 +58,8 @@
                 <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}" 
                                 x:Name="progressLoading" Grid.Column="0" Value="{Binding FileLoading}" Maximum="{Binding FileToLoad}"
                                 VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <Label Name="txtLoading" Grid.Column="1" FontSize="15" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
-                            Margin="10,0,20,0" FontWeight="Bold" Height="30" Content="{Binding StringLoading}"/>
+                <Label Name="txtLoading" Grid.Column="1" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch" 
+                            Margin="10,0,20,0" FontWeight="DemiBold" Height="30" Content="{Binding StringLoading}"/>
             </Grid>
         </Grid>
     </materialDesign:Card>

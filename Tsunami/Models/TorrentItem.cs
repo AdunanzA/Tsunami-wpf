@@ -25,7 +25,6 @@ namespace Tsunami.Models
         private int _DownloadRate;
         private int _UploadRate;
         private int _NumConnections;
-        private bool _isSelected;
 
         private int _ActiveTime;
         private DateTime _AddedTime;
@@ -89,6 +88,9 @@ namespace Tsunami.Models
         private int _UpBandwidthqueue;
         private BitField _VerifiedPieces;
 
+        private bool _isSelected;
+        //private bool _forceSequential;
+
         public int QueuePosition { get { return _QueuePosition; } set { if (_QueuePosition != value) { _QueuePosition = value; CallPropertyChanged("QueuePosition"); } } }
         public string Name { get { return _Name; } set { if (_Name != value) { _Name = value; CallPropertyChanged("Name"); } } }
         public string Hash { get { return _Hash; } set { if (_Hash != value) { _Hash = value; CallPropertyChanged("Hash"); } } }
@@ -114,7 +116,6 @@ namespace Tsunami.Models
         public int DownloadRate { get { return _DownloadRate; } set { if (_DownloadRate != value) { _DownloadRate = value; CallPropertyChanged("DownloadRate_ByteSize"); CallPropertyChanged("DownloadRate_Symbol"); CallPropertyChanged("DownloadRate_Short"); } } }
         public int UploadRate { get { return _UploadRate; } set { if (_UploadRate != value) { _UploadRate = value; CallPropertyChanged("UploadRate_ByteSize"); CallPropertyChanged("UploadRate_Symbol"); CallPropertyChanged("UploadRate_Short"); } } }
         public int NumConnections { get { return _NumConnections; } set { if (_NumConnections != value) { _NumConnections = value; CallPropertyChanged("NumConnections"); } } }
-        public bool IsSelected { get { return _isSelected; } set { if (_isSelected != value) { _isSelected = value; CallPropertyChanged("IsSelected"); } } }
 
         public int ActiveTime { get { return _ActiveTime; } set { if (_ActiveTime != value) { _ActiveTime = value; CallPropertyChanged("ActiveTime"); } } }
         public DateTime AddedTime { get { return _AddedTime; } set { if (_AddedTime != value) { _AddedTime = value; CallPropertyChanged("AddedTime"); } } }
@@ -180,6 +181,8 @@ namespace Tsunami.Models
 
         public ObservableCollection<Models.FileEntry> FileList { get; set; }
 
+        public bool IsSelected { get { return _isSelected; } set { if (_isSelected != value) { _isSelected = value; CallPropertyChanged("IsSelected"); } } }
+
         public System.Windows.Visibility IsPauseButtonVisible {
             get
             {
@@ -192,7 +195,6 @@ namespace Tsunami.Models
                 }
             }
         }
-
         public System.Windows.Visibility IsResumeButtonVisible
         {
             get
@@ -207,7 +209,9 @@ namespace Tsunami.Models
                 }
             }
         }
+
         public Func<double, string> Formatter { get; set; }
+
         public string TotalWanted_ByteSize
         {
             get
@@ -375,7 +379,7 @@ namespace Tsunami.Models
                     case "Allocating":
                         return "/Resources/state_loading.png";
                     case "Checking Resume Data":
-                        return "/Resources/state_loading.png";
+                        return "/Resources/state_warning.png";
                     case "Paused":
                         return "/Resources/state_pause.png";
                     default:
@@ -426,7 +430,8 @@ namespace Tsunami.Models
                 //    scb = new SolidColorBrush(Colors.Black);
                 //}
                 //return scb.Color;
-                return Colors.White;
+                //return Colors.White;
+                return new Color() { A = 255, B = 255, G = 255, R = 255 };
             }
         }
         public Color ColorTo
@@ -436,19 +441,58 @@ namespace Tsunami.Models
                 //Tuple<MahApps.Metro.AppTheme, MahApps.Metro.Accent> appStyle = MahApps.Metro.ThemeManager.DetectAppStyle(System.Windows.Application.Current);
                 //SolidColorBrush scb = (SolidColorBrush)appStyle.Item2.Resources["HighlightBrush"];
                 //return scb.Color;
-                return new SolidColorBrush(Colors.LimeGreen).Color;
+                //return new SolidColorBrush(Colors.LimeGreen).Color;
+                return new Color() { A = 255, B = 18, G = 253, R = 7 };
             }
         }
 
         public TorrentItem()
         {
             Formatter = x => ((int)x).ToString() + "%";
+            FileList = new ObservableCollection<FileEntry>();
         }
 
         public TorrentItem(Core.TorrentStatus ts)
         {
             Formatter = x => ((int)x).ToString() + "%";
+            FileList = new ObservableCollection<FileEntry>();
+
+            FileEntry fe;
+            using (Core.TorrentInfo tf = ts.torrent_file())
+            using (Core.FileStorage fs = tf.files())
+            {
+                // per ogni file nel torrent
+                for (int i = 0; i <= tf.num_files() - 1; i++)
+                    
+                    using (Core.FileEntry cfe = fs.at(i))
+                    using (Core.Sha1Hash hash = cfe.filehash)
+                    {
+                        // lo inserisco
+                        fe = new FileEntry(cfe);
+                        fe.FileName = fs.file_name(i);
+                        fe.IsValid = fs.is_valid();
+                        fe.PieceSize = fs.piece_size(i);
+                        FileList.Add(fe);
+                    }
+            }
+            if (FileList.Count == 0)
+            {
+                // non ci sono file nel torrent
+                fe = new FileEntry();
+                fe.FileName = ts.name;
+                FileList.Add(fe);
+            }
+
+            SequentialDownload = ts.sequential_download;
             Update(ts);
+
+            //System.Windows.Application.Current.Dispatcher.BeginInvoke(
+            //    System.Windows.Threading.DispatcherPriority.Normal,
+            //    (Action)delegate ()
+            //    {
+                    
+            //    });
+
         }
 
         public void Update(Core.TorrentStatus ts)
@@ -480,6 +524,7 @@ namespace Tsunami.Models
             DownBandwidthQueue = ts.down_bandwidth_queue;
             Error = ts.error;
             FinishedTime = ts.finished_time;
+            Hash = ts.info_hash.ToString();
             HasIncoming = ts.has_incoming;
             HasMetadata = ts.has_metadata;
             IpFilterApplies = ts.ip_filter_applies;
@@ -499,14 +544,25 @@ namespace Tsunami.Models
             NumSeeds = ts.num_seeds;
             NumUploads = ts.num_uploads;
             Paused = ts.paused;
-            Pieces = new BitField(ts.pieces);
+            using (Core.BitField bf = ts.pieces)
+            {
+                if (ReferenceEquals(null, Pieces))
+                {
+                    Pieces = new BitField(bf);
+                } else
+                {
+                    Pieces.Update(bf);
+                }
+            }
+            //Pieces = new BitField(ts.pieces);
             ProgressPpm = ts.progress_ppm;
             SavePath = ts.save_path;
             SeedingTime = ts.seeding_time;
             SeedMode = ts.seed_mode;
             SeedRank = ts.seed_rank;
-            SequentialDownload = ts.sequential_download;
+            //SequentialDownload = ts.sequential_download;
             ShareMode = ts.share_mode;
+            State = (ts.paused) ? "Paused" : Classes.Utils.GiveMeStateFromEnum(ts.state);
             StorageMode = Classes.Utils.GiveMeStorageModeFromEnum(ts.storage_mode);
             SuperSeeding = ts.super_seeding;
             TimeSinceDownload = ts.time_since_download;
@@ -522,7 +578,29 @@ namespace Tsunami.Models
             UploadMode = ts.upload_mode;
             UploadPayloadRate = ts.upload_payload_rate;
             UpBandwidthQueue = ts.up_bandwidth_queue;
-            VerifiedPieces = new BitField(ts.verified_pieces);
+            using (Core.BitField vp = ts.verified_pieces)
+            {
+                if (ReferenceEquals(null, VerifiedPieces))
+                {
+                    VerifiedPieces = new BitField(vp);
+                }
+                else
+                {
+                    VerifiedPieces.Update(vp);
+                }
+            }
+            //VerifiedPieces = new BitField(ts.verified_pieces);
+            //if (ForceSequential && !Pieces.AllSet)
+            //{
+            //    foreach (Models.Part item in Pieces.Parts)
+            //    {
+            //        if (!item.Downloaded)
+            //        {
+            //            ts.handle().piece_priority(item.Id, 7);
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         public void CallPropertyChanged(string prop)

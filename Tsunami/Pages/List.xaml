@@ -7,12 +7,13 @@
              xmlns:pages="clr-namespace:Tsunami.Pages"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid>
         <StackPanel Orientation="Vertical">
             <ListBox Grid.Row="1" Name="torrentList" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                        ItemsSource="{Binding TorrentList}" Background="Transparent">
+                        ItemsSource="{Binding TorrentList, Mode=OneWay}" Background="Transparent" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" IsItemsHost="True"></WrapPanel>

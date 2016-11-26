@@ -42,7 +42,7 @@
                                   Storyboard.TargetProperty="(Window.Opacity)"
                                   From="1.0"
                                   To="0.0"
-                                  Duration="0:0:0.5"
+                                  Duration="0:0:0.3"
                                   AutoReverse="False"
                                   RepeatBehavior="1x" />
                 </Storyboard>
@@ -68,9 +68,9 @@
         <Border CornerRadius="15" Grid.RowSpan="6" Grid.ColumnSpan="5">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
-                    <GradientStop Color="#555555" Offset="0.0" />
-                    <GradientStop Color="#333333" Offset="0.1" />
-                    <GradientStop Color="#333333" Offset="1.0" />
+                    <GradientStop Color="{DynamicResource Primary200}" Offset="0.0" />
+                    <GradientStop Color="{DynamicResource Primary500}" Offset="0.1" />
+                    <GradientStop Color="{DynamicResource Primary500}" Offset="1.0" />
                 </LinearGradientBrush>
             </Border.Background>
             <StackPanel Orientation="Vertical" Margin="1">
@@ -80,7 +80,7 @@
                         <ColumnDefinition Width="18" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" TextWrapping="NoWrap" Text="{Binding ShortName}" VerticalAlignment="Top" Margin="6,4,0,0" Width="110"
-                                FontSize="12" FontWeight="Regular" Cursor="Hand" ToolTip="{Binding Name}"
+                                FontSize="12" FontWeight="Regular" Cursor="Hand" ToolTip="{Binding Name}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
                                 PreviewMouseDown="torrentFile_PreviewMouseDown" HorizontalAlignment="Left">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -109,7 +109,7 @@
                     <Image Grid.Column="0" Grid.RowSpan="3" Source="/Resources/streaming_off.png" Width="30" Height="30"
                            Cursor="Hand" ToolTip="Play video"></Image>
                     <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Totale" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Opacity="0.8" Text="Totale" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
                         <TextBlock FontSize="10" Foreground="#3FB24A" Text="{Binding TotalWanted_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="Bold">
                             <TextBlock.LayoutTransform>
                                 <ScaleTransform ScaleX="0.8"></ScaleTransform>
@@ -117,7 +117,7 @@
                         </TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Scaricati" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Opacity="0.8" Text="Scaricati" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
                         <TextBlock FontSize="10" Foreground="#E0C164" Text="{Binding TotalDone_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="Bold">
                             <TextBlock.LayoutTransform>
                                 <ScaleTransform ScaleX="0.8"></ScaleTransform>
@@ -125,7 +125,7 @@
                         </TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
-                        <TextBlock FontSize="8" Foreground="#888888" Text="Restanti" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
+                        <TextBlock FontSize="8" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}" Opacity="0.8" Text="Restanti" Width="30" TextAlignment="Right" Margin="0,2,0,0" VerticalAlignment="Bottom"></TextBlock>
                         <TextBlock FontSize="10" Foreground="#216CA6" Text="{Binding Remaining_ByteSize}" Margin="5,2,0,0" VerticalAlignment="Bottom" FontWeight="ExtraBold">
                             <TextBlock.LayoutTransform>
                                 <ScaleTransform ScaleX="0.8"></ScaleTransform>
@@ -135,23 +135,26 @@
                 </Grid>
                 <Border Margin="0,-10,0,0">
                     <Border.Background>
-                        <ImageBrush ImageSource="/Resources/bkg1.png"/>
+                        <ImageBrush ImageSource="/Resources/bkg1.png" Opacity="0.6"/>
                     </Border.Background>
-                    <Viewbox  Width="90" Height="90">
-                        <Border>
-                            <Border.Background>
-                                <ImageBrush ImageSource="/Resources/progress_bar.png" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
-                            </Border.Background>
-                            <lvc:Gauge Uses360Mode="True" From="0" To="100" materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                                       Value="{Binding Progress_Number, Mode=OneWay}" InnerRadius="16"
-                                       TextElement.Foreground="{Binding Progress_Color}" 
-                                       LabelFormatter="{Binding Formatter}" 
-                                       FromColor="{Binding ColorFrom}"
-                                       ToColor="{Binding ColorTo}" Opacity="0.8"
-                                       HighFontSize="14" TextElement.FontStretch="ExtraCondensed">
-                            </lvc:Gauge>
-                        </Border>
-                    </Viewbox>
+                    <Grid>
+                        <Viewbox Width="90" Height="90">
+                            <Border>
+                                <lvc:Gauge Uses360Mode="True" From="0" To="100" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                                           Value="{Binding Progress_Number, Mode=OneWay}" InnerRadius="16"
+                                           TextElement.Foreground="{Binding Progress_Color}" 
+                                           LabelFormatter="{Binding Formatter}" 
+                                           FromColor="{Binding ColorFrom}"
+                                           ToColor="{Binding ColorTo}" Opacity="1"
+                                           HighFontSize="14" TextElement.FontStretch="ExtraCondensed">
+                                </lvc:Gauge>
+                                <Border.Background>
+                                    <ImageBrush ImageSource="/Resources/pb1.png" AlignmentX="Center" AlignmentY="Center" Stretch="Uniform"/>
+                                </Border.Background>
+                            </Border>
+                        </Viewbox>
+                        <Image VerticalAlignment="Center" HorizontalAlignment="Center" Source="/Resources/pb3.png" Width="58" Height="58"></Image>
+                    </Grid>
                 </Border>
             </StackPanel>
         </Border>
@@ -160,11 +163,11 @@
         <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding DownloadRate_Symbol}" HorizontalAlignment="Center" Foreground="#0686EB" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center"></TextBlock>
         <TextBlock Grid.Row="2" Grid.Column="3" Text="{Binding DownloadRate_Short}" Grid.ColumnSpan="2" HorizontalAlignment="Center" Foreground="#E0C164" FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"></TextBlock>
         <TextBlock Grid.Row="3" Grid.Column="2" Text="{Binding RemainingTime}" Grid.RowSpan="2" Visibility="{Binding IsDownloadVisible}" VerticalAlignment="Bottom"
-            FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" ToolTip="{Binding RemainingVerbose}">
+            FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Center" ToolTip="{Binding RemainingVerbose}" Foreground="{DynamicResource PrimaryHueMidForegroundBrush}">
         </TextBlock>
         <Border Visibility="{Binding IsDownloadVisible}" Grid.Row="5" Grid.ColumnSpan="3" Margin="2,0,0,2" Width="62" Height="30" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <Border.Background>
-                <ImageBrush ImageSource="/Resources/bkg2.png"/>
+                <ImageBrush ImageSource="/Resources/bkg2.png" Opacity="0.6"/>
             </Border.Background>
             <Grid>
                 <Grid.ColumnDefinitions>

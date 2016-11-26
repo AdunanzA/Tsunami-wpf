@@ -142,6 +142,7 @@ namespace Tsunami
 			void set_alert_callback(System::Action<Alert^>^ dispatch);
 			void set_session_callback(System::Action ^ dispatch);
 			void get_pending_alerts();
+			bool alerts_empty();
 			
 		private:
 			SessionDispatcher * sessionDispatcher_;

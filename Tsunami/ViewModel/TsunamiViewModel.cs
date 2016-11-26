@@ -14,13 +14,16 @@ namespace Tsunami.ViewModel
 {
     class TsunamiViewModel : INotifyPropertyChanged, IDisposable
     {
+        private static object _lock = new object();
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void CallPropertyChanged(string prop)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
-        private readonly Logger log = LogManager.GetLogger("VM-Tsunami");
+        private readonly Logger log = LogManager.GetLogger("TsunamiViewModel");
+        private readonly Logger CoreLog = LogManager.GetLogger("Core");
 
         //save_resume_variables
         private int outstanding_resume_data = 0;
@@ -30,8 +33,8 @@ namespace Tsunami.ViewModel
 
         private readonly System.Timers.Timer _dispatcherTimer = new System.Timers.Timer();
 
-        private ObservableCollection<Models.TorrentItem> _torrentList { get; set; }
-        public ObservableCollection<Models.TorrentItem> TorrentList
+        private static ObservableCollection<Models.TorrentItem> _torrentList { get; set; }
+        public static ObservableCollection<Models.TorrentItem> TorrentList
         {
             get
             {
@@ -106,9 +109,11 @@ namespace Tsunami.ViewModel
             Settings.Logger.Inizialize();
 
             _torrentList = new ObservableCollection<Models.TorrentItem>();
+            System.Windows.Data.BindingOperations.EnableCollectionSynchronization(TorrentList, _lock);
+
             _sessionStatistic = new SessionStatistics();
             _preference = new Models.Preferences();
-            IsTsunamiEnabled = true;
+            IsTsunamiEnabled = false;
             //_notifyIcon = new Models.NotifyIcon();
 
             _torrentSession = new Core.Session();
@@ -147,7 +152,8 @@ namespace Tsunami.ViewModel
                             | Core.AlertMask.status_notification
                             | Core.AlertMask.ip_block_notification
                             | Core.AlertMask.progress_notification
-                            | Core.AlertMask.stats_notification | Core.AlertMask.dht_notification
+                            | Core.AlertMask.stats_notification
+                            | Core.AlertMask.dht_notification
                             ;
 
             _torrentSession.set_alert_mask(alertMask);
@@ -164,7 +170,7 @@ namespace Tsunami.ViewModel
             _torrentSession.start_upnp();
             _torrentSession.start_dht();
             _torrentSession.resume();
-
+            
             log.Debug("created");
 
             //Dht = new Core.AdunanzaDht();
@@ -177,37 +183,40 @@ namespace Tsunami.ViewModel
         {
             //if (!IsTsunamiEnabled) { return; }
 
-            _torrentSession.post_torrent_updates();
-            _torrentSession.post_dht_stats();
-
-            using (Core.SessionStatus ss = _torrentSession.status())
+            if (_torrentSession.alerts_empty())
             {
-                SessionStatistic.Update(ss);
-            }
-
-            TimeSpan difference = DateTime.Now - _lastSaveResumeExecution;
-            if ( difference.TotalMinutes >= Settings.Application.SAVE_RESUME_INTERVAL && IsTsunamiEnabled)
-            {
-                //int totConnex = 0;
-                _lastSaveResumeExecution = DateTime.Now;
-
-                List<Models.TorrentItem> myList = new List<Models.TorrentItem>(TorrentList);
-                
-                foreach (Models.TorrentItem item in myList)
+                _torrentSession.post_torrent_updates();
+                _torrentSession.post_dht_stats();
+                using (Core.SessionStatus ss = _torrentSession.status())
                 {
-                    using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
-                    using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
-                    using (Core.TorrentStatus ts = th.status())
-                    {
-                        if (ts.has_metadata && ts.need_save_resume)
-                        {
-                            th.save_resume_data(1 | 2 | 4);
-                        }
-                    }
-                    //totConnex += item.NumConnections;
+                    SessionStatistic.Update(ss);
                 }
-                //SessionStatistic.NumConnections = totConnex;
             }
+
+
+            //TimeSpan difference = DateTime.Now - _lastSaveResumeExecution;
+            //if ( difference.TotalMinutes >= Settings.Application.SAVE_RESUME_INTERVAL && IsTsunamiEnabled)
+            //{
+            //    //int totConnex = 0;
+            //    _lastSaveResumeExecution = DateTime.Now;
+
+            //    List<Models.TorrentItem> myList = new List<Models.TorrentItem>(TorrentList);
+                
+            //    foreach (Models.TorrentItem item in myList)
+            //    {
+            //        using (Core.Sha1Hash sha1hash = new Core.Sha1Hash(item.Hash))
+            //        using (Core.TorrentHandle th = _torrentSession.find_torrent(sha1hash))
+            //        using (Core.TorrentStatus ts = th.status())
+            //        {
+            //            if (ts.has_metadata && ts.need_save_resume)
+            //            {
+            //                th.save_resume_data(1 | 2 | 4);
+            //            }
+            //        }
+            //        //totConnex += item.NumConnections;
+            //    }
+            //    //SessionStatistic.NumConnections = totConnex;
+            //}
         }
 
         private void HandleAlertCallback()
@@ -217,7 +226,7 @@ namespace Tsunami.ViewModel
 
         private void HandlePendingAlertCallback(Core.Alert a)
         {
-            log.Trace("libtorrent event {0}: {1}", a.what(), a.message());
+            CoreLog.Trace("libtorrent event {0}: {1}", a.what(), a.message());
             if (!alertType.ContainsKey(a.GetType()))
             {
                 return;
@@ -252,9 +261,50 @@ namespace Tsunami.ViewModel
                     SaveResumeDataFailedAlert((Core.save_resume_data_failed_alert)a);
                     break;
                 case 11: // piece_finished_alert
+                    PieceFinishedAlert((Core.piece_finished_alert)a);
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void PieceFinishedAlert(piece_finished_alert a)
+        {
+            Interlocked.MemoryBarrier();
+            using(Core.TorrentHandle th = a.handle)
+            using(Core.Sha1Hash hash = th.info_hash())
+            {
+                if (TorrentList.ToList().Any(x => x.Hash == hash.ToString()))
+                {
+                    Models.TorrentItem ti = TorrentList.First(z => z.Hash == hash.ToString());
+                    if (!ReferenceEquals(null, ti.Pieces.Parts) && ti.Pieces.Parts.Any(q => q.Id == a.piece_index))
+                    {
+                        ti.Pieces.Parts[a.piece_index].Downloaded = true;
+
+                        //var pp = th.piece_priorities();
+
+                        //if (ti.ForceSequential)
+                        if (ti.SequentialDownload)
+                        {
+                            //foreach (Models.Part item in ti.Pieces.Parts)
+                            //{
+                            //    if (!item.Downloaded)
+                            //    {
+                            //        th.piece_priority(item.Id, 7);
+                            //        break;
+                            //    }
+                            //}
+                            if (ti.Pieces.Parts.Any(w => w.Downloaded == false))
+                            {
+                                Models.Part mp = ti.Pieces.Parts.First(w => w.Downloaded == false);
+                                mp.Priority = 7;
+                                th.piece_priority(mp.Id, 7);
+                            }
+                        }
+
+                    }
+                }
+
             }
         }
 
@@ -263,13 +313,14 @@ namespace Tsunami.ViewModel
             using (Core.Sha1Hash sha1hash = a.info_hash)
             {
                 string hash = sha1hash.ToString();
-                if (TorrentList.Any(e => e.Hash == hash))
+                if (TorrentList.ToList().Any(e => e.Hash == hash))
                 {
+                    Models.TorrentItem ti = TorrentList.ToList().First(f => f.Hash == hash);
                     Application.Current.Dispatcher.BeginInvoke(
                     System.Windows.Threading.DispatcherPriority.Normal,
                     (Action)delegate ()
                     {
-                        TorrentList.Remove(TorrentList.First(f => f.Hash == hash));
+                        TorrentList.Remove(ti);
                     });
                 }
                 if (File.Exists("./Fastresume/" + hash + ".fastresume"))
@@ -304,7 +355,7 @@ namespace Tsunami.ViewModel
                 if (!ReferenceEquals(null, bw)) bw.Dispose();
                 if (!ReferenceEquals(null, fs)) fs.Dispose();
             }
-
+            
             Interlocked.Decrement(ref outstanding_resume_data);
             if (outstanding_resume_data == 0 && no_more_resume)
                 no_more_data.Set();
@@ -364,6 +415,7 @@ namespace Tsunami.ViewModel
                             atp.flags &= ~Core.ATPFlags.flag_paused; // remove pause on added torrent
                             await System.Threading.Tasks.Task.Run(() =>  _torrentSession.add_torrent(atp));
                         }
+                        await System.Threading.Tasks.Task.Delay(100);
                     }
                 } else
                 {
@@ -483,45 +535,9 @@ namespace Tsunami.ViewModel
         {
             using (Core.TorrentHandle th = a.handle)
             using (Core.TorrentStatus ts = th.status())
-            using (Core.Sha1Hash hash = th.info_hash())
             {
-                var stat = "Paused";
-                if (!ts.paused)
-                {
-                    stat = Classes.Utils.GiveMeStateFromEnum(ts.state);
-                }
-
-                ObservableCollection<Models.FileEntry> feList = new ObservableCollection<Models.FileEntry>();
-                using (Core.TorrentInfo tinf = th.torrent_file())
-                {
-                    Models.FileEntry fe;
-                    if (tinf == null)
-                    {
-                        // non ci sono file nel torrent
-                        fe = new Models.FileEntry();
-                        fe.FileName = th.ToString();
-                        feList.Add(fe);
-                    }
-                    else
-                    {
-                        for (int i = 0; i <= tinf.num_files() - 1; i++)
-                        {
-                            fe = new Models.FileEntry(tinf.files().at(i));
-                            fe.FileName = tinf.files().file_name(i);
-                            fe.IsValid = tinf.files().is_valid();
-                            fe.PieceSize = tinf.piece_size(i);
-                            //ti.trackers();
-                            feList.Add(fe);
-                        }
-                    }
-                }
-
-                Models.TorrentItem ti = new Models.TorrentItem(ts)
-                {
-                    Hash = hash.ToString(),
-                    State = stat,
-                    FileList = feList
-                };
+                Models.TorrentItem ti = new Models.TorrentItem(ts);
+                ti.PropertyChanged += torrentItem_PropertyChanged;
 
                 Application.Current.Dispatcher.BeginInvoke(
                     System.Windows.Threading.DispatcherPriority.Normal,
@@ -536,34 +552,65 @@ namespace Tsunami.ViewModel
             }
         }
 
-        private void StateUpdateAlert(Core.state_update_alert a)
+        private void torrentItem_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            Core.TorrentStatus[] statuses = (Core.TorrentStatus[])a.status.Clone();
-            foreach (Core.TorrentStatus ts in statuses)
-            using (ts)
-            using (Core.Sha1Hash hash = ts.info_hash)
+            if (e.PropertyName == "ForceSequential")
             {
-                var stat = "Paused";
-                if (!ts.paused)
+                Models.TorrentItem ti = (Models.TorrentItem)sender;
+                using (Core.Sha1Hash hash = new Core.Sha1Hash(ti.Hash))
+                using (Core.TorrentHandle th = _torrentSession.find_torrent(hash))
                 {
-                    stat = Classes.Utils.GiveMeStateFromEnum(ts.state);
-                }
-                if (TorrentList.Count(z => z.Hash == hash.ToString()) == 1)
-                {
-                    Models.TorrentItem ti = TorrentList.First(e => e.Hash == hash.ToString());
-                    ti.Update(ts);
+                    if (ti.SequentialDownload)
+                    {
+                        th.set_sequential_download(true);
+                        foreach (Models.Part mp in ti.Pieces.Parts.Where(x => x.Downloaded == false))
+                        {
+                            mp.Priority = 1;
+                            th.piece_priority(mp.Id, 1);
+                        }
+                        if (ti.Pieces.Parts.Any(w => w.Downloaded == false))
+                        {
+                            Models.Part mp = ti.Pieces.Parts.First(w => w.Downloaded == false);
+                            mp.Priority = 7;
+                            th.piece_priority(mp.Id, 7);
+                        }
+                    } else {
+                        th.set_sequential_download(false);
+                        foreach (Models.Part mp in ti.Pieces.Parts.Where(x => x.Downloaded == false))
+                        {
+                            mp.Priority = 4;
+                            th.piece_priority(mp.Id, 4);
+                        }
+                    }
                 }
             }
         }
 
+        private void StateUpdateAlert(Core.state_update_alert a)
+        {
+            foreach (Core.TorrentStatus ts in a.status)
+                using (ts)
+                using (Core.Sha1Hash hash = ts.info_hash)
+                {
+                    if (TorrentList.ToList().Any(z => z.Hash == hash.ToString()))
+                    {
+                        Models.TorrentItem ti = TorrentList.First(e => e.Hash == hash.ToString());
+                        ti.Update(ts);
+                    }
+                }
+        }
+
         public void Terminate()
         {
-            IsTsunamiEnabled = false;
-            _torrentSession.pause();
-
             _dispatcherTimer.Stop();
             _dispatcherTimer.Enabled = false;
+
+            IsTsunamiEnabled = false;
+
+            _torrentSession.pause();
+
             //stopWeb();
+            TerminateSaveResume();
 
             outstanding_resume_data = 0;
             List<Models.TorrentItem> myList = new List<Models.TorrentItem>(TorrentList);
@@ -577,20 +624,20 @@ namespace Tsunami.ViewModel
                     {
                         ++outstanding_resume_data;
                         th.save_resume_data(1 | 2 | 4);
+                        System.Threading.Thread.Sleep(100);
                     }
                 }
             }
             no_more_resume = true;
-            //if (outstanding_resume_data != 0)
-            if (outstanding_resume_data > 0)
+            //if (outstanding_resume_data > 0)
+            if (outstanding_resume_data != 0)
                 no_more_data.WaitOne();
 
-            TerminateSaveResume();
+            _torrentSession.clear_alert_callback();
         }
 
         private void TerminateSaveResume()
         {
-            _torrentSession.clear_alert_callback();
             using (var entry = _torrentSession.save_state(0xfffffff))
             {
                 var data = Core.Util.bencode(entry);
