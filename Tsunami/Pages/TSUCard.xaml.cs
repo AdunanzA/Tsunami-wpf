@@ -58,10 +58,11 @@ namespace Tsunami.Pages
 
         private async void btnCancel_Click(object sender, MouseButtonEventArgs e)
         {
-            var deleteMessageDialog = new DelDialog();
+            Image or = (Image)e.OriginalSource;
+            Models.TorrentItem ti = (Models.TorrentItem)or.DataContext;
+            var deleteMessageDialog = new DelDialog { DataContext = ti };
             
             await MaterialDesignThemes.Wpf.DialogHost.Show(deleteMessageDialog, "RootDialog");
-
             if (deleteMessageDialog.DeleteTorrent && deleteMessageDialog.DeleteFile)
             {
                 _deleteFileToo = true;
@@ -72,12 +73,6 @@ namespace Tsunami.Pages
                 _deleteFileToo = false;
                 FormFadeOut.Begin();
             }
-
-            //Button os = (Button)e.OriginalSource;
-            //MaterialDesignThemes.Wpf.PackIcon os = (MaterialDesignThemes.Wpf.PackIcon)e.Source;
-            //Models.TorrentItem ti = (Models.TorrentItem)os.DataContext;
-            //TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
-            //res.RemoveTorrent(ti.Hash);
         }
 
         private void FormFadeOut_Completed(object sender, EventArgs e)
@@ -87,9 +82,7 @@ namespace Tsunami.Pages
                 Models.TorrentItem ti = (Models.TorrentItem)DataContext;
                 TsunamiViewModel res = (TsunamiViewModel)FindResource("TsunamiVM");
 
-                if (_deleteFileToo) res.RemoveTorrent(ti.Hash, true);
-                else res.RemoveTorrent(ti.Hash, false);
-
+                res.RemoveTorrent(ti.Hash, _deleteFileToo);
                 _deleteFileToo = false;
             }
         }

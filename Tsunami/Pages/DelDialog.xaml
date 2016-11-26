@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:Tsunami.Pages"
              xmlns:Properties="clr-namespace:Tsunami.Properties"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" materialDesign:ShadowAssist.Darken="True" materialDesign:ShadowAssist.ShadowDepth="Depth3"
-             d:DesignHeight="300" d:DesignWidth="500">
+             d:DesignHeight="300" d:DesignWidth="450">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -21,35 +21,27 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" >
+            <Image     DockPanel.Dock="Left" Source="/Resources/trash.png"/>
+            <TextBlock DockPanel.Dock="Left" HorizontalAlignment="Left"   FontSize="18" Text="{DynamicResource DelTorrentMessage}" Style="{StaticResource MaterialDesignDisplay2TextBlock}"/>
+            <TextBlock DockPanel.Dock="Left" Text=" "/>
+            <TextBlock DockPanel.Dock="Left" HorizontalAlignment="Center" FontSize="18" Text="{Binding Name}" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
+            <TextBlock DockPanel.Dock="Left" Text=" "/>
+            <TextBlock DockPanel.Dock="Left" HorizontalAlignment="Right"  FontSize="18" Text="?" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1">
+            <Button DockPanel.Dock="Left" Height="30" Style="{StaticResource MaterialDesignRaisedButton}" IsDefault="True"
+                                 Content="{DynamicResource DelAffermativeButton}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                 Click="DelTorrentAndFile_Click" Margin="8" />
 
-        <TextBlock Grid.Row="0" HorizontalAlignment="Left"    Text="{DynamicResource DelTorrentMessage}" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
-        <!--<TextBlock Grid.Row="0" HorizontalAlignment="Center"  Text="{Binding ShortName}" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>-->
-        <TextBlock Grid.Row="0" HorizontalAlignment="Right"   Text=" ?" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
+            <Button DockPanel.Dock="Left" Height="30" Style="{StaticResource MaterialDesignFlatButton}" 
+                                 Content="{DynamicResource DelFirstAuxiliary}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                 Click="DelTorrentOnly_Click" Margin="8" />
 
-        <StackPanel Grid.Row="1">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                
-                <Button Grid.Column="0" Style="{StaticResource MaterialDesignFlatButton}" IsDefault="True"
-                                 Content="{DynamicResource DelAffermativeButton}" Margin="0,8,8,0"
-                                 Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                 Click="DelTorrentAndFile_Click"
-                                 />
-
-                <Button Grid.Column="1" Style="{StaticResource MaterialDesignFlatButton}" Content="{DynamicResource DelFirstAuxiliary}"
-                                 Margin="0,8,8,0" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                 Click="DelTorrentOnly_Click"/>
-
-                <Button Grid.Column="2" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True"
-                                        Content="{DynamicResource No}" Margin="0,8,8,0"
-                                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                 />
-            </Grid>
-        </StackPanel>
+            <Button DockPanel.Dock="Left" Height="30" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True"
+                                 Content="{DynamicResource No}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                 Margin="8" />
+        </DockPanel>
         
     </Grid>
 </UserControl>

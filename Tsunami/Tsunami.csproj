@@ -351,6 +351,9 @@
   <ItemGroup>
     <Resource Include="Resources\pb1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\trash.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>echo f | xcopy /d /y /s  "$(ProjectDir)Resources\*.*" "$(TargetDir)Resources\"</PreBuildEvent>
