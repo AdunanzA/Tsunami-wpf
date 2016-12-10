@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -28,8 +29,6 @@ namespace Tsunami.Models
         private bool _isValid { get; set; }
         private int _pieceSize { get; set; }
 
-        private ObservableCollection<bool> _pieces { get; set; }
-
         public bool ExecutableAttribute { get { return _executableAttribute; } set { if (_executableAttribute != value) { _executableAttribute = value; CallPropertyChanged("ExecutableAttribute"); } } }
         public string Filehash  { get { return _filehash; } set { if (_filehash != value) { _filehash = value; CallPropertyChanged("Filehash"); } } }
         public long FileBase  { get { return _fileBase; } set { if (_fileBase != value) { _fileBase = value; CallPropertyChanged("FileBase"); } } }
@@ -38,7 +37,7 @@ namespace Tsunami.Models
         public long Offset  { get { return _offset; } set { if (_offset != value) { _offset = value; CallPropertyChanged("Offset"); } } }
         public bool PadFile  { get { return _padFile; } set { if (_padFile != value) { _padFile = value; CallPropertyChanged("PadFile"); } } }
         public string Path  { get { return _path; } set { if (_path != value) { _path = value; CallPropertyChanged("Path"); } } }
-        public long Size  { get { return _size; } set { if (_size != value) { _size = value; CallPropertyChanged("Size"); } } }
+        public long Size  { get { return _size; } set { if (_size != value) { _size = value; CallPropertyChanged("Size"); CallPropertyChanged("Size_ByteSize"); } } }
         public bool SymlinkAttribute  { get { return _symlinkAttribute; } set { if (_symlinkAttribute != value) { _symlinkAttribute = value; CallPropertyChanged("SymlinkAttribute"); } } }
         public string SymlinkPath  { get { return _symlinkPath; } set { if (_symlinkPath != value) { _symlinkPath = value; CallPropertyChanged("SymlinkPath"); } } }
 
@@ -46,35 +45,42 @@ namespace Tsunami.Models
         public bool IsValid  { get { return _isValid; } set { if (_isValid != value) { _isValid = value; CallPropertyChanged("IsValid"); } } }
         public int PieceSize  { get { return _pieceSize; } set { if (_pieceSize != value) { _pieceSize = value; CallPropertyChanged("PieceSize"); } } }
 
-        public ObservableCollection<bool> Pieces { get { return _pieces; } }
+        public string Size_ByteSize
+        {
+            get
+            {
+                return _size.Bytes().ToString("0.00");
+            }
+        }
+
+        public ObservableCollection<Part> Pieces { get; set; }
 
         public FileEntry() {
-            _pieces = new ObservableCollection<bool>();
+            Pieces = new ObservableCollection<Part>();
         }
 
         public FileEntry(Core.FileEntry fe)
         {
-            _pieces = new ObservableCollection<bool>();
+            Pieces = new ObservableCollection<Part>();
+            using (Core.Sha1Hash hash = fe.filehash)
+            {
+                Filehash = hash.ToString();
+            }
+            Size = fe.size;
             Update(fe);
         }
 
         public void Update(Core.FileEntry fe)
         {
-            using (Core.Sha1Hash hash = fe.filehash)
-            {
-                Filehash = hash.ToString();
-            }
-            ExecutableAttribute = fe.executable_attribute;
-            FileBase = fe.file_base;
-            HiddenAttribute = fe.hidden_attribute;
-            Mtime = fe.mtime;
-            Offset = fe.offset;
-            PadFile = fe.pad_file;
-            Path = fe.path;
-            Size = fe.size;
-            SymlinkAttribute = fe.symlink_attribute;
-            SymlinkPath = fe.symlink_path;
-            
+            //ExecutableAttribute = fe.executable_attribute;
+            //FileBase = fe.file_base;
+            //HiddenAttribute = fe.hidden_attribute;
+            //Mtime = fe.mtime;
+            //Offset = fe.offset;
+            //PadFile = fe.pad_file;
+            //Path = fe.path;
+            //SymlinkAttribute = fe.symlink_attribute;
+            //SymlinkPath = fe.symlink_path;
         }
 
         public void CallPropertyChanged(string prop)

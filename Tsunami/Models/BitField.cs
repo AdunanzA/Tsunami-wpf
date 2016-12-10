@@ -21,7 +21,10 @@ namespace Tsunami.Models
         public int NumWords { get; set; }
         public int Size { get; set; }        
 
-        public BitField() { /* nothing to do. just for serializator */ }
+        public BitField()
+        {
+            Parts = new ObservableCollection<Part>();
+        }
 
         public BitField(Core.BitField bf)
         {

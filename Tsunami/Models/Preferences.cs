@@ -29,6 +29,7 @@ namespace Tsunami.Models
         private bool _isDarkTheme;
         private string _themeColor;
         private string _accentColor;
+        private string _logLevel;
 
         public string PathDownload { get { return _pathDownload; } set { if (_pathDownload != value) { _pathDownload = value; CallPropertyChanged("PathDownload"); } } }
 
@@ -45,6 +46,40 @@ namespace Tsunami.Models
         public string WebPassword { get { return _webPassword; } set { if (_webPassword != value) { _webPassword = value; CallPropertyChanged("WebPassword"); } } }
 
         public long StreamingBufferSize { get { return _streamingBufferSize; } set { if (_streamingBufferSize != value) { _streamingBufferSize = value; CallPropertyChanged("streamingBufferSize"); } } }
+
+        public NLog.LogLevel LogLevel
+        {
+            get
+            {
+                switch (_logLevel)
+                {
+                    case "fatal":
+                        return NLog.LogLevel.Fatal;
+                    case "error":
+                        return NLog.LogLevel.Error;
+                    case "warn":
+                        return NLog.LogLevel.Warn;
+                    case "info":
+                        return NLog.LogLevel.Info;
+                    case "debug":
+                        return NLog.LogLevel.Debug;
+                    case "trace":
+                        return NLog.LogLevel.Trace;
+                    default:
+                        return NLog.LogLevel.Info;
+                }
+            }
+            set
+            {
+                _logLevel = value.ToString().ToLowerInvariant();
+                foreach (var rule in LogManager.Configuration.LoggingRules)
+                {
+                    rule.EnableLoggingForLevels(value, NLog.LogLevel.Fatal);
+                }
+                LogManager.ReconfigExistingLoggers();
+                CallPropertyChanged("LogLevel");
+            }
+        }
 
         public List<ColorItem> ColorItems { get; }
         public List<ColorItem> AccentItems { get; }
@@ -128,6 +163,7 @@ namespace Tsunami.Models
             IsDarkTheme = Settings.User.IsDarkTheme;
             ThemeColor = Settings.User.ThemeColor;
             AccentColor = Settings.User.AccentColor;
+            LogLevel = NLog.LogLevel.FromString(Settings.User.LogLevel);
 
             log.Debug("loaded");
         }
@@ -146,6 +182,7 @@ namespace Tsunami.Models
             Settings.User.IsDarkTheme = IsDarkTheme;
             Settings.User.ThemeColor = ThemeColor;
             Settings.User.AccentColor = AccentColor;
+            Settings.User.LogLevel = LogLevel.ToString();
 
             Settings.User.writeToFile();
             log.Debug("saved");

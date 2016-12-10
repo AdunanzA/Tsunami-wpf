@@ -32,7 +32,7 @@ namespace Tsunami
             // wait for tsunami fast resume
             while (!tsunamiVM.IsTsunamiEnabled)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(500);
             }
 
             // wait something else
@@ -42,7 +42,8 @@ namespace Tsunami
             // Create the main window, but on the UI thread.
             Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Invoker)delegate
             {
-                Current.MainWindow.Hide();
+                //Current.MainWindow.Hide();
+                Current.MainWindow.Close();
                 Current.MainWindow = null;
                 Current.MainWindow = new Tsunami.MainWindow();
                 Current.MainWindow.Show();

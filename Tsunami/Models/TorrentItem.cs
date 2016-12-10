@@ -350,10 +350,6 @@ namespace Tsunami.Models
                     G = 255,
                     B = (byte)((255 * (100 - Progress_Number)) / 100)
                 };
-                //cl.A = 255;
-                //cl.R = (byte)((255 * (100 - Progress_Number)) / 100);
-                //cl.G = (byte)((255 * Progress_Number) / 100);
-                //cl.B = (byte)((255 * (100 - Progress_Number)) / 100);
                 return new SolidColorBrush(cl);
             }
         }
@@ -457,13 +453,18 @@ namespace Tsunami.Models
             Formatter = x => ((int)x).ToString() + "%";
             FileList = new ObservableCollection<FileEntry>();
 
+            using (Core.Sha1Hash hash = ts.info_hash)
+            {
+                Hash = hash.ToString();
+            }
+
             FileEntry fe;
+            int piecesOffset = 0;
             using (Core.TorrentInfo tf = ts.torrent_file())
             using (Core.FileStorage fs = tf.files())
             {
                 // per ogni file nel torrent
                 for (int i = 0; i <= tf.num_files() - 1; i++)
-                    
                     using (Core.FileEntry cfe = fs.at(i))
                     using (Core.Sha1Hash hash = cfe.filehash)
                     {
@@ -472,6 +473,20 @@ namespace Tsunami.Models
                         fe.FileName = fs.file_name(i);
                         fe.IsValid = fs.is_valid();
                         fe.PieceSize = fs.piece_size(i);
+
+                        if (fe.PieceSize > fe.Size)
+                        {
+                            // one piece
+                            fe.Pieces.Add(new Part() { Id = piecesOffset, Downloaded = false, Priority = 4 });
+                        } else
+                        {
+                            decimal piecesUsed = fe.Size / fe.PieceSize;
+                            for (int u = 0; u < piecesUsed; u++)
+                            {
+                                fe.Pieces.Add(new Part() { Id = piecesOffset, Downloaded = false, Priority = 4 });
+                                piecesOffset++;
+                            }
+                        }
                         FileList.Add(fe);
                     }
             }
@@ -485,64 +500,55 @@ namespace Tsunami.Models
 
             SequentialDownload = ts.sequential_download;
             Update(ts);
-
-            //System.Windows.Application.Current.Dispatcher.BeginInvoke(
-            //    System.Windows.Threading.DispatcherPriority.Normal,
-            //    (Action)delegate ()
-            //    {
-                    
-            //    });
-
         }
 
         public void Update(Core.TorrentStatus ts)
         {
             Name = ts.name;
-            Priority = ts.priority;
-            QueuePosition = ts.queue_position;
+            //Priority = ts.priority;
+            //QueuePosition = ts.queue_position;
             TotalWanted = ts.total_wanted;
             TotalDone = ts.total_done;
             Progress = ts.progress;
             DownloadRate = ts.download_rate;
             UploadRate = ts.upload_rate;
 
-            ActiveTime = ts.active_time;
-            AddedTime = ts.added_time;
-            AllTimeDownload = ts.all_time_download;
-            AllTimeUpload = ts.all_time_upload;
-            AnnounceInterval = ts.announce_interval;
-            AutoManaged = ts.auto_managed;
-            BlockSize = ts.block_size;
-            CompletedTime = ts.completed_time;
-            ConnectionsLimit = ts.connections_limit;
-            ConnectCandidates = ts.connect_candidates;
-            CurrentTracker = ts.current_tracker;
-            DistributedCopies = ts.distributed_copies;
-            DistributedFraction = ts.distributed_fraction;
-            DistributedFullCopies = ts.distributed_full_copies;
-            DownloadPayloadRate = ts.download_payload_rate;
-            DownBandwidthQueue = ts.down_bandwidth_queue;
+            //ActiveTime = ts.active_time;
+            //AddedTime = ts.added_time;
+            //AllTimeDownload = ts.all_time_download;
+            //AllTimeUpload = ts.all_time_upload;
+            //AnnounceInterval = ts.announce_interval;
+            //AutoManaged = ts.auto_managed;
+            //BlockSize = ts.block_size;
+            //CompletedTime = ts.completed_time;
+            //ConnectionsLimit = ts.connections_limit;
+            //ConnectCandidates = ts.connect_candidates;
+            //CurrentTracker = ts.current_tracker;
+            //DistributedCopies = ts.distributed_copies;
+            //DistributedFraction = ts.distributed_fraction;
+            //DistributedFullCopies = ts.distributed_full_copies;
+            //DownloadPayloadRate = ts.download_payload_rate;
+            //DownBandwidthQueue = ts.down_bandwidth_queue;
             Error = ts.error;
-            FinishedTime = ts.finished_time;
-            Hash = ts.info_hash.ToString();
-            HasIncoming = ts.has_incoming;
-            HasMetadata = ts.has_metadata;
-            IpFilterApplies = ts.ip_filter_applies;
+            //FinishedTime = ts.finished_time;
+            //HasIncoming = ts.has_incoming;
+            //HasMetadata = ts.has_metadata;
+            //IpFilterApplies = ts.ip_filter_applies;
             IsFinished = ts.is_finished;
             IsSeeding = ts.is_seeding;
-            LastScrape = ts.last_scrape;
-            LastSeenComplete = ts.last_seen_complete;
-            ListPeers = ts.list_peers;
-            ListSeeds = ts.list_seeds;
-            MovingStorage = ts.moving_storage;
+            //LastScrape = ts.last_scrape;
+            //LastSeenComplete = ts.last_seen_complete;
+            //ListPeers = ts.list_peers;
+            //ListSeeds = ts.list_seeds;
+            //MovingStorage = ts.moving_storage;
             NeedSaveResume = ts.need_save_resume;
-            NextAnnounce = ts.next_announce;
-            NumComplete = ts.num_complete;
-            NumIncomplete = ts.num_incomplete;
-            NumPeers = ts.num_peers;
+            //NextAnnounce = ts.next_announce;
+            //NumComplete = ts.num_complete;
+            //NumIncomplete = ts.num_incomplete;
+            //NumPeers = ts.num_peers;
             NumPieces = ts.num_pieces;
-            NumSeeds = ts.num_seeds;
-            NumUploads = ts.num_uploads;
+            //NumSeeds = ts.num_seeds;
+            //NumUploads = ts.num_uploads;
             Paused = ts.paused;
             using (Core.BitField bf = ts.pieces)
             {
@@ -554,30 +560,29 @@ namespace Tsunami.Models
                     Pieces.Update(bf);
                 }
             }
-            //Pieces = new BitField(ts.pieces);
-            ProgressPpm = ts.progress_ppm;
-            SavePath = ts.save_path;
-            SeedingTime = ts.seeding_time;
-            SeedMode = ts.seed_mode;
-            SeedRank = ts.seed_rank;
+            //ProgressPpm = ts.progress_ppm;
+            //SavePath = ts.save_path;
+            //SeedingTime = ts.seeding_time;
+            //SeedMode = ts.seed_mode;
+            //SeedRank = ts.seed_rank;
             //SequentialDownload = ts.sequential_download;
-            ShareMode = ts.share_mode;
+            //ShareMode = ts.share_mode;
             State = (ts.paused) ? "Paused" : Classes.Utils.GiveMeStateFromEnum(ts.state);
-            StorageMode = Classes.Utils.GiveMeStorageModeFromEnum(ts.storage_mode);
-            SuperSeeding = ts.super_seeding;
-            TimeSinceDownload = ts.time_since_download;
-            TimeSinceUpload = ts.time_since_upload;
+            //StorageMode = Classes.Utils.GiveMeStorageModeFromEnum(ts.storage_mode);
+            //SuperSeeding = ts.super_seeding;
+            //TimeSinceDownload = ts.time_since_download;
+            //TimeSinceUpload = ts.time_since_upload;
             TotalDownload = ts.total_download;
-            TotalFailedBytes = ts.total_failed_bytes;
-            TotalPayloadDownload = ts.total_payload_download;
-            TotalPayloadUpload = ts.total_payload_upload;
-            TotalReduntantBytes = ts.total_reduntant_bytes;
+            //TotalFailedBytes = ts.total_failed_bytes;
+            //TotalPayloadDownload = ts.total_payload_download;
+            //TotalPayloadUpload = ts.total_payload_upload;
+            //TotalReduntantBytes = ts.total_reduntant_bytes;
             TotalUpload = ts.total_upload;
             TotalWantedDone = ts.total_wanted_done;
-            UploadsLimit = ts.uploads_limit;
-            UploadMode = ts.upload_mode;
-            UploadPayloadRate = ts.upload_payload_rate;
-            UpBandwidthQueue = ts.up_bandwidth_queue;
+            //UploadsLimit = ts.uploads_limit;
+            //UploadMode = ts.upload_mode;
+            //UploadPayloadRate = ts.upload_payload_rate;
+            //UpBandwidthQueue = ts.up_bandwidth_queue;
             using (Core.BitField vp = ts.verified_pieces)
             {
                 if (ReferenceEquals(null, VerifiedPieces))
@@ -589,18 +594,17 @@ namespace Tsunami.Models
                     VerifiedPieces.Update(vp);
                 }
             }
-            //VerifiedPieces = new BitField(ts.verified_pieces);
-            //if (ForceSequential && !Pieces.AllSet)
-            //{
-            //    foreach (Models.Part item in Pieces.Parts)
-            //    {
-            //        if (!item.Downloaded)
-            //        {
-            //            ts.handle().piece_priority(item.Id, 7);
-            //            break;
-            //        }
-            //    }
-            //}
+
+            foreach (Models.FileEntry item in FileList)
+            {
+                foreach (Models.Part part in item.Pieces.Where(x => x.Downloaded == false))
+                {
+                    bool sub = ts.pieces.op_Subscript(part.Id);
+                    part.Downloaded = sub;
+                    Pieces.Parts[part.Id].Downloaded = sub;
+                }
+            }
+
         }
 
         public void CallPropertyChanged(string prop)

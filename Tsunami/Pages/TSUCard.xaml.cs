@@ -33,11 +33,11 @@ namespace Tsunami.Pages
         {
             TextBlock or = (TextBlock)e.OriginalSource;
             Models.TorrentItem ti = (Models.TorrentItem)or.DataContext;
-            var sampleMessageDialog = new FileList
+            FileList fileList = new FileList
             {
                 DataContext = ti
             };
-            await MaterialDesignThemes.Wpf.DialogHost.Show(sampleMessageDialog, "RootDialog");
+            await MaterialDesignThemes.Wpf.DialogHost.Show(fileList, "RootDialog");
         }
 
         private void btnPause_Click(object sender, RoutedEventArgs e)
@@ -63,6 +63,7 @@ namespace Tsunami.Pages
             var deleteMessageDialog = new DelDialog { DataContext = ti };
             
             await MaterialDesignThemes.Wpf.DialogHost.Show(deleteMessageDialog, "RootDialog");
+
             if (deleteMessageDialog.DeleteTorrent && deleteMessageDialog.DeleteFile)
             {
                 _deleteFileToo = true;

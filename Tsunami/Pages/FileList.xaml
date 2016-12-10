@@ -10,37 +10,15 @@
              MaxHeight="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=OneWay}"
              MaxWidth="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Margin="16">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Row="0" Grid.ColumnSpan="5" Text="{Binding Name}" Style="{StaticResource MaterialDesignTitleTextBlock}" Margin="0,4,0,0" TextWrapping="Wrap"/>
-        <TextBlock Grid.Row="1" Grid.Column="0" Text="Pieces #" Margin="0,4,4,0" HorizontalAlignment="Right"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Pieces.Size}" Margin="4,4,0,0"></TextBlock>
-        <TextBlock Grid.Row="1" Grid.Column="3" Text="Pieces num words" Margin="0,4,4,0" HorizontalAlignment="Right"/>
-        <TextBlock Grid.Row="1" Grid.Column="4" Text="{Binding Pieces.NumWords}" Margin="4,4,0,0"></TextBlock>
+    <StackPanel Margin="16" Orientation="Vertical">
+        <TextBlock Text="{Binding Name, Mode=OneWay}" Style="{StaticResource MaterialDesignTitleTextBlock}" Margin="0,4,0,0" TextWrapping="Wrap"/>
 
-        <CheckBox Grid.Row="2" Grid.Column="3" Style="{StaticResource MaterialDesignCheckBox}" Margin="0 0 8 8" VerticalAlignment="Center" IsChecked="{Binding SequentialDownload, Mode=TwoWay}">
+        <CheckBox Style="{StaticResource MaterialDesignCheckBox}" Margin="0 0 8 8" VerticalAlignment="Center" 
+                  Visibility="{Binding IsDownloadVisible, Mode=OneWay}"
+                  IsChecked="{Binding SequentialDownload, Mode=TwoWay}">
             Force sequential download
         </CheckBox>
-        <ListBox Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="5" Name="piecesList" MaxWidth="400" MaxHeight="400"
+        <!--<ListBox Grid.Row="3" Grid.RowSpan="5" Grid.ColumnSpan="5" Name="piecesList" MaxWidth="400" MaxHeight="400"
                     ItemsSource="{Binding Pieces.Parts}" Background="Transparent">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -48,7 +26,6 @@
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             <ListBox.ItemContainerStyle>
-                <!-- Remove mouse over and item selection -->
                 <Style TargetType="ListBoxItem">
                     <Setter Property="IsSelected" Value="False"/>
                     <Setter Property="Template">
@@ -64,42 +41,58 @@
                 <DataTemplate>
                     <Grid>
                         <Rectangle Fill="{Binding Brush}" Height="8" Width="8" Margin="0" Stroke="DarkGray" StrokeThickness="1"/>
-                        <!--<TextBlock Text="{Binding Priority}" FontSize="7" Margin="3,0,0,0" />-->
+                        <TextBlock Text="{Binding Priority}" FontSize="7" Margin="3,0,0,0" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-        </ListBox>
-        
-        <ScrollViewer Grid.Row="9" Grid.ColumnSpan="5" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-            <ListBox ItemsSource="{Binding FileList}">
+        </ListBox>-->
+
+        <ScrollViewer PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <ListBox ItemsSource="{Binding FileList}" MinHeight="400" MinWidth="600" Padding="0,0,20,0"
+                                     MaxWidth="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
-                            <TextBlock Text="{Binding FileName}" TextWrapping="Wrap"></TextBlock>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition /><ColumnDefinition /><ColumnDefinition Width="1*" />
-                                    <ColumnDefinition /><ColumnDefinition /><ColumnDefinition Width="1*"/>
-                                    <ColumnDefinition /><ColumnDefinition />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Size: " FontSize="9" FontWeight="DemiBold" HorizontalAlignment="Right"></TextBlock>
-                                <TextBlock Grid.Column="1" Text="{Binding Size}" FontSize="9" Padding="5,0,0,0"></TextBlock>
-                                <TextBlock Grid.Column="3" Text="Piece Size: " FontSize="9" FontWeight="DemiBold" HorizontalAlignment="Right"></TextBlock>
-                                <TextBlock Grid.Column="4" Text="{Binding PieceSize}" FontSize="9" Padding="5,0,0,0"></TextBlock>
-                                <TextBlock Grid.Column="6" Text="Offset: " FontSize="9" FontWeight="DemiBold" HorizontalAlignment="Right"></TextBlock>
-                                <TextBlock Grid.Column="7" Text="{Binding Offset}" FontSize="9" Padding="5,0,0,0"></TextBlock>
-                            </Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding FileName, Mode=OneWay}"></TextBlock>
+                                <TextBlock Text="{Binding Size_ByteSize, Mode=OneWay}" Padding="10,0,0,0"></TextBlock>
+                            </StackPanel>
+                            <ListBox ItemsSource="{Binding Pieces, Mode=OneWay}" Background="Transparent">
+                                <ListBox.ItemContainerStyle>
+                                    <!--Remove mouse over and item selection-->
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="IsSelected" Value="False"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"></WrapPanel>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Rectangle Fill="{Binding Brush}" Height="8" Width="8" Margin="0" Stroke="DarkGray" StrokeThickness="1"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <Button Grid.Row="10" Grid.ColumnSpan="5"
+        <Button 
                 IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
                 HorizontalAlignment="Right"
                 Margin="16 16 16 0"
                 Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
             CLOSE
         </Button>
-    </Grid>
+    </StackPanel>
 </UserControl>

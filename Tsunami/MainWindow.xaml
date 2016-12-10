@@ -23,7 +23,7 @@
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         
         DataContext="{StaticResource TsunamiVM}"
-              
+        
         WindowState="{Binding WindowState, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
         Height="{Binding WindowHeight, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}" 
         Width="{Binding WindowWidth, Source={x:Static Properties:Settings.Default}, Mode=TwoWay}"
@@ -36,19 +36,15 @@
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
 
-    <materialDesign:DialogHost Identifier="RootDialog">
+    <materialDesign:DialogHost x:Name="RootDialog" Identifier="RootDialog" CloseOnClickAway="True">
         <Grid IsEnabled="{Binding IsTsunamiEnabled, Mode=OneWay}" Margin="0,0,0,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                    <!-- body -->
-                <RowDefinition Height="30" />
-                <!-- status bar -->
+                <RowDefinition Height="*" /><!-- body -->
+                <RowDefinition Height="30" /><!-- status bar -->
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100" />
-                <!-- body left, menu -->
-                <ColumnDefinition Width="*" />
-                <!-- body right, content -->
+                <ColumnDefinition Width="100" /><!-- body left, menu -->
+                <ColumnDefinition Width="*" /><!-- body right, content -->
             </Grid.ColumnDefinitions>
             <Grid.Background>
                 <ImageBrush ImageSource="/Resources/logo_tsunami_big.ico" AlignmentX="Center" AlignmentY="Center" Stretch="None" Opacity="0.3" />
@@ -59,15 +55,15 @@
                 <ContentControl MouseDown="ContentControl_MouseDown" MouseDoubleClick="ContentControl_MouseDoubleClick">
                     <DockPanel>
                         <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedButton}"
-                            ToolTip="Resource name: MaterialDesignRaisedButton" Click="OnCloseButton_Click">
+                            ToolTip="Close" Click="OnCloseButton_Click">
                             <materialDesign:PackIcon Kind="Close" Height="25" Width="25"/>
                         </Button>
                         <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
-                            ToolTip="MaterialDesignFlatButton"  Click="OnResizeButton_Click">
+                            ToolTip="Maximize"  Click="OnResizeButton_Click">
                             <materialDesign:PackIcon Kind="WindowMaximize" Height="25" Width="25"/>
                         </Button>
                         <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
-                            ToolTip="MaterialDesignFlatButton" Click="OnMinimizeButton_Click">
+                            ToolTip="Minimize" Click="OnMinimizeButton_Click">
                             <materialDesign:PackIcon Kind="WindowMinimize" Height="25" Width="25"/>
                         </Button>
                         <Image Source="/Resources/logo_tsunami_big.ico" Margin="5,5,0,0" Height="30" Width="30" DockPanel.Dock="Left"/>
@@ -130,21 +126,21 @@
                     </Grid.ColumnDefinitions>
                 </Grid>
 
-           <lvc:AngularGauge Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
-                Height="130" Width="130" Margin="0,0,20,-40"
-                Value="{Binding SessionStatistic.AngularGaugeValue}" 
-                FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
-                LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                TicksForeground="White" Foreground="White"                                   
-                FontWeight="Bold" FontSize="14"
-                SectionsInnerRadius=".8" Grid.ColumnSpan="2">
-                <lvc:AngularGauge.Sections>
-                    <lvc:AngularSection FromValue="0" ToValue="10" Fill="#FF3939" />
-                    <lvc:AngularSection FromValue="10" ToValue="25" Fill="#F8A725" />
-                    <lvc:AngularSection FromValue="25" ToValue="75" Fill="#39AA39" />
-                    <lvc:AngularSection FromValue="75" ToValue="100" Fill="#00FF00" />
-                </lvc:AngularGauge.Sections>
-           </lvc:AngularGauge>
+                <lvc:AngularGauge Grid.Row="2" Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                    Height="130" Width="130" Margin="0,0,20,-40"
+                    Value="{Binding SessionStatistic.AngularGaugeValue}" 
+                    FromValue="0" ToValue="100" NeedleFill="{DynamicResource SecondaryAccentBrush}"
+                    LabelsStep="25" TicksStep="10" Wedge="200" materialDesign:ShadowAssist.ShadowDepth="Depth2"
+                    TicksForeground="White" Foreground="White"                                   
+                    FontWeight="Bold" FontSize="14"
+                    SectionsInnerRadius=".8" Grid.ColumnSpan="2">
+                    <lvc:AngularGauge.Sections>
+                        <lvc:AngularSection FromValue="0" ToValue="10" Fill="#FF3939" />
+                        <lvc:AngularSection FromValue="10" ToValue="25" Fill="#F8A725" />
+                        <lvc:AngularSection FromValue="25" ToValue="75" Fill="#39AA39" />
+                        <lvc:AngularSection FromValue="75" ToValue="100" Fill="#00FF00" />
+                    </lvc:AngularGauge.Sections>
+               </lvc:AngularGauge>
             </Grid>
             
             <materialDesign:ColorZone Grid.Row="1" Grid.ColumnSpan="2" x:Name="DownloadStatusBar" Height="30" 
@@ -160,18 +156,20 @@
                     <TextBlock Text=")" DockPanel.Dock="Right" FontSize="13"/>
                     <TextBlock Text="{Binding SessionStatistic.TotalDownload_ByteSize}" DockPanel.Dock="Right" FontSize="13"></TextBlock>
                     <TextBlock Text="(" DockPanel.Dock="Right" FontSize="13"/>
-                    <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" DockPanel.Dock="Right" Margin="10,0"  FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.TotalDownloadRate_ByteSize}" DockPanel.Dock="Right" Margin="10,0" FontSize="13"/>
                     <materialDesign:PackIcon DockPanel.Dock="Right" Kind="Download"  FontSize="13"/>
-                    <TextBlock Text="{Binding SessionStatistic.NumPeers}" DockPanel.Dock="Right" Margin="0,0,20,0"  FontSize="13"/>
+                    <TextBlock Text="{Binding SessionStatistic.NumPeers}" DockPanel.Dock="Right" Margin="0,0,20,0" FontSize="13"/>
                     <TextBlock Text="NumPeers: " DockPanel.Dock="Right"  FontSize="13"/>
                     <TextBlock Text=" " DockPanel.Dock="Right" FontSize="13"/>
                     <!--Black TextBlock fills the remaining space -->
+                    <!--<TextBlock Text="{Binding Preference.LogLevel}" DockPanel.Dock="Left" Margin="0,0,20,0" FontSize="13"/>-->
                 </DockPanel>
             </materialDesign:ColorZone>
+            
             <ni:TaskbarIcon
-            x:Name="tsunamiNotifyIcon"
-            ToolTipText="Tsunami"
-            IconSource="Resources/logo_tsunami_big.ico">
+                x:Name="tsunamiNotifyIcon"
+                ToolTipText="Tsunami"
+                IconSource="Resources/logo_tsunami_big.ico">
             </ni:TaskbarIcon>
 
         </Grid>           

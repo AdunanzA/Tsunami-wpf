@@ -15,6 +15,6 @@ namespace Tsunami.Settings
         public readonly static int SAVE_RESUME_INTERVAL = 30;
 
         // internal Tsunami user_agent
-        public readonly static string TSUNAMI_USER_AGENT = "Tsunami/019";
+        public readonly static string TSUNAMI_USER_AGENT = "Tsunami/{0}";
     }
 }

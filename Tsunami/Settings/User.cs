@@ -28,6 +28,7 @@ namespace Tsunami.Settings
         private static bool _isDarkTheme = true;
         private static string _themeColor = "Orange";
         private static string _accentColor = "Red";
+        private static string _logLevel = "info";
 
         public static string PathDownload
         {
@@ -171,6 +172,19 @@ namespace Tsunami.Settings
             }
         }
 
+        public static string LogLevel
+        {
+            get
+            {
+                return _logLevel;
+            }
+
+            set
+            {
+                _logLevel = value;
+            }
+        }
+
         public static void readFromFile()
         {
             if (File.Exists(_fileName))
@@ -213,6 +227,9 @@ namespace Tsunami.Settings
                         case "AccentColor":
                             _accentColor = element.Value;
                             break;
+                        case "LogLevel":
+                            _logLevel = element.Value;
+                            break;
                         default:
                             break;
                     }
@@ -238,6 +255,7 @@ namespace Tsunami.Settings
             doc.Root.Add(new XElement("IsDarkTheme", IsDarkTheme));
             doc.Root.Add(new XElement("ThemeColor", ThemeColor));
             doc.Root.Add(new XElement("AccentColor", AccentColor));
+            doc.Root.Add(new XElement("LogLevel", LogLevel));
             doc.Save(_fileName);
         }
     }

@@ -13,11 +13,12 @@ namespace Tsunami.Settings
     {
         public static void Inizialize()
         {
-            var config = new LoggingConfiguration();
-            var fileTarget = new FileTarget();
+            LoggingConfiguration config = new LoggingConfiguration();
+            FileTarget fileTarget = new FileTarget();
             fileTarget.FileName = "${basedir}/Logs/${logger}.txt";
-            fileTarget.Layout = @"${date:format=HH\:mm\:ss} ${logger} ${message}";
-            var rule = new LoggingRule("*", LogLevel.Debug, fileTarget);
+            fileTarget.Layout = @"${date:format=HH\:mm\:ss.fff} ${pad:padding=5:inner=${level:uppercase=true}} [${callsite:className=false:includeSourcePath=false}] - ${message}";
+            //LoggingRule rule = new LoggingRule("*", LogLevel.Trace, LogLevel.Fatal, fileTarget);
+            LoggingRule rule = new LoggingRule("*", fileTarget);
             config.LoggingRules.Add(rule);
             LogManager.Configuration = config;
         }
