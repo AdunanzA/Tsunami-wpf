@@ -66,8 +66,8 @@
                             ToolTip="Minimize" Click="OnMinimizeButton_Click">
                             <materialDesign:PackIcon Kind="WindowMinimize" Height="25" Width="25"/>
                         </Button>
-                        <Image Source="/Resources/logo_tsunami_big.ico" Margin="5,5,0,0" Height="30" Width="30" DockPanel.Dock="Left"/>
-                        <TextBlock x:Name="titleBlock" Margin="5,10,0,0" Foreground="{DynamicResource PrimaryHueMidBrush}" DockPanel.Dock="Left" FontSize="16"/>
+                        <Image Source="/Resources/logo_tsunami_tiny.png" Margin="10,6,0,0" Height="30" Width="30" DockPanel.Dock="Left"/>
+                        <TextBlock x:Name="titleBlock" Margin="10,13,0,0" Foreground="{DynamicResource PrimaryHueMidBrush}" DockPanel.Dock="Left" FontSize="16"/>
                     </DockPanel>
                 </ContentControl>
             </materialDesign:ColorZone>
