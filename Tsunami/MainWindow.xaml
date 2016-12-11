@@ -94,7 +94,7 @@
                             <materialDesign:PackIcon Kind="ChartAreaspline" Height="50" Width="50" Margin="18 10 10 10" />
                         </ListBoxItem.Content>
                     </ListBoxItem>
-                    <ListBoxItem VerticalAlignment="Bottom" Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
+                    <ListBoxItem Name="SettingsPage" MouseLeftButtonUp="SettingsPage_MouseLeftButtonUp">
                         <ListBoxItem.Content>
                             <materialDesign:PackIcon Kind="Settings" Height="50" Width="50" Margin="18 10 10 10" />
                         </ListBoxItem.Content>
