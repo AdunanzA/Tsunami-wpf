@@ -160,6 +160,9 @@
     <Compile Include="Pages\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\BrushDialog.xaml.cs">
+      <DependentUpon>BrushDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\DelDialog.xaml.cs">
       <DependentUpon>DelDialog.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,10 @@
     <Page Include="Pages\Add.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\BrushDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\DelDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -347,6 +354,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\trash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\logo_tsunami_medium.png" />
+    <Resource Include="Resources\logo_tsunami_small.png" />
+    <Resource Include="Resources\logo_tsunami_tiny.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

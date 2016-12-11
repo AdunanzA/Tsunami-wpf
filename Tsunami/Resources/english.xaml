@@ -39,7 +39,10 @@
     <system:String x:Key="Loading">Loading</system:String>
     <system:String x:Key="Theme">Theme</system:String>
     <system:String x:Key="Accent">Accent</system:String>
-    <system:String x:Key="General">General</system:String>
+    <system:String x:Key="BitTorrent">BitTorrent</system:String>
     <system:String x:Key="Aspect">Aspect</system:String>
     <system:String x:Key="Web">Web</system:String>
+    <system:String x:Key="AdvancedSettings">Advanced Settings</system:String>
+    <system:String x:Key="Downloads">Downloads</system:String>
+    <system:String x:Key="Speed">Speed</system:String>
 </ResourceDictionary>
