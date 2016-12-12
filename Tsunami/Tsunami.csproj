@@ -166,6 +166,9 @@
     <Compile Include="Pages\DelDialog.xaml.cs">
       <DependentUpon>DelDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\DownloadDialog.xaml.cs">
+      <DependentUpon>DownloadDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\FileList.xaml.cs">
       <DependentUpon>FileList.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,9 @@
     </Compile>
     <Compile Include="Pages\TSUCard.xaml.cs">
       <DependentUpon>TSUCard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\WebSettingsDialog.xaml.cs">
+      <DependentUpon>WebSettingsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\Application.cs" />
     <Compile Include="Settings\Logger.cs" />
@@ -219,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\DownloadDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\FileList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -240,6 +250,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\TSUCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\WebSettingsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
