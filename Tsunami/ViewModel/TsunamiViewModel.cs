@@ -792,8 +792,8 @@ namespace Tsunami.ViewModel
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    _dispatcherTimer?.Dispose();
-                    no_more_data?.Dispose();
+                    _dispatcherTimer.Dispose();
+                    no_more_data.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
