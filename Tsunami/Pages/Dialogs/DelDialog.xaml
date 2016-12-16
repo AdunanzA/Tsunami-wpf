@@ -24,9 +24,7 @@
         <DockPanel Grid.Row="0" >
             <materialDesign:PackIcon  Margin="10,10,10,10" DockPanel.Dock="Left" Kind="DeleteSweep" Height="40" Width="40"/>
             <TextBlock Margin="0,20,5,0" DockPanel.Dock="Left" HorizontalAlignment="Left"   FontSize="18" Text="{DynamicResource DelTorrentMessage}" Style="{StaticResource MaterialDesignDisplay2TextBlock}"/>
-            <!--<TextBlock Margin="0,0,0,0" DockPanel.Dock="Left" Text=" "/>-->
             <TextBlock Margin="0,20,0,0" DockPanel.Dock="Left" HorizontalAlignment="Center" FontSize="18" Text="{Binding Name}" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
-            <!--<TextBlock Margin="0,0,0,0" DockPanel.Dock="Left" Text=" "/>-->
             <TextBlock Margin="0,20,10,0" DockPanel.Dock="Left" HorizontalAlignment="Right"  FontSize="18" Text="?" Style="{StaticResource MaterialDesignDisplay1TextBlock}"/>
         </DockPanel>
         <DockPanel Grid.Row="1">
@@ -41,7 +39,6 @@
             <Button DockPanel.Dock="Left" Height="30" Style="{StaticResource MaterialDesignFlatButton}" IsCancel="True"
                                  Content="{DynamicResource No}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
                                  Margin="8" />
-        </DockPanel>
-        
+        </DockPanel>        
     </Grid>
 </UserControl>
