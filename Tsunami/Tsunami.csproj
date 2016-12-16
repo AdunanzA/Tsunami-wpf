@@ -160,6 +160,9 @@
     <Compile Include="Pages\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Dialogs\About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Dialogs\BrushDialog.xaml.cs">
       <DependentUpon>BrushDialog.xaml</DependentUpon>
     </Compile>
@@ -214,6 +217,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\Add.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Dialogs\About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
