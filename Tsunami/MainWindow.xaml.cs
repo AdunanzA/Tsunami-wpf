@@ -158,7 +158,7 @@ namespace Tsunami
             this.WindowState = WindowState.Minimized;
         }
 
-        private void ContentControl_MouseDown(object sender, MouseButtonEventArgs e)
+        private void ContentControl_MouseLeftDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
         }

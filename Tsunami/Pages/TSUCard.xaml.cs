@@ -60,7 +60,7 @@ namespace Tsunami.Pages
         {
             Image or = (Image)e.OriginalSource;
             Models.TorrentItem ti = (Models.TorrentItem)or.DataContext;
-            var deleteMessageDialog = new DelDialog { DataContext = ti };
+            var deleteMessageDialog = new Dialogs.DelDialog { DataContext = ti };
             
             await MaterialDesignThemes.Wpf.DialogHost.Show(deleteMessageDialog, "RootDialog");
 

@@ -27,19 +27,19 @@ namespace Tsunami.Pages
 
         private async void BrushButton_Click(object sender, RoutedEventArgs e)
         {
-            var brushDiag = new BrushDialog();
+            var brushDiag = new Dialogs.BrushDialog();
             await MaterialDesignThemes.Wpf.DialogHost.Show(brushDiag, "RootDialog");
         }
 
         private async void DownloadButton_Click(object sender, RoutedEventArgs e)
         {
-            var downloadDiag = new DownloadDialog();
+            var downloadDiag = new Dialogs.DownloadDialog();
             await MaterialDesignThemes.Wpf.DialogHost.Show(downloadDiag, "RootDialog");
         }
 
         private async void WebButton_Click(object sender, RoutedEventArgs e)
         {
-            var webDiag = new WebSettingsDialog();
+            var webDiag = new Dialogs.WebSettingsDialog();
             await MaterialDesignThemes.Wpf.DialogHost.Show(webDiag, "RootDialog");
         }
     }

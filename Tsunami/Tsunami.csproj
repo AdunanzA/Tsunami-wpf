@@ -111,8 +111,8 @@
       <HintPath>..\packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MaterialDesignThemes.Wpf, Version=2.2.0.725, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MaterialDesignThemes.2.2.0.725\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=2.2.1.750, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.2.2.1.750\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
@@ -160,13 +160,13 @@
     <Compile Include="Pages\Add.xaml.cs">
       <DependentUpon>Add.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\BrushDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\BrushDialog.xaml.cs">
       <DependentUpon>BrushDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DelDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\DelDialog.xaml.cs">
       <DependentUpon>DelDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DownloadDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\DownloadDialog.xaml.cs">
       <DependentUpon>DownloadDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\FileList.xaml.cs">
@@ -190,7 +190,7 @@
     <Compile Include="Pages\TSUCard.xaml.cs">
       <DependentUpon>TSUCard.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WebSettingsDialog.xaml.cs">
+    <Compile Include="Pages\Dialogs\WebSettingsDialog.xaml.cs">
       <DependentUpon>WebSettingsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\Application.cs" />
@@ -217,15 +217,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\BrushDialog.xaml">
+    <Page Include="Pages\Dialogs\BrushDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\DelDialog.xaml">
+    <Page Include="Pages\Dialogs\DelDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\DownloadDialog.xaml">
+    <Page Include="Pages\Dialogs\DownloadDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -253,7 +253,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\WebSettingsDialog.xaml">
+    <Page Include="Pages\Dialogs\WebSettingsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -52,7 +52,7 @@
 
             <materialDesign:ColorZone Grid.Row="0" Height="40" materialDesign:ShadowAssist.ShadowDepth="Depth0" DockPanel.Dock="Top" 
                                       VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
-                <ContentControl MouseDown="ContentControl_MouseDown" MouseDoubleClick="ContentControl_MouseDoubleClick">
+                <ContentControl MouseLeftButtonDown="ContentControl_MouseLeftDown" MouseDoubleClick="ContentControl_MouseDoubleClick">
                     <DockPanel>
                         <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedButton}"
                             ToolTip="Close" Click="OnCloseButton_Click">
