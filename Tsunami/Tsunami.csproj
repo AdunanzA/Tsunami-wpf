@@ -374,9 +374,6 @@
     <Resource Include="Resources\pb1.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\trash.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\logo_tsunami_medium.png" />
     <Resource Include="Resources\logo_tsunami_small.png" />
     <Resource Include="Resources\logo_tsunami_tiny.png" />
