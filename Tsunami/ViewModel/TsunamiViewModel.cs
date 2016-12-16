@@ -764,6 +764,13 @@ namespace Tsunami.ViewModel
             log.Info("closed");
         }
 
+        public void PauseResumeSession()
+        {
+            if (_torrentSession.is_paused())
+                _torrentSession.resume();
+            else _torrentSession.pause();
+        }
+
         private void TerminateSaveResume()
         {
             using (var entry = _torrentSession.save_state(0xfffffff))

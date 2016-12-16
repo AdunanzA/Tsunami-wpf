@@ -170,5 +170,10 @@ namespace Tsunami
             else
                 this.WindowState = WindowState.Maximized;
         }
+
+        private void OnPauseResumeLibTorrent_Click(object sender, RoutedEventArgs e)
+        {
+            tvm.PauseResumeSession();
+        }
     }
 }
