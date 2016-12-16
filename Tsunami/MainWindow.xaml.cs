@@ -175,5 +175,11 @@ namespace Tsunami
         {
             tvm.PauseResumeSession();
         }
+
+        private async void Logo_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var aboutUs = new Pages.Dialogs.About();
+            await MaterialDesignThemes.Wpf.DialogHost.Show(aboutUs, "RootDialog");
+        }
     }
 }
