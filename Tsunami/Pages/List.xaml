@@ -33,7 +33,7 @@
             </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <materialDesign:Card Margin="5" UniformCornerRadius="15" materialDesign:ShadowAssist.ShadowDepth="Depth2">
+                    <materialDesign:Card Margin="5" UniformCornerRadius="15">
                         <DockPanel>
                             <pages:TSUCard DockPanel.Dock="Left"></pages:TSUCard>
                         </DockPanel>

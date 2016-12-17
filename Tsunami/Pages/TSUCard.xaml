@@ -49,7 +49,7 @@
             </BeginStoryboard>
         </EventTrigger>
     </UserControl.Triggers>
-    <Grid>
+    <Grid materialDesign:ShadowAssist.ShadowDepth="Depth2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25*"/>
             <ColumnDefinition Width="11*"/>
