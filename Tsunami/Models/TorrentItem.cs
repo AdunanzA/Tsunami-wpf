@@ -550,16 +550,16 @@ namespace Tsunami.Models
             //NumSeeds = ts.num_seeds;
             //NumUploads = ts.num_uploads;
             Paused = ts.paused;
-            using (Core.BitField bf = ts.pieces)
-            {
-                if (ReferenceEquals(null, Pieces))
-                {
-                    Pieces = new BitField(bf);
-                } else
-                {
-                    Pieces.Update(bf);
-                }
-            }
+            //using (Core.BitField bf = ts.pieces)
+            //{
+            //    if (ReferenceEquals(null, Pieces))
+            //    {
+            //        Pieces = new BitField(bf);
+            //    } else
+            //    {
+            //        Pieces.Update(bf);
+            //    }
+            //}
             //ProgressPpm = ts.progress_ppm;
             //SavePath = ts.save_path;
             //SeedingTime = ts.seeding_time;
@@ -583,25 +583,37 @@ namespace Tsunami.Models
             //UploadMode = ts.upload_mode;
             //UploadPayloadRate = ts.upload_payload_rate;
             //UpBandwidthQueue = ts.up_bandwidth_queue;
-            using (Core.BitField vp = ts.verified_pieces)
+            //using (Core.BitField vp = ts.verified_pieces)
+            //{
+            //    if (ReferenceEquals(null, VerifiedPieces))
+            //    {
+            //        VerifiedPieces = new BitField(vp);
+            //    }
+            //    else
+            //    {
+            //        VerifiedPieces.Update(vp);
+            //    }
+            //}
+
+            using (Core.BitField bf = ts.pieces)
             {
-                if (ReferenceEquals(null, VerifiedPieces))
+                if (ReferenceEquals(null, Pieces))
                 {
-                    VerifiedPieces = new BitField(vp);
+                    Pieces = new BitField(bf);
                 }
                 else
                 {
-                    VerifiedPieces.Update(vp);
+                    Pieces.Update(bf);
                 }
-            }
 
-            foreach (Models.FileEntry item in FileList)
-            {
-                foreach (Models.Part part in item.Pieces.Where(x => x.Downloaded == false))
+                foreach (Models.FileEntry item in FileList)
                 {
-                    bool sub = ts.pieces.op_Subscript(part.Id);
-                    part.Downloaded = sub;
-                    Pieces.Parts[part.Id].Downloaded = sub;
+                    foreach (Models.Part part in item.Pieces.Where(x => x.Downloaded == false))
+                    {
+                        bool sub = bf.op_Subscript(part.Id);
+                        part.Downloaded = sub;
+                        Pieces.Parts[part.Id].Downloaded = sub;
+                    }
                 }
             }
 

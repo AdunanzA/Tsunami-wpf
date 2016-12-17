@@ -117,7 +117,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!--http://lvcharts.net/App/examples/v1/wpf/Constant%20Changes-->
                 <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2.5*" />
@@ -169,7 +168,7 @@
             <ni:TaskbarIcon
                 x:Name="tsunamiNotifyIcon"
                 ToolTipText="Tsunami"
-                IconSource="Resources/logo_tsunami_big.ico">
+                IconSource="Resources/logo_tsunami_tiny.ico">
             </ni:TaskbarIcon>
 
         </Grid>           
