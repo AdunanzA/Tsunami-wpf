@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using LiveCharts;
 using LiveCharts.Configurations;
@@ -182,6 +179,18 @@ namespace Tsunami
             //the values property will store our values array
             DownloadChartValues = new ChartValues<MeasureModel>();
             UploadChartValues = new ChartValues<MeasureModel>();
+            //First Chart Value is 0
+            DownloadChartValues.Add(new MeasureModel
+            {
+                DateTime = DateTime.Now,
+                Value = 0
+            });
+
+            UploadChartValues.Add(new MeasureModel
+            {
+                DateTime = DateTime.Now,
+                Value = 0
+            });
 
             //lets set how to display the X Labels
             DateTimeFormatter = value => new DateTime((long)value).ToString("hh:mm:ss");
@@ -246,10 +255,10 @@ namespace Tsunami
             AngularGaugeValue = (ss.download_rate.Megabytes().Megabytes/Math.Pow(10,6))*8;
 
             var now = DateTime.Now;
-            
-            if ( (now - LastUpdate).Seconds > 5)
+
+            if ((now - LastUpdate).Seconds > 5)
             {
-                
+
                 DownloadChartValues.Add(new MeasureModel
                 {
                     DateTime = now,
@@ -264,12 +273,12 @@ namespace Tsunami
 
                 SetAxisLimits(now);
 
-                //lets only use the last 30 values (61)
+                //lets only use the last 360 values
                 if (DownloadChartValues.Count > 361) DownloadChartValues.RemoveAt(0);
                 if (UploadChartValues.Count > 361) UploadChartValues.RemoveAt(0);
 
-                DownloadXAxisMin = DownloadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;// TimeSpan.FromSeconds(6).Ticks;
-                UploadXAxisMin = UploadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;//TimeSpan.FromSeconds(6).Ticks;
+                DownloadXAxisMin = DownloadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;
+                UploadXAxisMin = UploadChartValues.Last().DateTime.Ticks - TimeSpan.FromMinutes(30).Ticks;
 
                 LastUpdate = now;
             }
@@ -376,10 +385,8 @@ namespace Tsunami
         private void SetAxisLimits(DateTime now)
         {
             DownloadXAxisMax = now.Ticks + TimeSpan.FromSeconds(0.1).Ticks; // lets force the axis to be 100ms ahead
-            //DownloadXAxisMin = now.Ticks - TimeSpan.FromSeconds(8).Ticks; //we only care about the last 8 seconds
 
             UploadXAxisMax = now.Ticks + TimeSpan.FromSeconds(0.1).Ticks; // lets force the axis to be 100ms ahead
-            //UploadXAxisMin = now.Ticks - TimeSpan.FromSeconds(8).Ticks; //we only care about the last 8 seconds
 
             if (YAxisMax < DownloadRate)
             {
