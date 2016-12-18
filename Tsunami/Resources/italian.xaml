@@ -6,6 +6,7 @@
   <!-- String resource that can be localized -->
     <system:String x:Key="No">No</system:String>
     <system:String x:Key="Yes">Sì</system:String>
+    <system:String x:Key="Ok">Ok</system:String>
     <system:String x:Key="DownList">Lista Download</system:String>
     <system:String x:Key="Add">Aggiungi Torrent</system:String>
     <system:String x:Key="Settings">Impostazioni</system:String>

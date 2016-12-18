@@ -10,5 +10,18 @@
 
         // internal Tsunami user_agent
         public readonly static string TSUNAMI_USER_AGENT = "Tsunami/{0}";
+
+        //Tsunami Version
+        public readonly static string TSUNAMI_VERSION = GetTsunamiVersion();
+
+        private static string GetTsunamiVersion()
+        {
+            var _verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
+            var _verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
+            var _verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
+            string versionComplete = _verMajor + "." + _verMin + _verRev;
+
+            return versionComplete;
+        }
     }
 }

@@ -25,10 +25,7 @@ namespace Tsunami
 
             tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
 
-            var verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
-            var verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
-            var verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
-            titleBlock.Text = Title + " " + verMajor + "." + verMin + verRev;
+            titleBlock.Text = Title + " " + Settings.Application.TSUNAMI_VERSION;
             
             Closing += Window_Closing;
 
@@ -164,7 +161,7 @@ namespace Tsunami
             tvm.PauseResumeSession();
         }
 
-        private async void Logo_MouseDown(object sender, MouseButtonEventArgs e)
+        private async void Logo_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var aboutUs = new Pages.Dialogs.About();
             await MaterialDesignThemes.Wpf.DialogHost.Show(aboutUs, "RootDialog");
