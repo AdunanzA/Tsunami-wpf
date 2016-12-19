@@ -13,7 +13,8 @@
 
         mc:Ignorable="d"
         Title="Tsunami" Icon="Resources/logo_tsunami_big.ico" ResizeMode="CanResizeWithGrip"
-        WindowStyle="None" AllowsTransparency="True"  
+        WindowStyle="SingleBorderWindow"
+        
         MinHeight="600" MinWidth="800"
 
         TextElement.FontWeight="Regular" TextElement.FontSize="13" TextOptions.TextFormattingMode="Ideal" TextOptions.TextRenderingMode="Auto"
@@ -54,16 +55,16 @@
                                       VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
                 <ContentControl MouseLeftButtonDown="ContentControl_MouseLeftDown" MouseDoubleClick="ContentControl_MouseDoubleClick">
                     <DockPanel>
-                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedButton}"
-                            ToolTip="Close" Click="OnCloseButton_Click">
+                        <Button Margin="0,5,3,5" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignRaisedButton}"
+                            Click="OnCloseButton_Click">
                             <materialDesign:PackIcon Kind="Close" Height="25" Width="25"/>
                         </Button>
-                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
-                            ToolTip="Maximize"  Click="OnResizeButton_Click">
+                        <Button Margin="0,5,3,5" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
+                            Click="OnResizeButton_Click">
                             <materialDesign:PackIcon Kind="WindowMaximize" Height="25" Width="25"/>
                         </Button>
-                        <Button Margin="0,5,3,0" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
-                            ToolTip="Minimize" Click="OnMinimizeButton_Click">
+                        <Button Margin="0,5,3,5" DockPanel.Dock="Right" Style="{StaticResource MaterialDesignFlatButton}"
+                            Click="OnMinimizeButton_Click">
                             <materialDesign:PackIcon Kind="WindowMinimize" Height="25" Width="25"/>
                         </Button>
                         <Image Source="/Resources/logo_tsunami_tiny.png" Margin="10,6,0,0" Height="30" Width="30" DockPanel.Dock="Left" MouseLeftButtonDown="Logo_MouseLeftButtonDown"/>
