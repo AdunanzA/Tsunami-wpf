@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using Squirrel;
 namespace Tsunami
 {
     /// <summary>
@@ -22,6 +22,8 @@ namespace Tsunami
         {
             InitializeComponent();
             SetLanguageDictionary();
+
+            SquirrelUpdate("C:\\Repos\\Tsunami\\Tsunami\\Releases");
 
             tvm = (ViewModel.TsunamiViewModel)FindResource("TsunamiVM");
 
@@ -165,6 +167,14 @@ namespace Tsunami
         {
             var aboutUs = new Pages.Dialogs.About();
             await MaterialDesignThemes.Wpf.DialogHost.Show(aboutUs, "RootDialog");
+        }
+
+        private async void SquirrelUpdate(string path)
+        {
+            using (var mgr = new UpdateManager(path))
+            {
+                await mgr.UpdateApp();
+            }
         }
     }
 }

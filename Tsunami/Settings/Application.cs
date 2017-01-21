@@ -19,7 +19,7 @@
             var _verMajor = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major;
             var _verMin = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor;
             var _verRev = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build;
-            string versionComplete = _verMajor + "." + _verMin + _verRev;
+            string versionComplete = _verMajor + "." + _verMin + "." + _verRev;
 
             return versionComplete;
         }
